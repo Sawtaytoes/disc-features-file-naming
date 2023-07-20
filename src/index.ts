@@ -11,13 +11,13 @@ import {
   toArray,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError"
-import { combineMediaWithData } from "./combineMediaWithData"
-import { getArgValues } from './getArgValues'
-import { getFileVideoTimes } from "./getFileVideoTimes"
-import { parseExtras } from "./parseExtras"
-import { readFiles } from './readFiles'
-import { searchDvdCompare } from "./searchDvdCompare"
+import { catchNamedError } from "./catchNamedError.js"
+import { combineMediaWithData } from "./combineMediaWithData.js"
+import { getArgValues } from "./getArgValues.js"
+import { getFileVideoTimes } from "./getFileVideoTimes.js"
+import { parseExtras } from "./parseExtras.js"
+import { readFiles } from "./readFiles.js"
+import { searchDvdCompare } from "./searchDvdCompare.js"
 
 process
 .on(
@@ -74,7 +74,7 @@ searchDvdCompare({
   )),
   toArray(),
   // ignoreElements(),
-  mergeAll(),
+  concatAll(),
   concatAll(),
   catchNamedError(
     'index'

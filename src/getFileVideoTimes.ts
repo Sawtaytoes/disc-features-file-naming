@@ -16,8 +16,8 @@ import {
   take,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError"
-import { type File } from './readFiles';
+import { catchNamedError } from "./catchNamedError.js"
+import { type File } from "./readFiles.js";
 
 const execFile = (
   promisify(

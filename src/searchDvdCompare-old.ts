@@ -11,8 +11,8 @@ import {
   toArray,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError"
-import { getUserSearchInput } from "./getUserSearchInput"
+import { catchNamedError } from "./catchNamedError.js"
+import { getUserSearchInput } from "./getUserSearchInput.js"
 
 export const searchDvdCompare = ({
   searchTerm,

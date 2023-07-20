@@ -6,7 +6,7 @@ import {
   type Observable,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError"
+import { catchNamedError } from "./catchNamedError.js"
 
 export const searchDvdCompare = ({
   url,

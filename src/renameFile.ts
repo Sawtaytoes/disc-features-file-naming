@@ -9,7 +9,7 @@ import {
   tap,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError"
+import { catchNamedError } from "./catchNamedError.js"
 
 export type FilenameRename = {
   nextFilename: string,

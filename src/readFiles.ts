@@ -22,7 +22,7 @@ import {
   catchError,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError"
+import { catchNamedError } from "./catchNamedError.js"
 
 export type File = {
   filename: (
@@ -125,23 +125,11 @@ export const readFiles = ({
             oldFilename,
           }) => (
             from(
-              access(
+              stat(
                 newFilename,
-                (
-                  constants
-                  .F_OK
-                ),
               )
             )
             .pipe(
-              tap(() => {
-                throw (
-                  "File already exists for "
-                  .concat(
-                    `"${renamedFilename}"`
-                  )
-                )
-              }),
               catchError(() => (
                 bindNodeCallback(
                   rename,
@@ -150,8 +138,25 @@ export const readFiles = ({
                   newFilename,
                 )
               )),
+              map((
+                stats,
+              ) => {
+                if (
+                  stats
+                ) {
+                  throw (
+                    "File already exists for "
+                    .concat(
+                      `"${renamedFilename}"`
+                    )
+                  )
+                }
+              }),
             )
           )),
+          catchNamedError(
+            readFiles
+          ),
         )
       )
     } satisfies (

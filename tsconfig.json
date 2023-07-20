@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "CommonJS",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     // "noEmit": true,
     "outDir": "dist",
@@ -27,7 +27,7 @@
     "files": true,
     "compilerOptions": {
       "noEmit": false,
-      "module": "CommonJS",
+      "module": "NodeNext",
       "moduleResolution": "NodeNext",
       // "outDir": "src",
       "outFile": "src/index.js",

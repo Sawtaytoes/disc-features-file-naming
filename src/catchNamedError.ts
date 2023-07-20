@@ -1,3 +1,4 @@
+import chalk from "chalk"
 import {
   catchError,
   EMPTY,
@@ -19,15 +20,18 @@ export const catchNamedError = (
     console
     .error(
       (
-        (
-          typeof func
-          === 'function'
+        chalk
+        .red(
+          (
+            typeof func
+            === 'function'
+          )
+          ? (
+            func
+            .name
+          )
+          : func
         )
-        ? (
-          func
-          .name
-        )
-        : func
       ),
       error,
     )
