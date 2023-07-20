@@ -17,7 +17,6 @@ import { getArgValues } from './getArgValues'
 import { getFileVideoTimes } from "./getFileVideoTimes"
 import { parseExtras } from "./parseExtras"
 import { readFiles } from './readFiles'
-import { renameFile } from "./renameFile"
 import { searchDvdCompare } from "./searchDvdCompare"
 
 process
