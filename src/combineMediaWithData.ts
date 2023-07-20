@@ -36,6 +36,10 @@ export const extraMatchRenames = [
     replacement: "$1 -deleted",
   },
   {
+    searchTerm: /(.*outtakes.*)/i,
+    replacement: "$1 -outtakes",
+  },
+  {
     searchTerm: /(trailers?)$/i,
     replacement: "$1 -trailer",
   },
@@ -52,11 +56,11 @@ export const extraMatchRenames = [
     replacement: "$1 -behindthescenes",
   },
   {
-    searchTerm: /(q&a)$/i,
+    searchTerm: /(.*interview.*)/i,
     replacement: "$1 -interview",
   },
   {
-    searchTerm: /(interview)$/i,
+    searchTerm: /(q&a)$/i,
     replacement: "$1 -interview",
   },
   {
@@ -64,8 +68,12 @@ export const extraMatchRenames = [
     replacement: "$1 -short",
   },
   {
+    searchTerm: /(.*excerpts.*)$/i,
+    replacement: "$1 -short",
+  },
+  {
     searchTerm: /(story)$/i,
-    replacement: "$1 -story",
+    replacement: "$1 -short",
   },
   {
     searchTerm: /(.*prologue.*)/i,
@@ -270,11 +278,6 @@ export const combineMediaWithData = ({
           .filter(({
             timecode: extraChildTimecode,
           }) => (
-            //@ts-ignore
-            // console.log(
-            //   mediaTimecode,
-            //   extraChildTimecode,
-            // )||
             getIsSimilarTimecode(
               mediaTimecode,
               extraChildTimecode,
@@ -465,6 +468,10 @@ export const combineMediaWithData = ({
       .replaceAll(
         /"/g,
         "",
+      )
+      .replaceAll(
+        /:/g,
+        " -",
       )
     )),
     map((
