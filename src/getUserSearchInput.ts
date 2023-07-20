@@ -30,15 +30,15 @@ export const getUserSearchInput = () => (
       (
         index,
       ) => {
+        readlineInterface
+        .close()
+
         observer
         .next(
           Number(
             index
           )
         )
-
-        readlineInterface
-        .close()
 
         observer
         .complete()
