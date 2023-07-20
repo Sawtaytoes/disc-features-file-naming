@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "CommonJS",
+    "moduleResolution": "NodeNext",
+    // "noEmit": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    // "rootDir": "src",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+  },
+  "include": [
+    "src",
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "files": true,
+    "compilerOptions": {
+      "noEmit": false,
+      "module": "CommonJS",
+      "moduleResolution": "NodeNext",
+      // "outDir": "src",
+      "outFile": "src/index.js",
+    },
+  },
+}

@@ -1,0 +1,16 @@
+diff --git a/src/episodes.js b/src/episodes.js
+index a8d68249564b5769e7be83ae34ae679471d766d8..f13b29df53d1f9777a956bb38bc330da652ff61e 100644
+--- a/src/episodes.js
++++ b/src/episodes.js
+@@ -8,10 +8,7 @@ const parsePage = ($) => {
+   const allItems = $('tr.episode-list-data')
+   const result = []
+ 
+-  // Because MAL shows twice the number of elements for the order
+-  const items = allItems.slice(0, allItems.length / 2)
+-
+-  items.each(function (elem) {
++  allItems.each(function (elem) {
+     result.push({
+       epNumber: +$(this).find('td.episode-number').text().trim(),
+       aired: $(this).find('td.episode-aired').text().trim(),
