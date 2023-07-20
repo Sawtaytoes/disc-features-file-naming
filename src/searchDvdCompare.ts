@@ -172,6 +172,14 @@ export const searchDvdCompare = ({
                   (
                     element
                     ?.parentElement
+                    ?.querySelector(
+                      '.description'
+                    )
+                    ?.textContent
+                  )
+                  || (
+                    element
+                    ?.parentElement
                     ?.parentElement
                     ?.querySelector(
                       '.description'
