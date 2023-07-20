@@ -55,70 +55,67 @@ export const convertNumberToTimeString = (
 )
 
 export const convertDurationToTimecode = (
-  duration: number,
+  durationInSeconds: number,
 ): string => {
-  const hours = (
-    Math
-    .floor(
-      duration
-      / 60
-      / 60
+  const date = (
+    new Date(
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
     )
   )
 
-  const minutes = (
-    Math
-    .floor(
-      duration
-      / 60
-    )
+  date
+  .setSeconds(
+    durationInSeconds
   )
-
-  const seconds = (
-    Math
-    .round(
-      duration
-      % 60
-    )
-  )
-
-  if (
-    hours
-    > 0
-  ) {
-    return (
-      String(
-        hours
-      )
-      .concat(
-        ":",
-        (
-          convertNumberToTimeString(
-            minutes
-          )
-        ),
-        ":",
-        (
-          convertNumberToTimeString(
-            seconds
-          )
-        ),
-      )
-    )
-  }
 
   return (
-    String(
-      minutes
-    )
-    .concat(
-      ":",
+    [
       (
-        convertNumberToTimeString(
-          seconds
-        )
+        date
+        .getHours()
       ),
-    )
+      (
+        date
+        .getMinutes()
+      ),
+      (
+        date
+        .getSeconds()
+      ),
+    ]
+    .filter((
+      value,
+      index,
+    ) => (
+      (
+        index
+        === 0
+      )
+      ? (
+        Boolean(
+          value
+        )
+      )
+      : true
+    ))
+    .map((
+      value,
+      index,
+    ) => (
+      index > 0
+      ? (
+        convertNumberToTimeString(
+          value
+        )
+      )
+      : value
+    ))
+    .join(":")
   )
 }
 
