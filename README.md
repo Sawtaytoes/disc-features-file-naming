@@ -1,4 +1,4 @@
-# Media File Naming
+# Disc Features File Naming
 
 ```
 yarn install
