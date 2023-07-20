@@ -1,15 +1,11 @@
-import {
-  readdir,
-  rename,
-  stat,
-} from "node:fs/promises"
+import { rename } from "node:fs/promises"
 import os from "node:os"
-import path from "node:path"
 import {
   filter,
   from,
   map,
   mergeMap,
+  of,
   tap,
 } from "rxjs"
 
@@ -20,13 +16,11 @@ export type FilenameRename = {
   previousFilename: string,
 }
 
-export const renameFiles = ({
-  filenameRenames,
-}: {
-  filenameRenames: FilenameRename[],
-}) => (
+export const renameFile = (
+  renameFile: File["renameFile"],
+) => (
   from(
-    filenameRenames
+    renameFile
   )
   .pipe(
     filter(({
@@ -78,7 +72,7 @@ export const renameFiles = ({
       ),
     ),
     catchNamedError(
-      renameFiles
+      renameFile
     ),
   )
 )

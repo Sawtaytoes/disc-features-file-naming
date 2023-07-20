@@ -2,6 +2,8 @@ import {
   rename,
 } from "node:fs"
 import {
+  access,
+  constants,
   readdir,
   stat,
 } from "node:fs/promises"
@@ -15,6 +17,9 @@ import {
   mergeMap,
   toArray,
   type Observable,
+  tap,
+  of,
+  catchError,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError"
@@ -63,7 +68,18 @@ export const readFiles = ({
     map((
       filename,
     ) => ({
-      filename,
+      filename: (
+        path
+        .basename(
+          filename,
+          (
+            path
+            .extname(
+              filename
+            )
+          ),
+        )
+      ),
       fullPath: (
         parentDirectory
         .concat(
@@ -74,23 +90,68 @@ export const readFiles = ({
       renameFile: (
         renamedFilename: string,
       ) => (
-        bindNodeCallback(
-          rename,
-        )(
-          (
+        of({
+          oldFilename: (
             parentDirectory
             .concat(
               path.sep,
               filename,
             )
           ),
-          (
+          newFilename: (
             parentDirectory
             .concat(
               path.sep,
               renamedFilename,
+              (
+                path
+                .extname(
+                  filename
+                )
+              ),
             )
-          ),
+          )
+        })
+        .pipe(
+          filter(({
+            newFilename,
+            oldFilename,
+          }) => (
+            newFilename
+            !== oldFilename
+          )),
+          mergeMap(({
+            newFilename,
+            oldFilename,
+          }) => (
+            from(
+              access(
+                newFilename,
+                (
+                  constants
+                  .F_OK
+                ),
+              )
+            )
+            .pipe(
+              tap(() => {
+                throw (
+                  "File already exists for "
+                  .concat(
+                    `"${renamedFilename}"`
+                  )
+                )
+              }),
+              catchError(() => (
+                bindNodeCallback(
+                  rename,
+                )(
+                  oldFilename,
+                  newFilename,
+                )
+              )),
+            )
+          )),
         )
       )
     } satisfies (

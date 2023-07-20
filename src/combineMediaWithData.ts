@@ -22,13 +22,13 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError"
-import { type Media } from './getFileVideoTimes';
+import { convertNumberToTimeString, type Media } from './getFileVideoTimes';
+import { getUserSearchInput } from './getUserSearchInput';
 import {
   extraTypes,
   type Extra,
 } from './parseExtras';
-import { type FilenameRename } from './renameFiles';
-import { getUserSearchInput } from './getUserSearchInput';
+import { File } from './readFiles';
 
 export const extraMatchRenames = [
   {
@@ -81,6 +81,147 @@ export const extraMatchRenames = [
   },
 ] as const
 
+export const getTimecodeAtOffset = (
+  timecode: string,
+  offset: number,
+) => {
+  const date = (
+    new Date(
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    )
+  )
+
+  timecode
+  .split(":")
+  .reverse()
+  .map((
+    timeString
+  ) => (
+    Number(
+      timeString
+    )
+  ))
+  .forEach((
+    timeValue,
+    index,
+  ) => {
+    if (
+      index
+      === 0
+    ) {
+      date
+      .setSeconds(
+        timeValue
+      )
+    }
+    else if (
+      index
+      === 1
+    ) {
+      date
+      .setMinutes(
+        timeValue
+      )
+    }
+    else if (
+      index
+      === 2
+    ) {
+      date
+      .setHours(
+        timeValue
+      )
+    }
+  })
+
+  date
+  .setSeconds(
+    (
+      date
+      .getSeconds()
+    )
+    + offset
+  )
+
+  return (
+    [
+      (
+        date
+        .getHours()
+      ),
+      (
+        date
+        .getMinutes()
+      ),
+      (
+        date
+        .getSeconds()
+      ),
+    ]
+    .filter((
+      value,
+      index,
+    ) => (
+      (
+        index
+        === 0
+      )
+      ? (
+        Boolean(
+          value
+        )
+      )
+      : true
+    ))
+    .map((
+      value,
+      index,
+    ) => (
+      index > 0
+      ? (
+        convertNumberToTimeString(
+          value
+        )
+      )
+      : value
+    ))
+    .join(":")
+  )
+}
+
+export const getIsSimilarTimecode = (
+  timecodeA: string,
+  timecodeB?: string,
+) => (
+  (
+    timecodeA
+    === timecodeB
+  )
+  || (
+    (
+      getTimecodeAtOffset(
+        timecodeA,
+        +1,
+      )
+    )
+    === timecodeB
+  )
+  || (
+    (
+      getTimecodeAtOffset(
+        timecodeA,
+        -1,
+      )
+    )
+    === timecodeB
+  )
+)
+
 export const combineMediaWithData = ({
   extras,
   media,
@@ -89,7 +230,9 @@ export const combineMediaWithData = ({
   media: Media,
 }): (
   Observable<
-    FilenameRename[]
+    ReturnType<
+      File["renameFile"]
+    >
   >
 ) => (
   of(
@@ -104,8 +247,10 @@ export const combineMediaWithData = ({
         .filter(({
           timecode: extraTimecode,
         }) => (
-          extraTimecode
-          === mediaTimecode
+          getIsSimilarTimecode(
+            mediaTimecode,
+            extraTimecode,
+          )
         ))
         .concat(
           extras
@@ -125,8 +270,15 @@ export const combineMediaWithData = ({
           .filter(({
             timecode: extraChildTimecode,
           }) => (
-            extraChildTimecode
-            === mediaTimecode
+            //@ts-ignore
+            // console.log(
+            //   mediaTimecode,
+            //   extraChildTimecode,
+            // )||
+            getIsSimilarTimecode(
+              mediaTimecode,
+              extraChildTimecode,
+            )
           ))
         )
       )
@@ -146,13 +298,16 @@ export const combineMediaWithData = ({
             .filename
           ),
           "\n",
+          mediaTimecode,
+          "\n",
           matchingExtras
           .map((
             matchingExtra,
             index,
-          ) => (
-            `${index} | ${matchingExtra}`
-          ))
+          ) => ({
+            index,
+            matchingExtra,
+          }))
         )
 
         return (
@@ -271,6 +426,13 @@ export const combineMediaWithData = ({
                   selectedIndex
                 )
               )),
+              tap((
+                selectedType,
+              ) => {
+                if (!selectedType) {
+                  throw "Incorrect type selected."
+                }
+              }),
               filter(
                 Boolean
               ),
@@ -298,14 +460,34 @@ export const combineMediaWithData = ({
     }),
     map((
       text,
-    ) => ({
-      nextFilename: text,
-      previousFilename: (
+    ) => (
+      text
+      .replaceAll(
+        /"/g,
+        "",
+      )
+    )),
+    map((
+      text,
+    ) => {
+      console
+      .info({
+        old: (
+          media
+          .file
+          .filename
+        ),
+        new: text,
+      })
+
+      return (
         media
         .file
-        .filename
-      ),
-    })),
+        .renameFile(
+          text
+        )
+      )
+    }),
     catchNamedError(
       combineMediaWithData
     ),

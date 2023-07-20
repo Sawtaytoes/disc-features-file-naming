@@ -2,11 +2,13 @@ import "@total-typescript/ts-reset"
 import "dotenv/config"
 
 import {
-  combineLatest,
+  concatAll,
   concatMap,
   ignoreElements,
+  mergeAll,
   mergeMap,
   tap,
+  toArray,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError"
@@ -15,7 +17,7 @@ import { getArgValues } from './getArgValues'
 import { getFileVideoTimes } from "./getFileVideoTimes"
 import { parseExtras } from "./parseExtras"
 import { readFiles } from './readFiles'
-import { renameFiles } from "./renameFiles"
+import { renameFile } from "./renameFile"
 import { searchDvdCompare } from "./searchDvdCompare"
 
 process
@@ -71,15 +73,10 @@ searchDvdCompare({
       )),
     )
   )),
-  tap(console.log),
-  ignoreElements(),
-  mergeMap((
-    filenameRenames,
-  ) => (
-    renameFiles(
-      filenameRenames
-    )
-  )),
+  toArray(),
+  // ignoreElements(),
+  mergeAll(),
+  concatAll(),
   catchNamedError(
     'index'
   )
