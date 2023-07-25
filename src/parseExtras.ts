@@ -244,7 +244,7 @@ export const parseExtras = (
       ) {
         const extraMatchKey = (
           matches
-          .at(1)
+          .at(0)
         )
 
         if (
@@ -272,7 +272,6 @@ export const parseExtras = (
           ExtraType
         ),
       }
-
     }),
     reduce(
       (
