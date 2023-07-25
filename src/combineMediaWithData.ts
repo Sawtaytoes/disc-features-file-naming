@@ -496,6 +496,10 @@ export const combineMediaWithData = ({
         /\//g,
         " - ",
       )
+      .replaceAll(
+        /\?/g,
+        "",
+      )
     )),
     map((
       text,
