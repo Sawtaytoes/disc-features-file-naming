@@ -63,6 +63,10 @@ export const extraMatchRenames = [
     replacement: "$1 -trailer",
   },
   {
+    searchTerm: /(.*essay.*)/i,
+    replacement: "$1 -featurette",
+  },
+  {
     searchTerm: /(.*shorts?.*)/i,
     replacement: "$1 -short",
   },
