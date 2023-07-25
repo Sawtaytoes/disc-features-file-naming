@@ -147,7 +147,10 @@ export const parseExtras = (
     map((
       lineItem
     ) => ({
-      text: lineItem,
+      text: (
+        lineItem
+        .trim()
+      ),
     })),
     map(({
       text,
@@ -156,7 +159,7 @@ export const parseExtras = (
       const matches = (
         text
         .match(
-          /\(.+?(\d+:\d+)\)/
+          /\(.*?(\d+:\d+)\)/
         )
       )
 
@@ -174,7 +177,7 @@ export const parseExtras = (
             text: (
               text
               .replace(
-                / \(.+?\d+:\d+\)/,
+                / \(.*?\d+:\d+\)/,
                 "",
               )
             ),
