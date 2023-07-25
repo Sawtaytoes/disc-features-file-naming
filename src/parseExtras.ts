@@ -154,7 +154,7 @@ export const parseExtras = (
       const matches = (
         text
         .match(
-          /\((\d+:\d+)\)/
+          /\(.+?(\d+:\d+)\)/
         )
       )
 
@@ -172,7 +172,7 @@ export const parseExtras = (
             text: (
               text
               .replace(
-                / \(\d+:\d+\)/,
+                / \(.+?\d+:\d+\)/,
                 "",
               )
             ),
