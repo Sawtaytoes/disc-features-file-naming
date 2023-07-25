@@ -37,15 +37,19 @@ export const extraMatchRenames = [
   },
   {
     searchTerm: /(.*outtakes.*)/i,
-    replacement: "$1 -outtakes",
+    replacement: "$1 -deleted",
   },
   {
-    searchTerm: /(trailers?)$/i,
+    searchTerm: /(.*trailers?.*)/i,
     replacement: "$1 -trailer",
   },
   {
     searchTerm: /(featurettes?)$/i,
     replacement: "-featurette",
+  },
+  {
+    searchTerm: /(.*featurettes?.*)/i,
+    replacement: "$1 -featurette",
   },
   {
     searchTerm: /(.*documentary.*)/i,
@@ -56,15 +60,23 @@ export const extraMatchRenames = [
     replacement: "$1 -behindthescenes",
   },
   {
+    searchTerm: /(.*making of.*)/i,
+    replacement: "$1 -behindthescenes",
+  },
+  {
     searchTerm: /(.*interview.*)/i,
     replacement: "$1 -interview",
   },
   {
-    searchTerm: /(q&a)$/i,
+    searchTerm: /(.*q&a.*)$/i,
     replacement: "$1 -interview",
   },
   {
-    searchTerm: /(short)$/i,
+    searchTerm: /(.*promotional?.*)/i,
+    replacement: "$1 -trailer",
+  },
+  {
+    searchTerm: /(.*shorts?.*)/i,
     replacement: "$1 -short",
   },
   {
@@ -72,7 +84,7 @@ export const extraMatchRenames = [
     replacement: "$1 -short",
   },
   {
-    searchTerm: /(story)$/i,
+    searchTerm: /(.*story.*)/i,
     replacement: "$1 -short",
   },
   {

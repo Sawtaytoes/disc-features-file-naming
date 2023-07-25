@@ -36,16 +36,19 @@ export type Extra = {
 
 export const extraMatchKeys = [
   "behind the scenes",
+  "clip",
   "deleted scene",
   "documentary",
   "featurette",
   "interview",
-  "q&a",
-  "trailer",
-  "music video",
   "montage",
+  "music video",
+  "outtakes",
+  "promotional",
+  "q&a",
   "short",
-  "clip",
+  "story",
+  "trailer",
 ] as const
 
 export type ExtraMatchKey = typeof extraMatchKeys[number]
@@ -62,10 +65,13 @@ export const extraMatchTypes: (
   "documentary": "behindthescenes",
   "featurette": "featurette",
   "interview": "interview",
-  "music video": "short",
   "montage": "featurette",
+  "music video": "short",
+  "outtakes": "deleted",
+  "promotional": "trailer",
   "q&a": "interview",
   "short": "short",
+  "story": "short",
   "trailer": "trailer",
 }
 
