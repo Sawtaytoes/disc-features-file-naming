@@ -47,6 +47,8 @@ export const extraMatchKeys = [
   "promotional",
   "q&a",
   "short",
+  "sing",
+  "song",
   "story",
   "trailer",
 ] as const
@@ -71,6 +73,8 @@ export const extraMatchTypes: (
   "promotional": "trailer",
   "q&a": "interview",
   "short": "short",
+  "sing": "short",
+  "song": "short",
   "story": "short",
   "trailer": "trailer",
 }

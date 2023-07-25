@@ -88,6 +88,14 @@ export const extraMatchRenames = [
     replacement: "$1 -short",
   },
   {
+    searchTerm: /(.*song.*)/i,
+    replacement: "$1 -short",
+  },
+  {
+    searchTerm: /(.*sing.*)/i,
+    replacement: "$1 -short",
+  },
+  {
     searchTerm: /(.*prologue.*)/i,
     replacement: "$1 -short",
   },
