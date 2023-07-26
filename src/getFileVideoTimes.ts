@@ -31,10 +31,13 @@ export type Track = {
 }
 
 export type MediaInfo = {
-  media: {
-    '@ref': string,
-    track: Track[],
-  },
+  media: (
+    | {
+      '@ref': string,
+      track: Track[],
+    }
+    | null
+  ),
 }
 
 export type Media = {
@@ -169,8 +172,11 @@ export const getFileVideoTimes = (
         map(({
           media,
         }) => (
-          media
-          .track
+          (
+            media
+            ?.track
+          )
+          || []
         )),
         mergeAll(),
         filter(({
