@@ -2,8 +2,6 @@ import {
   rename,
 } from "node:fs"
 import {
-  access,
-  constants,
   readdir,
   stat,
 } from "node:fs/promises"
@@ -17,7 +15,6 @@ import {
   mergeMap,
   toArray,
   type Observable,
-  tap,
   of,
   catchError,
 } from "rxjs"
@@ -88,7 +85,7 @@ export const readFiles = ({
         )
       ),
       renameFile: (
-        renamedFilename: string,
+        renamedFilename,
       ) => (
         of({
           oldFilename: (

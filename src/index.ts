@@ -34,47 +34,51 @@ const {
   getArgValues()
 )
 
-searchDvdCompare({
-  url,
-})
-.pipe(
-  mergeMap((
-    extrasText,
-  ) => (
-    parseExtras(
-      extrasText
-    )
-  )),
-  mergeMap((
-    extras,
-  ) => (
-    readFiles({
-      parentDirectory,
-    })
-    .pipe(
-      mergeMap((
-        files,
-      ) => (
-        getFileVideoTimes(
-          files
-        )
-      )),
-      concatMap((
-        media,
-      ) => (
-        combineMediaWithData({
-          extras,
+export const nameDiscExtras = () => (
+  searchDvdCompare({
+    url,
+  })
+  .pipe(
+    mergeMap((
+      extrasText,
+    ) => (
+      parseExtras(
+        extrasText
+      )
+    )),
+    mergeMap((
+      extras,
+    ) => (
+      readFiles({
+        parentDirectory,
+      })
+      .pipe(
+        mergeMap((
+          files,
+        ) => (
+          getFileVideoTimes(
+            files
+          )
+        )),
+        concatMap((
           media,
-        })
-      )),
+        ) => (
+          combineMediaWithData({
+            extras,
+            media,
+          })
+        )),
+      )
+    )),
+    toArray(),
+    // ignoreElements(),
+    concatAll(),
+    concatAll(),
+    catchNamedError(
+      nameDiscExtras
     )
-  )),
-  toArray(),
-  // ignoreElements(),
-  concatAll(),
-  concatAll(),
-  catchNamedError(
-    'index'
   )
 )
+
+nameDiscExtras()
 .subscribe()

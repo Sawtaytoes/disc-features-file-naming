@@ -18,6 +18,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { type File } from "./readFiles.js";
+import { getMediaInfo } from './getMediaInfo.js';
 
 const execFile = (
   promisify(
@@ -136,39 +137,11 @@ export const getFileVideoTimes = (
     mergeMap((
       file,
     ) => (
-      from(
-        execFile(
-          'MediaInfo_CLI_23.07_Windows_x64/MediaInfo.exe',
-          [
-            '--Output=JSON',
-            (
-              file
-              .fullPath
-            ),
-          ],
-        )
+      getMediaInfo(
+        file
+        .fullPath
       )
       .pipe(
-        map(({
-          stderr,
-          stdout,
-        }) => {
-          if (stderr) {
-            throw stderr
-          }
-
-          return stdout
-        }),
-        map((
-          mediaInfoJsonString,
-        ) => (
-          JSON
-          .parse(
-            mediaInfoJsonString
-          ) as (
-            MediaInfo
-          )
-        )),
         map(({
           media,
         }) => (
