@@ -222,25 +222,6 @@ export const getDiscWorthIt = (): (
                     ?.at(2)
                   ),
                 }))
-                .map(({
-                  reasons,
-                  ...otherProps
-                }) => ({
-                  ...otherProps,
-                  ...(
-                    (
-                      (
-                        reasons
-                        .length
-                      )
-                      > 0
-                    )
-                    ? {
-                      reasons
-                    }
-                    : undefined
-                  ),
-                }))
                 .filter(({
                   sectionTitle,
                   movieName,
