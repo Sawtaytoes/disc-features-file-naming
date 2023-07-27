@@ -89,6 +89,10 @@ const cliProgressBar = new cliProgress.SingleBar({
   hideCursor: true,
 });
 
+const progressRegex = (
+  /Progress: (\d+)%/
+)
+
 export const keepSpecifiedLanguageTracks = ({
   audioLanguage,
   filePath,
@@ -173,13 +177,28 @@ export const keepSpecifiedLanguageTracks = ({
             cliProgressBar.start(
               100,
               Number(
-                data.toString().replace(/Progress: (\d+)%/, "$1")
+                data
+                .toString()
+                .replace(
+                  progressRegex,
+                  "$1",
+                )
               ),
               {},
             )
           }
           else {
-            cliProgressBar.update(Number(data.toString().replace(/Progress: (\d+)%/, "$1")))
+            cliProgressBar
+            .update(
+              Number(
+                data
+                .toString()
+                .replace(
+                  progressRegex,
+                  "$1",
+                )
+              )
+            )
           }
         }
         else {
