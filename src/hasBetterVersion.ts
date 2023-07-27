@@ -111,27 +111,18 @@ export const hasBetterVersion = () => (
         )),
         mergeMap(({
           matchingSections,
-          movieNameWithYear,
         }) => (
           matchingSections
-          .map((
-            matchingSection
-          ) => ({
-            ...matchingSection,
-            movieNameWithYear,
-          }))
           .flatMap(({
             items,
             ...otherProps
           }) => (
             items
-            .map(({
-              publisher,
-              reasons,
-            }) => ({
+            .map((
+              item
+            ) => ({
               ...otherProps,
-              publisher,
-              reasons,
+              ...item,
             }))
           ))
         )),
