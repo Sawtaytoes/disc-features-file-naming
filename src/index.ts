@@ -1,20 +1,9 @@
 import "@total-typescript/ts-reset"
 import "dotenv/config"
 
-import {
-  concatAll,
-  concatMap,
-  mergeMap,
-  toArray,
-} from "rxjs"
-
-import { catchNamedError } from "./catchNamedError.js"
-import { combineMediaWithData } from "./combineMediaWithData.js"
+import yargs from "yargs/yargs"
+import { hideBin } from "yargs/helpers"
 import { getArgValues } from "./getArgValues.js"
-import { getFileVideoTimes } from "./getFileVideoTimes.js"
-import { parseExtras } from "./parseExtras.js"
-import { readFiles } from "./readFiles.js"
-import { searchDvdCompare } from "./searchDvdCompare.js"
 
 process
 .on(
@@ -27,58 +16,71 @@ process
   },
 )
 
+// const argv = (
+//   yargs(
+//     hideBin(
+//       process
+//       .argv
+//     )
+//   )
+//   .scriptName(
+//     "ts-node src/index.ts"
+//   )
+//   .usage(
+//     "$0 <cmd> [args]"
+//   )
+//   .command(
+//     "[scriptName]",
+//     "Run a separate command.",
+//     (
+//       yargs,
+//     ) => {
+//       yargs
+//       .positional(
+//         "scriptName",
+//         {
+//           // default: "",
+//           describe: "The name of a script to run.",
+//           type: "string",
+//         },
+//       )
+//     },
+//     (
+//       argv,
+//     ) => {
+//       console
+//       .info(
+//         "hello",
+//         argv.name,
+//         "welcome to yargs!"
+//       )
+//     }
+//   )
+//   .help()
+//   .demandCommand(
+//     1
+//   )
+//   .strict()
+//   .argv
+// )
+
 const {
   parentDirectory,
-  url,
+  scriptName,
+  url
 } = (
   getArgValues()
 )
 
-export const nameDiscExtras = () => (
-  searchDvdCompare({
+import(
+  `${scriptName}.ts`
+)
+.then((
+  createObservable,
+) => (
+  createObservable({
+    parentDirectory,
     url,
   })
-  .pipe(
-    mergeMap((
-      extrasText,
-    ) => (
-      parseExtras(
-        extrasText
-      )
-    )),
-    mergeMap((
-      extras,
-    ) => (
-      readFiles({
-        parentDirectory,
-      })
-      .pipe(
-        mergeMap((
-          files,
-        ) => (
-          getFileVideoTimes(
-            files
-          )
-        )),
-        concatMap((
-          media,
-        ) => (
-          combineMediaWithData({
-            extras,
-            media,
-          })
-        )),
-      )
-    )),
-    toArray(),
-    // ignoreElements(),
-    concatAll(),
-    concatAll(),
-    catchNamedError(
-      nameDiscExtras
-    )
-  )
-)
-
-nameDiscExtras()
-.subscribe()
+  .subscribe()
+))

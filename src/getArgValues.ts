@@ -1,8 +1,14 @@
 export const getArgValues = () => {
-  const parentDirectory = (
+  const scriptName = (
     process
     .argv
     .at(2)
+  )
+
+  const parentDirectory = (
+    process
+    .argv
+    .at(3)
   )
 
   if (!parentDirectory) {
@@ -13,13 +19,14 @@ export const getArgValues = () => {
     (
       process
       .argv
-      .at(3)
+      .at(4)
     )
     || ""
   )
 
   return {
     parentDirectory,
+    scriptName,
     url,
   }
 }
