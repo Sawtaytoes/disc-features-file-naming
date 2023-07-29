@@ -21,7 +21,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 
-export type File = {
+export type FileInfo = {
   filename: (
     string
   ),
@@ -43,7 +43,7 @@ export const readFiles = ({
   parentDirectory: string,
 }): (
   Observable<
-    File[]
+    FileInfo[]
   >
 ) => (
   from(
@@ -157,9 +157,9 @@ export const readFiles = ({
         )
       )
     } satisfies (
-      File
+      FileInfo
     ) as (
-      File
+      FileInfo
     ))),
     mergeMap((
       file,

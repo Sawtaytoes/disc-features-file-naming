@@ -1,50 +1,16 @@
 import {
-  execFile as execFileCallback,
-} from 'node:child_process';
-import {
-  promisify,
-} from 'node:util'
-import {
   filter,
   from,
   map,
-  mergeMap,
-  tap,
-  toArray,
-  type Observable,
   mergeAll,
+  mergeMap,
   take,
+  type Observable,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { type File } from "./readFiles.js";
 import { getMediaInfo } from './getMediaInfo.js';
-
-const execFile = (
-  promisify(
-    execFileCallback
-  )
-)
-
-export type Track = {
-  '@type': string,
-  'Duration': string,
-}
-
-export type MediaInfo = {
-  media: (
-    | {
-      '@ref': string,
-      track: Track[],
-    }
-    | null
-  ),
-}
-
-export type Media = {
-  file: File,
-  timecode: string,
-}
+import { type FileInfo } from "./readFiles.js";
 
 export const convertNumberToTimeString = (
   number: number,
@@ -124,11 +90,12 @@ export const convertDurationToTimecode = (
 }
 
 export const getFileVideoTimes = (
-  files: File[],
+  files: FileInfo[],
 ): (
-  Observable<
-    Media
-  >
+  Observable<{
+    file: FileInfo,
+    timecode: string,
+  }>
 ) => (
   from(
     files

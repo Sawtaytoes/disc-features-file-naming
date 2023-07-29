@@ -9,6 +9,7 @@ export const getUserSearchInput = () => (
   >((
     observer,
   ) => {
+    // Switch to using `inquirer`.
     const readlineInterface = (
       readline
       .createInterface({

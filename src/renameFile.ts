@@ -10,6 +10,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { type FileInfo } from "./readFiles.js"
 
 export type FilenameRename = {
   nextFilename: string,
@@ -17,7 +18,7 @@ export type FilenameRename = {
 }
 
 export const renameFile = (
-  renameFile: File["renameFile"],
+  renameFile: FileInfo["renameFile"],
 ) => (
   from(
     renameFile
