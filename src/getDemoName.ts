@@ -38,51 +38,8 @@ export const getDemoName = ({
     || []
   )
   .pipe(
-    // map(({
-    //   "@type": type,
-    //   "@typeorder": typeOrder,
-    //   "BitDepth": bitDepth,
-    //   "ChannelLayout_Original": channelLayoutOriginal,
-    //   "ChannelLayout": channelLayout,
-    //   "ChannelPositions": channelPositions,
-    //   "Channels": channels,
-    //   "DisplayAspectRatio": displayAspectRatio,
-    //   "Format": format,
-    //   "Format_AdditionalFeatures": formatAdditionalFeatures,
-    //   "Format_Commercial_IfAny": formatCommercialIfAny,
-    //   "Format_Commercial": formatCommercial,
-    //   "Format_Settings_Mode": formatSettingsMode,
-    //   "Format/Info": formatInfo,
-    //   "HDR_Format_Compatibility": hdrFormatCompatibility,
-    //   "HDR_Format": hdrFormat,
-    //   "Height": height,
-    //   "Title": title,
-    //   "transfer_characteristics": transferCharacteristics,
-    //   "Width": width,
-    // }) => ({
-    //   bitDepth,
-    //   channelLayout,
-    //   channelLayoutOriginal,
-    //   channelPositions,
-    //   channels,
-    //   displayAspectRatio,
-    //   format,
-    //   formatAdditionalFeatures,
-    //   formatCommercial,
-    //   formatCommercialIfAny,
-    //   formatInfo,
-    //   formatSettingsMode,
-    //   hdrFormatCompatibility,
-    //   hdrFormat,
-    //   height,
-    //   title,
-    //   transferCharacteristics,
-    //   type,
-    //   typeOrder,
-    //   width,
-    // })),
     filter((
-      track
+      track,
     ) => (
       (
         (
