@@ -9,13 +9,13 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { convertNumberToTimeString, type Media } from "./getFileVideoTimes.js";
+import { convertNumberToTimeString } from "./getFileVideoTimes.js";
 import { getUserSearchInput } from "./getUserSearchInput.js";
 import {
   extraTypes,
   type Extra,
 } from "./parseExtras.js";
-import { File } from "./readFiles.js";
+import { type FileInfo } from "./readFiles.js";
 
 export const extraMatchRenames = [
   {
@@ -250,7 +250,7 @@ export const combineMediaWithData = ({
 }): (
   Observable<
     ReturnType<
-      File["renameFile"]
+      FileInfo["renameFile"]
     >
   >
 ) => (

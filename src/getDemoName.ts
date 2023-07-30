@@ -17,14 +17,13 @@ import { replaceAudioFormatByChannelCount } from './audioHelpers.js'
 import { catchNamedError } from "./catchNamedError.js"
 import { MediaInfo, VideoTrack } from "./getMediaInfo.js"
 import { replaceHdrFormat } from './hdrHelpers.js'
-import { type FileInfo } from "./readFiles.js"
 import { replaceResolutionName } from './resolutionHelpers.js'
 
 export const getDemoName = ({
-  fileInfo,
+  filename,
   mediaInfo,
 }: {
-  fileInfo: FileInfo
+  filename: string
   mediaInfo: MediaInfo
 }): (
   Observable<
@@ -78,23 +77,20 @@ export const getDemoName = ({
           .pipe(
             filter(() => (
               !(
-                fileInfo
-                .filename
+                filename
                 .includes(
                   "Auro-3D"
                 )
               )
               && !(
                 (
-                  fileInfo
-                  .filename
+                  filename
                   .includes(
                     "Trinnov"
                   )
                 )
                 && (
-                  fileInfo
-                  .filename
+                  filename
                   .includes(
                     "DTS-X"
                   )
@@ -180,17 +176,14 @@ export const getDemoName = ({
     }),
     reduce(
       (
-        filename,
+        modifiedFilename,
         renamingFunction,
       ) => (
         renamingFunction(
-          filename
+          modifiedFilename
         )
       ),
-      (
-        fileInfo
-        .filename
-      )
+      filename,
     ),
     catchNamedError(
       getDemoName
