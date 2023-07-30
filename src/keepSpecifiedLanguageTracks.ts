@@ -7,12 +7,10 @@ import {
   unlink,
 } from "node:fs/promises"
 import {
-  map,
   Observable,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { type MkvInfo } from "./getMkvInfo.js";
 import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
 
 const cliProgressBar = (
@@ -50,7 +48,7 @@ export const keepSpecifiedLanguageTracks = ({
   subtitleLanguage: Iso6392LanguageCode,
 }): (
   Observable<
-    MkvInfo
+    string
   >
 ) => (
   new Observable<
@@ -81,26 +79,6 @@ export const keepSpecifiedLanguageTracks = ({
 
           filePath,
         ],
-        // (
-        //   error,
-        //   stdout,
-        //   stderr,
-        // ) => {
-        //   if (error) {
-        //     console.error(stderr) // TEMP
-        //     observer
-        //     .error(
-        //       error
-        //     )
-        //   }
-
-        //   console.log('stdout', stdout)
-        //   observer
-        //   .next({
-        //     stderr,
-        //     stdout,
-        //   })
-        // },
       )
     )
 
@@ -206,6 +184,11 @@ export const keepSpecifiedLanguageTracks = ({
         code,
       ) => {
         observer
+        .next(
+          newFilePath
+        )
+
+        observer
         .complete()
 
         cliProgressBar
@@ -261,60 +244,8 @@ export const keepSpecifiedLanguageTracks = ({
         )
       }
     )
-
-    // process
-    // .on(
-    //   'SIGINT',
-    //   () => {
-    //     console.log('YO!')
-
-    //     console.log('deleted file')
-    //     // .finally(() => {
-    //     //   process.exit(0)
-    //     // })
-    //   },
-    // )
   })
-  // from(
-  //   execFile(
-  //     "mkvtoolnix-64-bit-78.0.7/mkvmerge.exe",
-  //     [
-  //       "--output",
-  //       `${filePath} (LANGUAGE-TRIMMED)`,
-
-  //       "--audio-tracks",
-  //       audioLanguage,
-
-  //       "--subtitle-tracks",
-  //       subtitleLanguage,
-
-  //       filePath,
-  //     ],
-  //   )
-  // )
   .pipe(
-    // map(({
-    //   stderr,
-    //   stdout,
-    // }) => {
-    //   if (
-    //     stderr
-    //   ) {
-    //     throw stderr
-    //   }
-
-    //   return stdout
-    // }),
-    map((
-      mkvInfoJsonString,
-    ) => (
-      JSON
-      .parse(
-        mkvInfoJsonString
-      ) as (
-        MkvInfo
-      )
-    )),
     catchNamedError(
       keepSpecifiedLanguageTracks
     ),

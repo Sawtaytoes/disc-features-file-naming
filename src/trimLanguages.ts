@@ -1,9 +1,10 @@
 import "@total-typescript/ts-reset"
 import "dotenv/config"
 
+import chalk from "chalk"
+import { rename, unlink } from "node:fs/promises"
 import {
-  filter,
-  ignoreElements,
+  from,
   mergeAll,
   mergeMap,
   take,
@@ -40,35 +41,61 @@ export const trimLanguages = () => (
     mergeAll(),
     take(1),
     mergeMap((
-      file,
+      fileInfo,
     ) => (
+      // TODO: before doing this, figure out what tracks exist. If no English tracks, we probably shouldn't touch the file.
+
+      // TODO: We should make sure Japanese anime aren't touched as we don't want to remove the Japanese audio.
+
       keepSpecifiedLanguageTracks({
         audioLanguage: "eng",
         filePath: (
-          file
+          fileInfo
           .fullPath
         ),
         subtitleLanguage: "eng",
       })
-    )),
-    mergeMap((
-      mkvInfo,
-    ) => (
-      mkvInfo
-      .tracks
-    )),
-    filter(({
-      properties,
-    }) => (
-      (
-        properties
-        .language
+      .pipe(
+        tap(() => {
+          console
+          .info(
+            (
+              chalk
+              .green(
+                "[SWAPPING IN TRIMMED FILE]"
+              )
+            ),
+            (
+              fileInfo
+              .fullPath
+            ),
+            "\n",
+            "\n",
+          )
+        }),
+        mergeMap((
+          newFilePath,
+        ) => (
+          from(
+            unlink(
+              fileInfo
+              .fullPath
+            )
+          )
+          .pipe(
+            mergeMap(() => (
+              rename(
+                newFilePath,
+                (
+                  fileInfo
+                  .fullPath
+                ),
+              )
+            ))
+          )
+        )),
       )
-      === "eng"
     )),
-    // toArray(),
-    tap(t => { console.log(t) }),
-    ignoreElements(),
     catchNamedError(
       trimLanguages
     )
