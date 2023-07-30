@@ -36,7 +36,6 @@ export const nameDemoFiles = () => (
   })
   .pipe(
     mergeAll(),
-    take(1),
     mergeMap((
       fileInfo,
     ) => (
