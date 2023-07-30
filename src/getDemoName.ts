@@ -10,19 +10,21 @@ import {
   toArray,
   type Observable,
   of,
+  reduce,
 } from "rxjs"
 
 import { replaceAudioFormatByChannelCount } from './audioHelpers.js'
 import { catchNamedError } from "./catchNamedError.js"
 import { MediaInfo, VideoTrack } from "./getMediaInfo.js"
 import { replaceHdrFormat } from './hdrHelpers.js'
+import { type FileInfo } from "./readFiles.js"
 import { replaceResolutionName } from './resolutionHelpers.js'
 
 export const getDemoName = ({
-  filename,
+  fileInfo,
   mediaInfo,
 }: {
-  filename: string
+  fileInfo: FileInfo
   mediaInfo: MediaInfo
 }): (
   Observable<
@@ -61,33 +63,42 @@ export const getDemoName = ({
         )
       )
     )),
-    // groupBy(({
-    //   "@type": type,
-    // }) => (
-    //   type
-    // )),
-    // mergeMap((
-    //   group$,
-    // ) => (
     mergeMap((
-      track,
-    ) => (
-      merge(
+      track
+    ) => {
+      if (
         (
-          of(
-            track
-          )
+          track
+          ["@type"]
+        )
+        === "Audio"
+      ) {
+        return (
+          of(track)
           .pipe(
-            filter(({
-              "@type": type,
-            }) => (
-              type === "Audio"
-            )),
             filter(() => (
-              !filename.includes("Auro-3D")
+              !(
+                fileInfo
+                .filename
+                .includes(
+                  "Auro-3D"
+                )
+              )
               && !(
-                filename.includes("Trinnov")
-                && filename.includes("DTS-X")
+                (
+                  fileInfo
+                  .filename
+                  .includes(
+                    "Trinnov"
+                  )
+                )
+                && (
+                  fileInfo
+                  .filename
+                  .includes(
+                    "DTS-X"
+                  )
+                )
               )
             )),
             map(({
@@ -124,17 +135,19 @@ export const getDemoName = ({
               getDemoName
             ),
           )
-        ),
+        )
+      }
+
+      if (
         (
-          of(
-            track
-          )
+          track
+          ["@type"]
+        )
+        === "Video"
+      ) {
+        return (
+          of(track)
           .pipe(
-            filter(({
-              "@type": type,
-            }) => (
-              type === "Video"
-            )),
             map(({
               "HDR_Format_Compatibility": hdrFormatCompatibility,
               "HDR_Format": hdrFormat,
@@ -159,14 +172,26 @@ export const getDemoName = ({
                 })
               )
             )),
-            catchNamedError(
-              getDemoName
-            ),
           )
-        ),
+        )
+      }
+
+      return EMPTY
+    }),
+    reduce(
+      (
+        filename,
+        renamingFunction,
+      ) => (
+        renamingFunction(
+          filename
+        )
+      ),
+      (
+        fileInfo
+        .filename
       )
-    )),
-    toArray(),
+    ),
     catchNamedError(
       getDemoName
     ),

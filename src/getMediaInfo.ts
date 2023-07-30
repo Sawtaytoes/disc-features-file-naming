@@ -153,6 +153,7 @@ export type AudioTrack = {
   BitRate_Maximum?: string
   BitRate_Mode: string
   BitRate: string
+  ChannelLayout_Original: string
   ChannelLayout: string
   ChannelPositions: string
   Channels: string
@@ -166,6 +167,7 @@ export type AudioTrack = {
   Forced: string
   Format_AdditionalFeatures?: string
   Format_Commercial_IfAny?: string
+  Format_Commercial: string
   Format_Settings_Endianness?: string
   Format_Settings_Mode?: string
   Format: string

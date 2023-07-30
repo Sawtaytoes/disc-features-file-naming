@@ -128,9 +128,9 @@ export const replaceAudioFormatByChannelCount = ({
   channelLayout: string,
   channels: string,
   filename: string,
-  formatAdditionalFeatures: string,
+  formatAdditionalFeatures?: string,
   formatCommercial: string,
-  formatSettingsMode: string,
+  formatSettingsMode?: string,
 }) => {
   if (
     formatCommercial
