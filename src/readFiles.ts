@@ -17,6 +17,7 @@ import {
   type Observable,
   of,
   catchError,
+  tap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
@@ -117,6 +118,20 @@ export const readFiles = ({
             newFilename
             !== oldFilename
           )),
+          tap(({
+            newFilename,
+            oldFilename,
+          }) => {
+            console
+            .info(
+              "[RENAMING]",
+              oldFilename,
+              "\n",
+              newFilename,
+              "\n",
+              "\n",
+            )
+          }),
           mergeMap(({
             newFilename,
             oldFilename,
