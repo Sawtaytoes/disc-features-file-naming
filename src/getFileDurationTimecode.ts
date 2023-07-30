@@ -1,16 +1,15 @@
 import {
-  filter,
+  EMPTY,
   from,
   map,
-  mergeAll,
   mergeMap,
+  of,
   take,
   type Observable,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getMediaInfo } from './getMediaInfo.js';
-import { type FileInfo } from "./readFiles.js";
+import { type MediaInfo } from './getMediaInfo.js';
 
 export const convertNumberToTimeString = (
   number: number,
@@ -89,58 +88,57 @@ export const convertDurationToTimecode = (
   )
 }
 
-export const getFileVideoTimes = (
-  files: FileInfo[],
-): (
-  Observable<{
-    file: FileInfo,
-    timecode: string,
-  }>
+export const getFileDurationTimecode = ({
+  filePath,
+  mediaInfo,
+}: {
+  filePath: string,
+  mediaInfo: MediaInfo,
+}): (
+  Observable<
+    string
+  >
 ) => (
   from(
-    files
+    (
+      mediaInfo
+      ?.media
+      ?.track
+    )
+    || []
   )
   .pipe(
     mergeMap((
-      file,
-    ) => (
-      getMediaInfo(
-        file
-        .fullPath
-      )
-      .pipe(
-        map(({
-          media,
-        }) => (
-          (
-            media
-            ?.track
-          )
-          || []
-        )),
-        mergeAll(),
-        filter(({
-          "@type": type,
-        }) => (
-          type === 'General'
-        )),
-        take(1),
-        map(({
-          Duration,
-        }) => ({
-          file,
-          timecode: (
-            convertDurationToTimecode(
-              Number(
-                Duration
+      track
+    ) => {
+      if (
+        (
+          track
+          ["@type"]
+        )
+        === "General"
+      ) {
+        return (
+          of(track)
+          .pipe(
+            map(({
+              Duration,
+            }) => (
+              convertDurationToTimecode(
+                Number(
+                  Duration
+                )
               )
-            )
-          ),
-        })),
-      )
-    )),
+            )),
+          )
+        )
+      }
+
+      return EMPTY
+    }),
+    take(1),
     catchNamedError(
-      getFileVideoTimes
+      getFileDurationTimecode
     ),
   )
 )

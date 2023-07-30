@@ -9,15 +9,16 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { convertNumberToTimeString } from "./getFileVideoTimes.js";
+import { convertNumberToTimeString } from "./getFileDurationTimecode.js";
 import { getUserSearchInput } from "./getUserSearchInput.js";
 import {
-  extraTypes,
-  type Extra,
-} from "./parseExtras.js";
+  specialFeatureTypes,
+  type SpecialFeature,
+} from "./parseSpecialFeatures.js";
 import { type FileInfo } from "./readFiles.js";
+import { Media } from "./getMediaInfo.js";
 
-export const extraMatchRenames = [
+export const specialFeatureMatchRenames = [
   {
     searchTerm: /(.*deleted.*)/i,
     replacement: "$1 -deleted",
@@ -242,41 +243,39 @@ export const getIsSimilarTimecode = (
 )
 
 export const combineMediaWithData = ({
-  extras,
-  media,
+  filename,
+  specialFeatures,
+  timecode: mediaTimecode,
 }: {
-  extras: Extra[],
-  media: Media,
+  filename: string,
+  specialFeatures: SpecialFeature[],
+  timecode: string,
 }): (
   Observable<
-    ReturnType<
-      FileInfo["renameFile"]
-    >
+    string
   >
 ) => (
   of(
-    media
+    null
   )
   .pipe(
-    mergeMap(({
-      timecode: mediaTimecode,
-    }) => {
+    mergeMap(() => {
       const matchingExtras = (
-        extras
+        specialFeatures
         .filter(({
-          timecode: extraTimecode,
+          timecode: specialFeatureTimecode,
         }) => (
           getIsSimilarTimecode(
             mediaTimecode,
-            extraTimecode,
+            specialFeatureTimecode,
           )
         ))
         .concat(
-          extras
+          specialFeatures
           .filter(({
-            timecode: extraTimecode,
+            timecode: specialFeatureTimecode,
           }) => (
-            !extraTimecode
+            !specialFeatureTimecode
           ))
           .flatMap(({
             children,
@@ -287,11 +286,11 @@ export const combineMediaWithData = ({
             Boolean
           )
           .filter(({
-            timecode: extraChildTimecode,
+            timecode: SpecialFeatureChildTimecode,
           }) => (
             getIsSimilarTimecode(
               mediaTimecode,
-              extraChildTimecode,
+              SpecialFeatureChildTimecode,
             )
           ))
         )
@@ -306,11 +305,7 @@ export const combineMediaWithData = ({
       ) {
         console
         .info(
-          (
-            media
-            .file
-            .filename
-          ),
+          filename,
           "\n",
           mediaTimecode,
           "\n",
@@ -371,8 +366,8 @@ export const combineMediaWithData = ({
       text,
       type,
     }) => {
-      const extraMatchRename = (
-        extraMatchRenames
+      const specialFeatureMatchRename = (
+        specialFeatureMatchRenames
         .find(({
           searchTerm,
         }) => (
@@ -384,13 +379,13 @@ export const combineMediaWithData = ({
       )
 
       if (
-        extraMatchRename
+        specialFeatureMatchRename
       ) {
         const {
           searchTerm,
           replacement,
         } = (
-          extraMatchRename
+          specialFeatureMatchRename
         )
 
         return (
@@ -412,15 +407,11 @@ export const combineMediaWithData = ({
         ) {
           console
           .info(
-            (
-              media
-              .file
-              .filename
-            ),
+            filename,
             "\n",
             text,
             "\n",
-            extraTypes
+            specialFeatureTypes
             .map((
               extraType,
               index,
@@ -435,7 +426,7 @@ export const combineMediaWithData = ({
               map((
                 selectedIndex
               ) => (
-                extraTypes
+                specialFeatureTypes
                 .at(
                   selectedIndex
                 )
@@ -501,27 +492,6 @@ export const combineMediaWithData = ({
         "",
       )
     )),
-    map((
-      text,
-    ) => {
-      console
-      .info({
-        old: (
-          media
-          .file
-          .filename
-        ),
-        new: text,
-      })
-
-      return (
-        media
-        .file
-        .renameFile(
-          text
-        )
-      )
-    }),
     catchNamedError(
       combineMediaWithData
     ),

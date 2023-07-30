@@ -4,7 +4,7 @@
   "scripts": {
     "has-better-version": "ts-node src/hasBetterVersion.ts",
     "name-demo-files": "ts-node src/nameDemoFiles.ts",
-    "name-disc-extras": "ts-node src/name-disc-extras.ts",
+    "name-special-features": "ts-node src/nameSpecialFeatures.ts",
     "trim-languages": "ts-node src/trimLanguages.ts"
   },
   "type": "module",

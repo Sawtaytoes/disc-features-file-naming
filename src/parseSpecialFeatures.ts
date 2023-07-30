@@ -8,7 +8,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 
-export const extraTypes = [
+export const specialFeatureTypes = [
   "behindthescenes",
   "deleted",
   "featurette",
@@ -20,13 +20,13 @@ export const extraTypes = [
 ] as const
 
 export type ExtraType = (
-  | typeof extraTypes[number]
+  | typeof specialFeatureTypes[number]
   | "unknown"
 )
 
-export type Extra = {
+export type SpecialFeature = {
   children?: (
-    Extra[]
+    SpecialFeature[]
   ),
   parentType: ExtraType,
   timecode?: string,
@@ -34,7 +34,7 @@ export type Extra = {
   type: ExtraType,
 }
 
-export const extraMatchKeys = [
+export const specialFeatureMatchKeys = [
   "behind the scenes",
   "clip",
   "deleted scene",
@@ -54,11 +54,13 @@ export const extraMatchKeys = [
   "trailer",
 ] as const
 
-export type ExtraMatchKey = typeof extraMatchKeys[number]
+export type SpecialFeatureMatchKey = (
+  typeof specialFeatureMatchKeys[number]
+)
 
-export const extraMatchTypes: (
+export const specialFeatureMatchTypes: (
   Record<
-    ExtraMatchKey,
+    SpecialFeatureMatchKey,
     ExtraType
   >
 ) = {
@@ -81,15 +83,15 @@ export const extraMatchTypes: (
   "trailer": "trailer",
 }
 
-export const parseExtras = (
-  extrasText: string,
+export const parseSpecialFeatures = (
+  specialFeatureText: string,
 ): (
   Observable<
-    Extra[]
+    SpecialFeature[]
   >
 ) => (
   from(
-    extrasText
+    specialFeatureText
     .split(
       "\n"
     )
@@ -240,7 +242,7 @@ export const parseExtras = (
         .match(
           new RegExp(
             (
-              extraMatchKeys
+              specialFeatureMatchKeys
               .join('|')
             ),
             'i',
@@ -263,10 +265,10 @@ export const parseExtras = (
             ...otherProps,
             text,
             type: (
-              extraMatchTypes[
+              specialFeatureMatchTypes[
                 extraMatchKey
                 .toLowerCase() as (
-                  ExtraMatchKey
+                  SpecialFeatureMatchKey
                 )
               ]
             )
@@ -343,11 +345,11 @@ export const parseExtras = (
         )
       },
       [] as (
-        Extra[]
+        SpecialFeature[]
       ),
     ),
     catchNamedError(
-      parseExtras
+      parseSpecialFeatures
     ),
   )
 )
