@@ -1,3 +1,4 @@
+import chalk from "chalk"
 import {
   rename,
 } from "node:fs"
@@ -124,7 +125,12 @@ export const readFiles = ({
           }) => {
             console
             .info(
-              "[RENAMING]",
+              (
+                chalk
+                .green(
+                  "[RENAMING]"
+                )
+              ),
               oldFilename,
               "\n",
               newFilename,
