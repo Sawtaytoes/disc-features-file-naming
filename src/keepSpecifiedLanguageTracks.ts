@@ -1,5 +1,6 @@
-import cliProgress from "cli-progress"
 import colors from "ansi-colors"
+import chalk from "chalk"
+import cliProgress from "cli-progress"
 import {
   spawn,
 } from "node:child_process";
@@ -38,6 +39,8 @@ const progressRegex = (
   /Progress: (\d+)%/
 )
 
+export const languageTrimmedText = "(LANGUAGE-TRIMMED)"
+
 export const keepSpecifiedLanguageTracks = ({
   audioLanguage,
   filePath,
@@ -60,7 +63,7 @@ export const keepSpecifiedLanguageTracks = ({
       filePath
       .replace(
         /(\.mkv)/,
-        " (LANGUAGE-TRIMMED)$1"
+        ` ${languageTrimmedText}$1`
       )
     )
 
@@ -167,10 +170,30 @@ export const keepSpecifiedLanguageTracks = ({
       (
         code,
       ) => {
-        unlink(
-          newFilePath
+        (
+          (
+            code
+            === null
+          )
+          ? (
+            unlink(
+              newFilePath
+            )
+          )
+          : (
+            Promise
+            .resolve()
+          )
         )
         .finally(() => {
+          console
+          .info(
+            chalk
+            .red(
+              "Process canceled by user."
+            )
+          )
+
           process
           .exit()
         })
@@ -183,10 +206,16 @@ export const keepSpecifiedLanguageTracks = ({
       (
         code,
       ) => {
-        observer
-        .next(
-          newFilePath
-        )
+        console.log('exit', {code})
+        if (
+          code
+          === 0
+        ) {
+          observer
+          .next(
+            newFilePath
+          )
+        }
 
         observer
         .complete()

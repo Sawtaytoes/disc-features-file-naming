@@ -2,18 +2,20 @@ import "@total-typescript/ts-reset"
 import "dotenv/config"
 
 import chalk from "chalk"
-import { rename, unlink } from "node:fs/promises"
+import { rename } from "node:fs/promises"
 import {
-  from,
+  filter,
   mergeAll,
   mergeMap,
-  take,
   tap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
 import { getArgValues } from "./getArgValues.js"
-import { keepSpecifiedLanguageTracks } from "./keepSpecifiedLanguageTracks.js"
+import {
+  keepSpecifiedLanguageTracks,
+  languageTrimmedText,
+} from "./keepSpecifiedLanguageTracks.js"
 import { readFiles } from "./readFiles.js"
 
 process
@@ -39,7 +41,17 @@ export const trimLanguages = () => (
   })
   .pipe(
     mergeAll(),
-    take(1),
+    filter((
+      fileInfo,
+    ) => (
+      !(
+        fileInfo
+        .filename
+        .includes(
+          languageTrimmedText
+        )
+      )
+    )),
     mergeMap((
       fileInfo,
     ) => (
@@ -73,25 +85,18 @@ export const trimLanguages = () => (
             "\n",
           )
         }),
+        filter(
+          Boolean
+        ),
         mergeMap((
           newFilePath,
         ) => (
-          from(
-            unlink(
+          rename(
+            newFilePath,
+            (
               fileInfo
               .fullPath
-            )
-          )
-          .pipe(
-            mergeMap(() => (
-              rename(
-                newFilePath,
-                (
-                  fileInfo
-                  .fullPath
-                ),
-              )
-            ))
+            ),
           )
         )),
       )
