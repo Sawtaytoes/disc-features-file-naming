@@ -1,10 +1,8 @@
 import "@total-typescript/ts-reset"
 import "dotenv/config"
 
-import { inspect } from "node:util"
 import {
   filter,
-  ignoreElements,
   map,
   mergeAll,
   mergeMap,
@@ -132,7 +130,6 @@ export const hasBetterVersion = () => (
       console
       .info
     ),
-    ignoreElements(),
     catchNamedError(
       hasBetterVersion
     )
