@@ -36,7 +36,10 @@ export const catchNamedError = (
       error,
     )
 
-    process
-    .exit()
+    // TODO: See if this needs to be removed.
+    // process
+    // .exit()
+
+    return EMPTY
   })
 )
