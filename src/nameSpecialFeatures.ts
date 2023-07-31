@@ -4,6 +4,7 @@ import {
   map,
   mergeAll,
   mergeMap,
+  tap,
   toArray,
 } from "rxjs"
 
@@ -74,15 +75,13 @@ export const nameSpecialFeatures = () => (
                 timecode,
               })
             )),
+            // We don't want to rename any files just yet, so we're simply mapping to an observable.
             map((
               renamedFilename,
             ) => (
-              // We don't want to rename any files just yet.
-              () => (
-                fileInfo
-                .renameFile(
-                  renamedFilename
-                )
+              fileInfo
+              .renameFile(
+                renamedFilename
               )
             )),
           )
@@ -93,10 +92,17 @@ export const nameSpecialFeatures = () => (
     // Wait till all renames are figured out before doing any renaming.
     toArray(),
 
+    // Remove the array.
+    concatAll(),
+
     // Rename everything by calling the mapped function.
     concatAll(),
+
     catchNamedError(
       nameSpecialFeatures
     )
   )
 )
+
+nameSpecialFeatures()
+.subscribe()
