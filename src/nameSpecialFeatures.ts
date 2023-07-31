@@ -1,11 +1,10 @@
 import {
-  concatAll,
   concatMap,
   map,
   mergeAll,
   mergeMap,
+  Observable,
   scan,
-  tap,
   toArray,
 } from "rxjs"
 
@@ -23,6 +22,16 @@ const {
   url,
 } = (
   getArgValues()
+)
+
+const getNextFilenameCount = (
+  previousCount?: number,
+) => (
+  (
+    previousCount
+    || 0
+  )
+  + 1
 )
 
 export const nameSpecialFeatures = () => (
@@ -85,72 +94,80 @@ export const nameSpecialFeatures = () => (
             timecode,
           })
           .pipe(
-            scan(
-              (
-                {
-                  previousFilenamesCount,
-                },
-                filename,
-              ) => (
-                (
-                  filename in (
-                    previousFilenamesCount
-                  )
-                )
-                ? {
-                  previousFilenamesCount: {
-                    ...previousFilenamesCount,
-                    [filename]: (
-                      (
-                        previousFilenamesCount
-                        [filename]
-                      )
-                      + 1
-                    )
-                  },
-                  renamedFilename: (
-                    filename
-                    .concat(
-                      " ",
-                      "(",
-                      (
-                        String(
-                          (
-                            previousFilenamesCount
-                            [filename]
-                          )
-                          + 1
-                        )
-                      ),
-                      ")",
-                    )
-                  ),
-                }
-                : {
-                  previousFilenamesCount,
-                  renamedFilename: filename,
-                }
-              ),
-              {
-                previousFilenamesCount: {} as (
-                  Record<
-                    string,
-                    number
-                  >
-                ),
-                renamedFilename: "",
-              },
-            ),
-            // We don't want to rename any files until they're all figured out, so we're simply mapping to an observable.
-            map(({
+            map((
               renamedFilename,
-            }) => (
+            ) => ({
+              fileInfo,
+              renamedFilename,
+            }))
+          )
+        )),
+        scan(
+          (
+            {
+              previousFilenameCount,
+            },
+            {
+              fileInfo,
+              renamedFilename,
+            },
+          ) => ({
+            previousFilenameCount: {
+              ...previousFilenameCount,
+              [renamedFilename]: (
+                getNextFilenameCount(
+                  previousFilenameCount
+                  [renamedFilename]
+                )
+              )
+            },
+            renameFile$: (
               fileInfo
               .renameFile(
-                renamedFilename
+                (
+                  renamedFilename in (
+                    previousFilenameCount
+                  )
+                )
+                ? (
+                  "("
+                  .concat(
+                    (
+                      String(
+                        getNextFilenameCount(
+                          previousFilenameCount
+                          [renamedFilename]
+                        )
+                      )
+                    ),
+                    ") ",
+                    renamedFilename
+                  )
+                )
+                : renamedFilename
               )
-            )),
-          )
+            ),
+          }),
+          {
+            previousFilenameCount: {} as (
+              Record<
+                string,
+                number
+              >
+            ),
+            renameFile$: (
+              new Observable()
+            ) as (
+              Observable<
+                void
+              >
+            ),
+          },
+        ),
+        map(({
+          renameFile$
+        }) => (
+          renameFile$
         )),
       )
     )),
@@ -158,11 +175,11 @@ export const nameSpecialFeatures = () => (
     // Wait till all renames are figured out before doing any renaming.
     toArray(),
 
-    // Remove the array.
-    concatAll(),
+    // Unfold the array.
+    mergeAll(),
 
     // Rename everything by calling the mapped function.
-    concatAll(),
+    mergeAll(),
 
     catchNamedError(
       nameSpecialFeatures

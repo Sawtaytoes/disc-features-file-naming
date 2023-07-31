@@ -15,8 +15,6 @@ import {
   specialFeatureTypes,
   type SpecialFeature,
 } from "./parseSpecialFeatures.js";
-import { type FileInfo } from "./readFiles.js";
-import { Media } from "./getMediaInfo.js";
 
 export const specialFeatureMatchRenames = [
   {
@@ -90,6 +88,10 @@ export const specialFeatureMatchRenames = [
   {
     searchTerm: /(.*prologue.*)/i,
     replacement: "$1 -short",
+  },
+  {
+    searchTerm: /(.*) scene$/i,
+    replacement: "$1 -scene",
   },
   {
     searchTerm: /(.*montage.*)/i,
@@ -413,10 +415,10 @@ export const combineMediaWithData = ({
             "\n",
             specialFeatureTypes
             .map((
-              extraType,
+              specialFeatureType,
               index,
             ) => (
-              `${index} | ${extraType}`
+              `${index} | ${specialFeatureType}`
             ))
           )
 
@@ -463,35 +465,6 @@ export const combineMediaWithData = ({
         )
       )
     }),
-    map((
-      text,
-    ) => (
-      text
-      .replaceAll(
-        /"/g,
-        "",
-      )
-      .replaceAll(
-        /: /g,
-        " - ",
-      )
-      .replaceAll(
-        /:/g,
-        "-",
-      )
-      .replaceAll(
-        / \/ /g,
-        " - ",
-      )
-      .replaceAll(
-        /\//g,
-        " - ",
-      )
-      .replaceAll(
-        /\?/g,
-        "",
-      )
-    )),
     catchNamedError(
       combineMediaWithData
     ),

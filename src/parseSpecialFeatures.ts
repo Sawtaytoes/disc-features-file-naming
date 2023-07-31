@@ -19,7 +19,7 @@ export const specialFeatureTypes = [
   "trailer",
 ] as const
 
-export type ExtraType = (
+export type SpecialFeatureType = (
   | typeof specialFeatureTypes[number]
   | "unknown"
 )
@@ -28,10 +28,10 @@ export type SpecialFeature = {
   children?: (
     SpecialFeature[]
   ),
-  parentType: ExtraType,
+  parentType: SpecialFeatureType,
   timecode?: string,
   text: string,
-  type: ExtraType,
+  type: SpecialFeatureType,
 }
 
 export const specialFeatureMatchKeys = [
@@ -47,6 +47,7 @@ export const specialFeatureMatchKeys = [
   "outtakes",
   "promotional",
   "q&a",
+  "scene",
   "short",
   "sing",
   "song",
@@ -61,7 +62,7 @@ export type SpecialFeatureMatchKey = (
 export const specialFeatureMatchTypes: (
   Record<
     SpecialFeatureMatchKey,
-    ExtraType
+    SpecialFeatureType
   >
 ) = {
   "behind the scenes": "behindthescenes",
@@ -76,12 +77,15 @@ export const specialFeatureMatchTypes: (
   "outtakes": "deleted",
   "promotional": "trailer",
   "q&a": "interview",
+  "scene": "scene",
   "short": "short",
   "sing": "short",
   "song": "short",
   "story": "short",
   "trailer": "trailer",
 }
+
+const timecodeRegex = /\s*\([^)]*?\s*(\d+:\d{2}:\d{2}|\d+:\d{2})\s*[^)]*?\)/
 
 export const parseSpecialFeatures = (
   specialFeatureText: string,
@@ -152,6 +156,14 @@ export const parseSpecialFeatures = (
       text: (
         lineItem
         .trim()
+        .replace(
+          /:$/,
+          "",
+        )
+        .replace(
+          / \([^)]*Play All[^)]*\)/,
+          "",
+        )
       ),
     })),
     map(({
@@ -161,7 +173,7 @@ export const parseSpecialFeatures = (
       const matches = (
         text
         .match(
-          /\(.*?(\d+:\d+)\)/
+          timecodeRegex
         )
       )
 
@@ -179,7 +191,7 @@ export const parseSpecialFeatures = (
             text: (
               text
               .replace(
-                / \(.*?\d+:\d+\)/,
+                timecodeRegex,
                 "",
               )
             ),
@@ -201,7 +213,7 @@ export const parseSpecialFeatures = (
       const matches = (
         text
         .match(
-          /^([\*-–] )/
+          /^([\*\-–]+ )/
         )
       )
 
@@ -236,6 +248,53 @@ export const parseSpecialFeatures = (
     map(({
       text,
       ...otherProps
+    }) => ({
+      ...otherProps,
+      text: (
+        text
+        .replaceAll(
+          /"/g,
+          "",
+        )
+        .replaceAll(
+          /“/g,
+          "",
+        )
+        .replaceAll(
+          /”/g,
+          "",
+        )
+        .replaceAll(
+          /: /g,
+          " - ",
+        )
+        .replaceAll(
+          /:/g,
+          "-",
+        )
+        .replaceAll(
+          / \/ /g,
+          " - ",
+        )
+        .replaceAll(
+          /\//g,
+          " - ",
+        )
+        .replaceAll(
+          /\? /g,
+          " - ",
+        )
+        .replaceAll(
+          /\?$/g,
+          "",
+        )
+      ),
+    })),
+  )
+  .pipe(
+    map(({
+      text,
+      ...otherProps
     }) => {
       const matches = (
         text
@@ -253,20 +312,20 @@ export const parseSpecialFeatures = (
       if (
         matches
       ) {
-        const extraMatchKey = (
+        const specialFeatureMatchKey = (
           matches
           .at(0)
         )
 
         if (
-          extraMatchKey
+          specialFeatureMatchKey
         ) {
           return {
             ...otherProps,
             text,
             type: (
               specialFeatureMatchTypes[
-                extraMatchKey
+                specialFeatureMatchKey
                 .toLowerCase() as (
                   SpecialFeatureMatchKey
                 )
@@ -280,7 +339,7 @@ export const parseSpecialFeatures = (
         ...otherProps,
         text,
         type: "unknown" as (
-          ExtraType
+          SpecialFeatureType
         ),
       }
     }),
