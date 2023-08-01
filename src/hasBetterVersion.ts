@@ -42,7 +42,6 @@ export const hasBetterVersion = () => (
       })
       .pipe(
         mergeAll(),
-        // take(1),
         map((
           fileFolder,
         ) => ({
