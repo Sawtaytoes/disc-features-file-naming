@@ -94,6 +94,14 @@ export const specialFeatureMatchRenames = [
     replacement: "$1 -scene",
   },
   {
+    searchTerm: /(.*spot?.*)/i,
+    replacement: "$1 -trailer",
+  },
+  {
+    searchTerm: /(.*promo?.*)/i,
+    replacement: "$1 -trailer",
+  },
+  {
     searchTerm: /(.*montage.*)/i,
     replacement: "$1 -featurette",
   },
