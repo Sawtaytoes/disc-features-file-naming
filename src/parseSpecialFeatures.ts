@@ -213,7 +213,7 @@ export const parseSpecialFeatures = (
       const matches = (
         text
         .match(
-          /^([\*\-–]+ )/
+          /^([\*\-–]+ ?)/
         )
       )
 
