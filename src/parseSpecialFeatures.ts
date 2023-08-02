@@ -7,6 +7,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { getTimecodeAtOffset } from "./combineMediaWithData.js"
 
 export const specialFeatureTypes = [
   "behindthescenes",
@@ -195,7 +196,12 @@ export const parseSpecialFeatures = (
                 "",
               )
             ),
-            timecode,
+            timecode: (
+              getTimecodeAtOffset(
+                timecode,
+                0,
+              )
+            ),
           }
         }
       }

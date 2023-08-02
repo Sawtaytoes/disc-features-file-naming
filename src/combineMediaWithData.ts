@@ -236,7 +236,7 @@ export const getIsSimilarTimecode = (
     (
       getTimecodeAtOffset(
         timecodeA,
-        +1,
+        + 1,
       )
     )
     === timecodeB
@@ -245,7 +245,7 @@ export const getIsSimilarTimecode = (
     (
       getTimecodeAtOffset(
         timecodeA,
-        -1,
+        - 1,
       )
     )
     === timecodeB
