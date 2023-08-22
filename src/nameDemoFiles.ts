@@ -4,7 +4,6 @@ import "dotenv/config"
 import {
   mergeAll,
   mergeMap,
-  take,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"

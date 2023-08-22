@@ -15,7 +15,7 @@ import {
 
 import { replaceAudioFormatByChannelCount } from './audioHelpers.js'
 import { catchNamedError } from "./catchNamedError.js"
-import { MediaInfo, VideoTrack } from "./getMediaInfo.js"
+import { MediaInfo } from "./getMediaInfo.js"
 import { replaceHdrFormat } from './hdrHelpers.js'
 import { replaceResolutionName } from './resolutionHelpers.js'
 

@@ -47,7 +47,7 @@ export const hasBetterVersion = () => (
         ) => ({
           movieName: (
             fileFolder
-            .foldername
+            .folderName
             .replace(
               /(.+) \(\d{4}\)/,
               "$1",
@@ -55,7 +55,7 @@ export const hasBetterVersion = () => (
           ),
           movieNameWithYear: (
             fileFolder
-            .foldername
+            .folderName
           ),
         })),
         map(({

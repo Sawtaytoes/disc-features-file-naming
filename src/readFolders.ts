@@ -8,28 +8,28 @@ import {
 import path from "node:path"
 import {
   bindNodeCallback,
+  catchError,
   filter,
   from,
   map,
   mergeAll,
   mergeMap,
+  of,
   toArray,
   type Observable,
-  of,
-  catchError,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
 
-export type FileFolder = {
-  foldername: (
+export type FolderInfo = {
+  folderName: (
     string
   ),
   fullPath: (
     string
   ),
   renameFolder: (
-    renamedFoldername: string,
+    renamedFolderName: string,
   ) => (
     Observable<
       void
@@ -43,7 +43,7 @@ export const readFolders = ({
   parentDirectory: string,
 }): (
   Observable<
-    FileFolder[]
+    FolderInfo[]
   >
 ) => (
   from(
@@ -54,45 +54,45 @@ export const readFolders = ({
   .pipe(
     mergeAll(),
     // filter((
-    //   foldername,
+    //   folderName,
     // ) => (
-    //   foldername
+    //   folderName
     //   // -------------------------------------
     //   // UNCOMMENT THIS TIME TO TEST A SINGLE FILE
-    //   // && foldername.startsWith('The Rock')
+    //   // && folderName.startsWith('The Rock')
     //   // -------------------------------------
     // )),
     map((
-      foldername,
+      folderName,
     ) => ({
-      foldername,
+      folderName,
       fullPath: (
         parentDirectory
         .concat(
           path.sep,
-          foldername,
+          folderName,
         )
       ),
       renameFolder: (
-        renamedFoldername,
+        renamedFolderName,
       ) => (
         of({
-          oldFoldername: (
+          oldFolderName: (
             parentDirectory
             .concat(
               path.sep,
-              foldername,
+              folderName,
             )
           ),
-          newFoldername: (
+          newFolderName: (
             parentDirectory
             .concat(
               path.sep,
-              renamedFoldername,
+              renamedFolderName,
               (
                 path
                 .extname(
-                  foldername
+                  folderName
                 )
               ),
             )
@@ -100,19 +100,19 @@ export const readFolders = ({
         })
         .pipe(
           filter(({
-            newFoldername,
-            oldFoldername,
+            newFolderName,
+            oldFolderName,
           }) => (
-            newFoldername
-            !== oldFoldername
+            newFolderName
+            !== oldFolderName
           )),
           mergeMap(({
-            newFoldername,
-            oldFoldername,
+            newFolderName,
+            oldFolderName,
           }) => (
             from(
               stat(
-                newFoldername,
+                newFolderName,
               )
             )
             .pipe(
@@ -120,8 +120,8 @@ export const readFolders = ({
                 bindNodeCallback(
                   rename,
                 )(
-                  oldFoldername,
-                  newFoldername,
+                  oldFolderName,
+                  newFolderName,
                 )
               )),
               map((
@@ -133,7 +133,7 @@ export const readFolders = ({
                   throw (
                     "File already exists for "
                     .concat(
-                      `"${renamedFoldername}"`
+                      `"${renamedFolderName}"`
                     )
                   )
                 }
@@ -146,9 +146,9 @@ export const readFolders = ({
         )
       )
     } satisfies (
-      FileFolder
+      FolderInfo
     ) as (
-      FileFolder
+      FolderInfo
     ))),
     mergeMap((
       folder,
