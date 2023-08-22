@@ -20,7 +20,7 @@ yarn set version stable
 ### Usage
 
 ```sh
-yarn start FOLDER_LOCATION DVD_COMPARE_LINK
+yarn nameSpecialFeatures FOLDER_LOCATION DVD_COMPARE_LINK
 ```
 
 - `FOLDER_LOCATION`: The absolute path of the directory with your features.
@@ -29,7 +29,7 @@ yarn start FOLDER_LOCATION DVD_COMPARE_LINK
 #### EXAMPLE
 
 ```sh
-yarn start 'G:\Disc-Rips\Ford v Ferrari bonus' https://dvdcompare.net/comparisons/film.php?fid=52929#1
+yarn nameSpecialFeatures 'G:\Disc-Rips\Ford v Ferrari bonus' https://dvdcompare.net/comparisons/film.php?fid=52929#1
 ```
 
 ## Demo Media File Naming
@@ -52,7 +52,7 @@ Examples of demo filenames:
 ### Usage
 
 ```sh
-yarn start FOLDER_LOCATION
+yarn nameDemoFiles FOLDER_LOCATION
 ```
 
 - `FOLDER_LOCATION`: The absolute path of the directory with your demo media.
@@ -60,5 +60,5 @@ yarn start FOLDER_LOCATION
 #### EXAMPLE
 
 ```sh
-yarn start 'G:\Movie-Demos'
+yarn nameDemoFiles 'G:\Movie-Demos'
 ```

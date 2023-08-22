@@ -2,10 +2,12 @@
   "name": "media-file-naming",
   "packageManager": "yarn@3.6.1",
   "scripts": {
-    "has-better-version": "ts-node src/hasBetterVersion.ts",
-    "name-demo-files": "ts-node src/nameDemoFiles.ts",
-    "name-special-features": "ts-node src/nameSpecialFeatures.ts",
-    "trim-languages": "ts-node src/trimLanguages.ts"
+    "hasBetterAudio": "ts-node src/hasBetterAudio.ts",
+    "hasBetterVersion": "ts-node src/hasBetterVersion.ts",
+    "hasImaxEnhancedAudio": "ts-node src/hasImaxEnhancedAudio.ts",
+    "nameDemoFiles": "ts-node src/nameDemoFiles.ts",
+    "nameSpecialFeatures": "ts-node src/nameSpecialFeatures.ts",
+    "trimLanguages": "ts-node src/trimLanguages.ts"
   },
   "type": "module",
   "dependencies": {
