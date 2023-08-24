@@ -160,25 +160,29 @@ export const hasBetterAudio = () => (
             }
           }
 
-          if (
-            formatSettingsMode
-            === 'Dolby Surround EX'
-          ) {
-            return {
-              channelCount: 8,
-              track,
-            }
-          }
+          // This doesn't work correctly.
 
-          if (
-            formatSettingsMode
-            === 'Dolby Surround'
-          ) {
-            return {
-              channelCount: 4,
-              track,
-            }
-          }
+          // if (
+          //   formatSettingsMode
+          //   === 'Dolby Surround EX'
+          // ) {
+          //   return {
+          //     channelCount: 8,
+          //     track,
+          //   }
+          // }
+
+          // This doesn't work correctly.
+
+          // if (
+          //   formatSettingsMode
+          //   === 'Dolby Surround'
+          // ) {
+          //   return {
+          //     channelCount: 4,
+          //     track,
+          //   }
+          // }
 
           if (
             channelLayout
