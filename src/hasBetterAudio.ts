@@ -136,7 +136,7 @@ export const hasBetterAudio = () => (
                 track
                 .Channels
               )
-              || 1
+              || 2
             )
           )
 
