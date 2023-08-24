@@ -19,15 +19,6 @@ export const formatCodecName = (
   if (
     codecName
     .includes(
-      '96/24'
-    )
-  ) {
-    return 'DTS 96-24'
-  }
-
-  if (
-    codecName
-    .includes(
       'DTS-HD MA + IMAX Enhanced'
     )
   ) {
@@ -79,6 +70,15 @@ export const formatCodecName = (
     return 'DTS-HD HRA'
   }
 
+  if (
+    codecName
+    .includes(
+      '96/24'
+    )
+  ) {
+    return 'DTS'
+  }
+
   return codecName
 }
 
@@ -86,10 +86,12 @@ export const replaceAudioFormat = ({
   channelCount,
   codecName,
   filename,
+  codecNameSuffix = "",
 }: {
   channelCount: string,
   codecName: string,
   filename: string,
+  codecNameSuffix?: string,
 }) => (
   filename
   .replace(
@@ -100,6 +102,9 @@ export const replaceAudioFormat = ({
       (
         formatCodecName(
           codecName
+        )
+        .concat(
+          codecNameSuffix
         )
       ),
       (
@@ -132,6 +137,15 @@ export const replaceAudioFormatByChannelCount = ({
   formatCommercial: string,
   formatSettingsMode?: string,
 }) => {
+  const codecNameSuffix = (
+    (
+      formatAdditionalFeatures
+      ?.includes('96')
+    )
+    ? " 96-24"
+    : ""
+  )
+
   if (
     formatCommercial
     ?.includes('Atmos')
@@ -190,6 +204,7 @@ export const replaceAudioFormatByChannelCount = ({
       replaceAudioFormat({
         channelCount: '6.1',
         codecName: 'DTS-ES HRA Matrix',
+        codecNameSuffix,
         filename,
       })
     )
@@ -203,6 +218,7 @@ export const replaceAudioFormatByChannelCount = ({
       replaceAudioFormat({
         channelCount: '6.1',
         codecName: 'DTS-ES MA Matrix',
+        codecNameSuffix,
         filename,
       })
     )
@@ -216,6 +232,7 @@ export const replaceAudioFormatByChannelCount = ({
       replaceAudioFormat({
         channelCount: '6.1',
         codecName: 'DTS-ES MA Discrete',
+        codecNameSuffix,
         filename,
       })
     )
@@ -229,6 +246,7 @@ export const replaceAudioFormatByChannelCount = ({
       replaceAudioFormat({
         channelCount: '',
         codecName: 'DTS-X',
+        codecNameSuffix,
         filename,
       })
     )
@@ -242,6 +260,7 @@ export const replaceAudioFormatByChannelCount = ({
       replaceAudioFormat({
         channelCount: '',
         codecName: 'IMAX Enhanced DTS-X',
+        codecNameSuffix,
         filename,
       })
     )
@@ -279,6 +298,7 @@ export const replaceAudioFormatByChannelCount = ({
         codecName: (
           formatCommercial
         ),
+        codecNameSuffix,
         filename,
       })
     )
@@ -320,7 +340,10 @@ export const replaceAudioFormatByChannelCount = ({
             )
           )
         ),
-        codecName: formatCommercial,
+        codecName: (
+          formatCommercial
+        ),
+        codecNameSuffix,
         filename,
       })
     )
@@ -329,7 +352,10 @@ export const replaceAudioFormatByChannelCount = ({
   return (
     replaceAudioFormat({
       channelCount: '2.0',
-      codecName: formatCommercial,
+      codecName: (
+        formatCommercial
+      ),
+      codecNameSuffix,
       filename,
     })
   )
