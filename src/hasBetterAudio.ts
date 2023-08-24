@@ -26,21 +26,25 @@ const {
 )
 
 export const hasBetterAudio = () => (
-  readFolders({
+  // readFolders({
+  //   parentDirectory,
+  // })
+  // .pipe(
+  //   mergeAll(),
+  //   mergeMap((
+  //     folderInfo,
+  //   ) => (
+  //     readFiles({
+  //       parentDirectory: (
+  //         folderInfo
+  //         .fullPath
+  //       )
+  //     })
+  //   )),
+  readFiles({
     parentDirectory,
   })
   .pipe(
-    mergeAll(),
-    mergeMap((
-      folderInfo,
-    ) => (
-      readFiles({
-        parentDirectory: (
-          folderInfo
-          .fullPath
-        )
-      })
-    )),
     mergeAll(),
     mergeMap((
       fileInfo,
