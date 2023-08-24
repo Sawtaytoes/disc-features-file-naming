@@ -5,7 +5,7 @@
     "hasBetterAudio": "ts-node src/hasBetterAudio.ts",
     "hasBetterVersion": "ts-node src/hasBetterVersion.ts",
     "hasImaxEnhancedAudio": "ts-node src/hasImaxEnhancedAudio.ts",
-    "hasMoreThanOneAudioTrack": "ts-node src/hasMoreThanOneAudioTrack.ts",
+    "hasManyAudioTracks": "ts-node src/hasManyAudioTracks.ts",
     "nameDemoFiles": "ts-node src/nameDemoFiles.ts",
     "nameSpecialFeatures": "ts-node src/nameSpecialFeatures.ts",
     "trimLanguages": "ts-node src/trimLanguages.ts"

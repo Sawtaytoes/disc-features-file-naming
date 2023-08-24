@@ -7,18 +7,13 @@ import {
   mergeAll,
   mergeMap,
   of,
-  reduce,
   tap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
 import { getArgValues } from "./getArgValues.js"
-import {
-  getMediaInfo,
-  type AudioTrack,
-} from "./getMediaInfo.js"
+import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
-import { readFolders } from "./readFolders.js"
 
 const {
   parentDirectory,
@@ -26,8 +21,8 @@ const {
   getArgValues()
 )
 
-/** Useful for determining which demos have multiple audio tracks. */
-export const hasMoreThanOneAudioTrack = () => (
+/** Useful for determining which demos have probably too many audio tracks. */
+export const hasManyAudioTracks = () => (
   readFiles({
     parentDirectory,
   })
@@ -79,7 +74,7 @@ export const hasMoreThanOneAudioTrack = () => (
           count,
         ) => (
           count
-          > 1
+          > 2
         )),
         tap((
           count
@@ -96,10 +91,10 @@ export const hasMoreThanOneAudioTrack = () => (
       )
     )),
     catchNamedError(
-      hasMoreThanOneAudioTrack
+      hasManyAudioTracks
     ),
   )
 )
 
-hasMoreThanOneAudioTrack()
+hasManyAudioTracks()
 .subscribe()
