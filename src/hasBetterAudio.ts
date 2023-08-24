@@ -155,7 +155,7 @@ export const hasBetterAudio = () => (
             )
           ) {
             return {
-              channelCount: 12,
+              channelCount: 16,
               track,
             }
           }
