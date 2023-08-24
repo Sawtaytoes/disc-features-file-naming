@@ -152,7 +152,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatSettingsMode === 'Dolby Surround'
+    formatSettingsMode
+    === 'Dolby Surround'
   ) {
     return (
       replaceAudioFormat({
@@ -169,7 +170,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatSettingsMode === 'Dolby Surround EX'
+    formatSettingsMode
+    === 'Dolby Surround EX'
   ) {
     return (
       replaceAudioFormat({
@@ -181,7 +183,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatAdditionalFeatures === 'ES'
+    formatAdditionalFeatures
+    === 'ES'
   ) {
     return (
       replaceAudioFormat({
@@ -193,7 +196,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatAdditionalFeatures === 'ES XLL'
+    formatAdditionalFeatures
+    === 'ES XLL'
   ) {
     return (
       replaceAudioFormat({
@@ -205,7 +209,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatAdditionalFeatures === 'ES XCh XLL'
+    formatAdditionalFeatures
+    === 'ES XCh XLL'
   ) {
     return (
       replaceAudioFormat({
@@ -217,7 +222,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatAdditionalFeatures === 'XLL X'
+    formatAdditionalFeatures
+    === 'XLL X'
   ) {
     return (
       replaceAudioFormat({
@@ -229,7 +235,8 @@ export const replaceAudioFormatByChannelCount = ({
   }
 
   if (
-    formatAdditionalFeatures === 'XLL X IMAX'
+    formatAdditionalFeatures
+    === 'XLL X IMAX'
   ) {
     return (
       replaceAudioFormat({

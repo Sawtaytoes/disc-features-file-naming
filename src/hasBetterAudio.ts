@@ -90,28 +90,102 @@ export const hasBetterAudio = () => (
         map((
           track,
         ) => {
-          if (
+          const audioFormat = (
             (
               track
-              .ChannelLayout
+              .Format_Commercial_IfAny
             )
             || (
               track
+              .Format_Commercial
+            )
+            || (
+              track
+              .Format
+            )
+          )
+
+          const channelLayout = (
+            (
+              track
               .ChannelLayout_Original
+            )
+            || (
+              track
+              .ChannelLayout
+            )
+          )
+
+          const formatAdditionalFeatures = (
+            track
+            .Format_AdditionalFeatures
+          )
+
+          const formatSettingsMode = (
+            track
+            .Format_Settings_Mode
+          )
+
+          const numberOfChannels = (
+            Number(
+              (
+                track
+                .Channels_Original
+              )
+              || (
+                track
+                .Channels
+              )
+              || 1
+            )
+          )
+
+          if (
+            (
+              audioFormat
+              ?.includes('Atmos')
+            )
+            || (
+              formatAdditionalFeatures
+              === 'XLL X'
+            )
+            || (
+              formatAdditionalFeatures
+              === 'XLL X IMAX'
             )
           ) {
             return {
+              channelCount: 12,
+              track,
+            }
+          }
+
+          if (
+            formatSettingsMode
+            === 'Dolby Surround EX'
+          ) {
+            return {
+              channelCount: 8,
+              track,
+            }
+          }
+
+          if (
+            formatSettingsMode
+            === 'Dolby Surround'
+          ) {
+            return {
+              channelCount: 4,
+              track,
+            }
+          }
+
+          if (
+            channelLayout
+          ) {
+            return {
               channelCount: (
-                (
-                  (
-                    track
-                    .ChannelLayout_Original
-                  )
-                  || (
-                    track
-                    .ChannelLayout
-                  )
-                )
+                channelLayout
                 .split(' ')
                 .length
               ),
@@ -119,23 +193,10 @@ export const hasBetterAudio = () => (
             }
           }
 
-          if (
-            track
-            .Channels
-          ) {
-            return {
-              channelCount: (
-                Number(
-                  track
-                  .Channels
-                )
-              ),
-              track,
-            }
-          }
-
           return {
-            channelCount: 1,
+            channelCount: (
+              numberOfChannels
+            ),
             track,
           }
         }),

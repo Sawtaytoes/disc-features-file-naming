@@ -156,6 +156,7 @@ export type AudioTrack = {
   ChannelLayout_Original: string
   ChannelLayout: string
   ChannelPositions: string
+  Channels_Original: string
   Channels: string
   CodecID: string
   Compression_Mode: string
