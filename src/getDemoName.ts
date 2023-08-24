@@ -44,20 +44,20 @@ export const getDemoName = ({
     ) => (
       (
         (
-          "@typeOrder" in (
+          "@typeorder" in (
             track
           )
         )
         && (
           (
             track
-            ["@typeOrder"]
+            ["@typeorder"]
           )
           === "1"
         )
       )
       || !(
-        "@typeOrder" in (
+        "@typeorder" in (
           track
         )
       )
