@@ -1210,6 +1210,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-sort@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "fast-sort@npm:3.4.0"
+  checksum: b925d68438629b7176dc52c6f5bb88162675e88286b6e06041c6fb1095ec44af6aac3edd5b7e09ada044b90bced078a013683d2d75337ae6f5e7224f7e073019
+  languageName: node
+  linkType: hard
+
 "fastq@npm:^1.6.0":
   version: 1.15.0
   resolution: "fastq@npm:1.15.0"
@@ -1785,6 +1792,7 @@ __metadata:
     chalk: ^5.3.0
     cli-progress: ^3.12.0
     dotenv: ^16.3.1
+    fast-sort: ^3.4.0
     he: ^1.2.0
     inquirer: ^9.2.9
     jsdom: ^22.1.0

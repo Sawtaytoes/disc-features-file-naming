@@ -2,12 +2,11 @@ import malScraper from "mal-scraper"
 import path from "node:path"
 import readline from "node:readline"
 import {
+  concatAll,
   concatMap,
   filter,
   from,
   map,
-  mergeAll,
-  mergeMap,
   Observable,
   tap,
   toArray,
@@ -17,6 +16,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { getArgValues } from "./getArgValues.js"
 import { readFiles } from "./readFiles.js"
+import { naturalSort } from "./naturalSort.js"
 
 const {
   parentDirectory,
@@ -50,7 +50,7 @@ export const nameAnimeEpisodes = () => (
         )
       )
       .pipe(
-        mergeMap((
+        concatMap((
           animeList,
         ) => (
           new Observable<
@@ -126,7 +126,7 @@ export const nameAnimeEpisodes = () => (
         filter(
           Boolean
         ),
-        mergeMap(({
+        concatMap(({
           id,
           name,
           url,
@@ -179,13 +179,22 @@ export const nameAnimeEpisodes = () => (
             || ""
           ),
         })),
-        tap(console.log),
-        mergeMap(({
+        concatMap(({
           seriesName,
           seriesEpisodes,
         }) => (
           from(
-            fileInfos
+            naturalSort(
+              fileInfos
+            )
+            .by({
+              asc: (
+                fileInfo,
+              ) => (
+                fileInfo
+                .filename
+              ),
+            })
           )
           .pipe(
             map((
@@ -276,9 +285,9 @@ export const nameAnimeEpisodes = () => (
       )
     )),
     toArray(),
-    mergeAll(),
-    mergeAll(),
-    // mergeMap(({
+    concatAll(),
+    concatAll(),
+    //  concatMap(({
     //   fileInfo,
     //   renamedFilename,
     // }) => (
