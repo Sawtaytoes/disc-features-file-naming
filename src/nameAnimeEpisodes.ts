@@ -277,6 +277,18 @@ export const nameAnimeEpisodes = () => (
                   /: /g,
                   " - ",
                 )
+                .replaceAll(
+                  /:/g,
+                  "-",
+                )
+                .replaceAll(
+                  "?",
+                  "",
+                )
+                .replaceAll(
+                  "\"",
+                  "",
+                )
               )
             })),
           )
