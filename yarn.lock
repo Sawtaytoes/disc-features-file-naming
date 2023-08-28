@@ -1738,7 +1738,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mal-scraper@npm:^2.13.1":
+"mal-scraper@npm:2.13.1":
   version: 2.13.1
   resolution: "mal-scraper@npm:2.13.1"
   dependencies:
@@ -1746,6 +1746,17 @@ __metadata:
     cheerio: ^1.0.0-rc.12
     match-sorter: ^6.3.1
   checksum: 52596a12559d13a2ab27ff4df4c9d1a2faa92b32bc570f56ebbd59372ede8a975bb564bd9063388b47aaffa3f09ef99a8c682d5163e22448d634ac2155de175f
+  languageName: node
+  linkType: hard
+
+"mal-scraper@patch:mal-scraper@npm%3A2.13.1#./.yarn/patches/mal-scraper-npm-2.13.1-8a68a57707.patch::locator=media-file-naming%40workspace%3A.":
+  version: 2.13.1
+  resolution: "mal-scraper@patch:mal-scraper@npm%3A2.13.1#./.yarn/patches/mal-scraper-npm-2.13.1-8a68a57707.patch::version=2.13.1&hash=ee9ee7&locator=media-file-naming%40workspace%3A."
+  dependencies:
+    axios: ^1.4.0
+    cheerio: ^1.0.0-rc.12
+    match-sorter: ^6.3.1
+  checksum: dabb80fcdd133d7e6c8eb2083a5eeedaf5b89404f9dc811c4f9947ffc47a5a772da727243bafc3e40dc2279b49b09c24632440792c1f564fecd9e4cecf557b4f
   languageName: node
   linkType: hard
 
