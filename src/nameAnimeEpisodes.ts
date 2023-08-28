@@ -2,13 +2,13 @@ import malScraper from "mal-scraper"
 import path from "node:path"
 import readline from "node:readline"
 import {
-  concatAll,
   concatMap,
   filter,
   from,
   map,
+  mergeAll,
+  mergeMap,
   Observable,
-  tap,
   toArray,
   zip,
 } from "rxjs"
@@ -243,7 +243,6 @@ export const nameAnimeEpisodes = () => (
                 || ""
               ),
             })),
-            tap(console.log),
             map(({
               episodeNumber,
               fileInfo,
@@ -285,17 +284,17 @@ export const nameAnimeEpisodes = () => (
       )
     )),
     toArray(),
-    concatAll(),
-    concatAll(),
-    //  concatMap(({
-    //   fileInfo,
-    //   renamedFilename,
-    // }) => (
-    //   fileInfo
-    //   .renameFile(
-    //     renamedFilename
-    //   )
-    // )),
+    mergeAll(),
+    mergeAll(),
+    mergeMap(({
+      fileInfo,
+      renamedFilename,
+    }) => (
+      fileInfo
+      .renameFile(
+        renamedFilename
+      )
+    )),
     catchNamedError(
       nameAnimeEpisodes
     )
