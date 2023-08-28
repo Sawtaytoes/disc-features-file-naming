@@ -24,9 +24,23 @@ export const getArgValues = () => {
     || ""
   )
 
+  const seasonNumber = (
+    process
+    .argv
+    .at(3)
+  )
+
+  const searchString = (
+    process
+    .argv
+    .at(4)
+  )
+
   return {
     parentDirectory,
     // scriptName,
+    searchString,
+    seasonNumber,
     url,
   }
 }

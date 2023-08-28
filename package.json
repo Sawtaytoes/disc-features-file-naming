@@ -6,7 +6,9 @@
     "hasBetterVersion": "ts-node src/hasBetterVersion.ts",
     "hasImaxEnhancedAudio": "ts-node src/hasImaxEnhancedAudio.ts",
     "hasManyAudioTracks": "ts-node src/hasManyAudioTracks.ts",
+    "nameAnimeEpisodes": "ts-node src/nameAnimeEpisodes.ts",
     "nameDemoFiles": "ts-node src/nameDemoFiles.ts",
+    "nameMovieDownloads": "ts-node src/nameMovieDownloads--needs-rewrite.ts",
     "nameSpecialFeatures": "ts-node src/nameSpecialFeatures.ts",
     "trimLanguages": "ts-node src/trimLanguages.ts"
   },
@@ -19,6 +21,7 @@
     "he": "^1.2.0",
     "inquirer": "^9.2.9",
     "jsdom": "^22.1.0",
+    "mal-scraper": "^2.13.1",
     "puppeteer": "^20.8.3",
     "rxjs": "^7.8.1",
     "yargs": "^17.7.2"
