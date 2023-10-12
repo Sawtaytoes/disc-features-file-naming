@@ -19,64 +19,70 @@ export const formatCodecName = (
   if (
     codecName
     .includes(
-      'DTS-HD MA + IMAX Enhanced'
+      "DTS-HD MA + IMAX Enhanced"
     )
   ) {
-    return 'IMAX Enhanced DTS-X'
+    return "IMAX Enhanced DTS-X"
+  }
+
+  if (
+    (
+      codecName
+      .includes(
+        "DTS-HD MA + DTS:X"
+      )
+    )
+    || (
+      codecName
+      .includes(
+        "DTS:X"
+      )
+    )
+  ) {
+    return "DTS-X"
   }
 
   if (
     codecName
     .includes(
-      'DTS-HD MA + DTS:X'
+      "DTS-HD Master Audio"
     )
   ) {
-    return 'DTS-X'
+    return "DTS-HD MA"
   }
 
   if (
-    codecName
-    .includes(
-      'DTS:X'
+    (
+      codecName
+      .includes(
+        "DTS-HD High Resolution Audio"
+      )
+    )
+    || (
+      codecName
+      .includes(
+        "DTS-HD High-Res Audio"
+      )
     )
   ) {
-    return 'DTS-X'
+    return "DTS-HD HRA"
   }
 
   if (
-    codecName
-    .includes(
-      'DTS-HD Master Audio'
+    (
+      codecName
+      .includes(
+        "DTS-ES"
+      )
+    )
+    || (
+      codecName
+      .includes(
+        "96/24"
+      )
     )
   ) {
-    return 'DTS-HD MA'
-  }
-
-  if (
-    codecName
-    .includes(
-      'DTS-HD High Resolution Audio'
-    )
-  ) {
-    return 'DTS-HD HRA'
-  }
-
-  if (
-    codecName
-    .includes(
-      'DTS-HD High-Res Audio'
-    )
-  ) {
-    return 'DTS-HD HRA'
-  }
-
-  if (
-    codecName
-    .includes(
-      '96/24'
-    )
-  ) {
-    return 'DTS'
+    return "DTS"
   }
 
   return codecName
@@ -86,12 +92,12 @@ export const replaceAudioFormat = ({
   channelCount,
   codecName,
   filename,
-  codecNameSuffix = "",
+  codecNameSuffixes = [""],
 }: {
   channelCount: string,
   codecName: string,
   filename: string,
-  codecNameSuffix?: string,
+  codecNameSuffixes?: string[],
 }) => (
   filename
   .replace(
@@ -104,8 +110,15 @@ export const replaceAudioFormat = ({
           codecName
         )
         .concat(
-          codecNameSuffix
+          " ",
+          (
+            codecNameSuffixes
+            .join(
+              " "
+            )
+          ),
         )
+        .trim()
       ),
       (
         channelCount
@@ -137,27 +150,27 @@ export const replaceAudioFormatByChannelCount = ({
   formatCommercial: string,
   formatSettingsMode?: string,
 }) => {
-  const codecNameSuffix = (
+  const codec96Suffix = (
     (
       formatAdditionalFeatures
-      ?.includes('96')
+      ?.includes("96")
     )
-    ? " 96-24"
+    ? "96-24"
     : ""
   )
 
   if (
     formatCommercial
-    ?.includes('Atmos')
+    ?.includes("Atmos")
   ) {
     return (
       replaceAudioFormat({
-        channelCount: '',
+        channelCount: "",
         codecName: (
           formatCommercial
           .replace(
             /Dolby (.+) with Dolby Atmos/,
-            'Dolby Atmos $1'
+            "Dolby Atmos $1"
           )
         ),
         filename,
@@ -167,15 +180,15 @@ export const replaceAudioFormatByChannelCount = ({
 
   if (
     formatSettingsMode
-    === 'Dolby Surround'
+    === "Dolby Surround"
   ) {
     return (
       replaceAudioFormat({
-        channelCount: '4.0',
+        channelCount: "4.0",
         codecName: (
           formatCommercial
           .concat(
-            ' Surround'
+            " Surround"
           )
         ),
         filename,
@@ -185,12 +198,63 @@ export const replaceAudioFormatByChannelCount = ({
 
   if (
     formatSettingsMode
-    === 'Dolby Surround EX'
+    === "Dolby Surround EX"
   ) {
     return (
       replaceAudioFormat({
-        channelCount: '7.1',
-        codecName: 'Dolby Digital Surround EX',
+        channelCount: "6.1",
+        codecName: "Dolby Digital Surround EX",
+        filename,
+      })
+    )
+  }
+
+  if (
+    (
+      formatCommercial
+      .startsWith(
+        "DTS"
+      )
+    )
+    && (
+      formatAdditionalFeatures
+      ?.includes("ES")
+    )
+    && (
+      (
+        Number(
+          channels
+        )
+      )
+      <= 7
+    )
+  ) {
+    const codecNameSuffixes = (
+      [
+        "ES",
+      ]
+      .concat(
+        formatAdditionalFeatures
+        .includes(
+          "XCh"
+        )
+        ? "Discrete"
+        : "Matrix"
+      )
+    )
+
+    return (
+      replaceAudioFormat({
+        channelCount: "6.1",
+        codecName: (
+          formatCommercial
+        ),
+        codecNameSuffixes: (
+          codecNameSuffixes
+          .concat(
+            codec96Suffix
+          )
+        ),
         filename,
       })
     )
@@ -198,13 +262,15 @@ export const replaceAudioFormatByChannelCount = ({
 
   if (
     formatAdditionalFeatures
-    === 'ES'
+    === "XLL X"
   ) {
     return (
       replaceAudioFormat({
-        channelCount: '6.1',
-        codecName: 'DTS-ES HRA Matrix',
-        codecNameSuffix,
+        channelCount: "",
+        codecName: "DTS-X",
+        codecNameSuffixes: [
+          codec96Suffix
+        ],
         filename,
       })
     )
@@ -212,55 +278,15 @@ export const replaceAudioFormatByChannelCount = ({
 
   if (
     formatAdditionalFeatures
-    === 'ES XLL'
+    === "XLL X IMAX"
   ) {
     return (
       replaceAudioFormat({
-        channelCount: '6.1',
-        codecName: 'DTS-ES MA Matrix',
-        codecNameSuffix,
-        filename,
-      })
-    )
-  }
-
-  if (
-    formatAdditionalFeatures
-    === 'ES XCh XLL'
-  ) {
-    return (
-      replaceAudioFormat({
-        channelCount: '6.1',
-        codecName: 'DTS-ES MA Discrete',
-        codecNameSuffix,
-        filename,
-      })
-    )
-  }
-
-  if (
-    formatAdditionalFeatures
-    === 'XLL X'
-  ) {
-    return (
-      replaceAudioFormat({
-        channelCount: '',
-        codecName: 'DTS-X',
-        codecNameSuffix,
-        filename,
-      })
-    )
-  }
-
-  if (
-    formatAdditionalFeatures
-    === 'XLL X IMAX'
-  ) {
-    return (
-      replaceAudioFormat({
-        channelCount: '',
-        codecName: 'IMAX Enhanced DTS-X',
-        codecNameSuffix,
+        channelCount: "",
+        codecName: "IMAX Enhanced DTS-X",
+        codecNameSuffixes: [
+          codec96Suffix
+        ],
         filename,
       })
     )
@@ -274,31 +300,33 @@ export const replaceAudioFormatByChannelCount = ({
         channelCount: (
           String(
             channelLayout
-            .split(' ')
+            .split(" ")
             .filter((
               channelName,
             ) => (
               channelName
-              !== 'LFE'
+              !== "LFE"
             ))
             .length
           )
           .concat(
-            '.',
+            ".",
             (
               (
                 channelLayout
-                ?.includes('LFE')
+                ?.includes("LFE")
               )
-              ? '1'
-              : '0'
+              ? "1"
+              : "0"
             ),
           )
         ),
         codecName: (
           formatCommercial
         ),
-        codecNameSuffix,
+        codecNameSuffixes: [
+          codec96Suffix
+        ],
         filename,
       })
     )
@@ -343,7 +371,9 @@ export const replaceAudioFormatByChannelCount = ({
         codecName: (
           formatCommercial
         ),
-        codecNameSuffix,
+        codecNameSuffixes: [
+          codec96Suffix
+        ],
         filename,
       })
     )
@@ -351,11 +381,13 @@ export const replaceAudioFormatByChannelCount = ({
 
   return (
     replaceAudioFormat({
-      channelCount: '2.0',
+      channelCount: "2.0",
       codecName: (
         formatCommercial
       ),
-      codecNameSuffix,
+      codecNameSuffixes: [
+        codec96Suffix
+      ],
       filename,
     })
   )

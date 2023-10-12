@@ -5,14 +5,11 @@ import {
   spawn,
 } from "node:child_process";
 import {
-  unlink,
-} from "node:fs/promises"
-import {
   Observable,
 } from "rxjs"
 
+import { mkvPropEditPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
-import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
 
 const cliProgressBar = (
   new cliProgress
@@ -39,16 +36,12 @@ const progressRegex = (
   /Progress: (\d+)%/
 )
 
-export const languageTrimmedText = "[LANGUAGE-TRIMMED]"
-
-export const keepSpecifiedLanguageTracks = ({
-  audioLanguage,
+export const runMkvPropEdit = ({
+  args,
   filePath,
-  subtitleLanguage,
 }: {
-  audioLanguage: Iso6392LanguageCode,
-  filePath: string,
-  subtitleLanguage: Iso6392LanguageCode,
+  args: string[]
+  filePath: string
 }): (
   Observable<
     string
@@ -59,33 +52,15 @@ export const keepSpecifiedLanguageTracks = ({
   >((
     observer,
   ) => {
-    const newFilePath = (
-      filePath
-      .replace(
-        /(\.mkv)/,
-        ` ${languageTrimmedText}$1`
-      )
-    )
-
     const childProcess = (
       spawn(
-        "mkvtoolnix-64-bit-78.0.7/mkvmerge.exe",
+        mkvPropEditPath,
         [
-          "--output",
-          newFilePath,
-
-          "--audio-tracks",
-          audioLanguage,
-
-          "--subtitle-tracks",
-          subtitleLanguage,
-
           filePath,
-        ],
+          ...args
+        ]
       )
     )
-
-    let hasStarted = false
 
     childProcess
     .stdout
@@ -94,53 +69,11 @@ export const keepSpecifiedLanguageTracks = ({
       (
         data
       ) => {
-        if (
+        console
+        .info(
           data
           .toString()
-          .startsWith(
-            "Progress:"
-          )
-        ) {
-          if (
-            !hasStarted
-          ) {
-            hasStarted = true
-
-            cliProgressBar
-            .start(
-              100,
-              Number(
-                data
-                .toString()
-                .replace(
-                  progressRegex,
-                  "$1",
-                )
-              ),
-              {},
-            )
-          }
-          else {
-            cliProgressBar
-            .update(
-              Number(
-                data
-                .toString()
-                .replace(
-                  progressRegex,
-                  "$1",
-                )
-              )
-            )
-          }
-        }
-        else {
-          console
-          .info(
-            data
-            .toString()
-          )
-        }
+        )
       },
     )
 
@@ -176,27 +109,37 @@ export const keepSpecifiedLanguageTracks = ({
             === null
           )
           ? (
-            unlink(
-              newFilePath
-            )
+            Promise
+            .resolve()
+            .then(() => {
+              console
+              .info(
+                chalk
+                .red(
+                  "Process canceled by user."
+                )
+              )
+
+              return (
+                Promise
+                .reject()
+                .finally(() => {
+                  setTimeout(
+                    () => {
+                      process
+                      .exit()
+                    },
+                    500,
+                  )
+                })
+              )
+            })
           )
           : (
             Promise
             .resolve()
           )
         )
-        .finally(() => {
-          console
-          .info(
-            chalk
-            .red(
-              "Process canceled by user."
-            )
-          )
-
-          process
-          .exit()
-        })
       },
     )
 
@@ -206,14 +149,13 @@ export const keepSpecifiedLanguageTracks = ({
       (
         code,
       ) => {
-        console.log('exit', {code})
         if (
           code
           === 0
         ) {
           observer
           .next(
-            newFilePath
+            filePath
           )
         }
 
@@ -276,7 +218,7 @@ export const keepSpecifiedLanguageTracks = ({
   })
   .pipe(
     catchNamedError(
-      keepSpecifiedLanguageTracks
+      runMkvPropEdit
     ),
   )
 )

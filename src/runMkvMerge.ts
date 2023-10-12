@@ -11,8 +11,8 @@ import {
   Observable,
 } from "rxjs"
 
+import { mkvMergePath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
-import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
 
 const cliProgressBar = (
   new cliProgress
@@ -39,16 +39,12 @@ const progressRegex = (
   /Progress: (\d+)%/
 )
 
-export const languageTrimmedText = "[LANGUAGE-TRIMMED]"
-
-export const keepSpecifiedLanguageTracks = ({
-  audioLanguage,
-  filePath,
-  subtitleLanguage,
+export const runMkvMerge = ({
+  args,
+  newFilePath,
 }: {
-  audioLanguage: Iso6392LanguageCode,
-  filePath: string,
-  subtitleLanguage: Iso6392LanguageCode,
+  args: string[]
+  newFilePath: string
 }): (
   Observable<
     string
@@ -59,29 +55,14 @@ export const keepSpecifiedLanguageTracks = ({
   >((
     observer,
   ) => {
-    const newFilePath = (
-      filePath
-      .replace(
-        /(\.mkv)/,
-        ` ${languageTrimmedText}$1`
-      )
-    )
-
     const childProcess = (
       spawn(
-        "mkvtoolnix-64-bit-78.0.7/mkvmerge.exe",
+        mkvMergePath,
         [
           "--output",
           newFilePath,
-
-          "--audio-tracks",
-          audioLanguage,
-
-          "--subtitle-tracks",
-          subtitleLanguage,
-
-          filePath,
-        ],
+          ...args
+        ]
       )
     )
 
@@ -179,24 +160,29 @@ export const keepSpecifiedLanguageTracks = ({
             unlink(
               newFilePath
             )
+            .then(() => {
+              console
+              .info(
+                chalk
+                .red(
+                  "Process canceled by user."
+                )
+              )
+
+              setTimeout(
+                () => {
+                  process
+                  .exit()
+                },
+                500,
+              )
+            })
           )
           : (
             Promise
             .resolve()
           )
         )
-        .finally(() => {
-          console
-          .info(
-            chalk
-            .red(
-              "Process canceled by user."
-            )
-          )
-
-          process
-          .exit()
-        })
       },
     )
 
@@ -206,7 +192,6 @@ export const keepSpecifiedLanguageTracks = ({
       (
         code,
       ) => {
-        console.log('exit', {code})
         if (
           code
           === 0
@@ -265,18 +250,19 @@ export const keepSpecifiedLanguageTracks = ({
           childProcess
           .kill()
         }
-
-        process
-        .stdout
-        .write(
-          key
-        )
+        else {
+          process
+          .stdout
+          .write(
+            key
+          )
+        }
       }
     )
   })
   .pipe(
     catchNamedError(
-      keepSpecifiedLanguageTracks
+      runMkvMerge
     ),
   )
 )

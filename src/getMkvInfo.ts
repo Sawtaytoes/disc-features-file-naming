@@ -7,10 +7,10 @@ import {
 import {
   from,
   map,
-  tap,
   type Observable,
 } from "rxjs"
 
+import { mkvMergePath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
 
 const execFile = (
@@ -94,13 +94,13 @@ export const getMkvInfo = (
 ) => (
   from(
     execFile(
-      "mkvtoolnix-64-bit-78.0.7/mkvmerge.exe",
+      mkvMergePath,
       [
         "--identification-format",
         "json",
 
         "--identify",
-        filePath,
+        `${filePath}`,
       ],
     )
   )

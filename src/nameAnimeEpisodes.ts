@@ -1,3 +1,6 @@
+import "@total-typescript/ts-reset"
+import "dotenv/config"
+
 import malScraper from "mal-scraper"
 import path from "node:path"
 import readline from "node:readline"
@@ -14,9 +17,10 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { cleanupFilename } from "./cleanupFilename.js"
 import { getArgValues } from "./getArgValues.js"
-import { readFiles } from "./readFiles.js"
 import { naturalSort } from "./naturalSort.js"
+import { readFiles } from "./readFiles.js"
 
 const {
   parentDirectory,
@@ -251,43 +255,29 @@ export const nameAnimeEpisodes = () => (
             }) => ({
               fileInfo,
               renamedFilename: (
-                seriesName
-                .concat(
-                  " - ",
-                  "s",
-                  (
-                    seasonNumber
-                    .padStart(
-                      2,
-                      '0',
-                    )
-                  ),
-                  "e",
-                  (
-                    episodeNumber
-                    .padStart(
-                      2,
-                      '0',
-                    )
-                  ),
-                  " - ",
-                  title,
-                )
-                .replaceAll(
-                  /: /g,
-                  " - ",
-                )
-                .replaceAll(
-                  /:/g,
-                  "-",
-                )
-                .replaceAll(
-                  "?",
-                  "",
-                )
-                .replaceAll(
-                  "\"",
-                  "",
+                cleanupFilename(
+                  seriesName
+                  .concat(
+                    " - ",
+                    "s",
+                    (
+                      seasonNumber
+                      .padStart(
+                        2,
+                        '0',
+                      )
+                    ),
+                    "e",
+                    (
+                      episodeNumber
+                      .padStart(
+                        2,
+                        '0',
+                      )
+                    ),
+                    " - ",
+                    title,
+                  )
                 )
               )
             })),

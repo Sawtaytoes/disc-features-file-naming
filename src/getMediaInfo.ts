@@ -10,6 +10,7 @@ import {
   type Observable,
 } from "rxjs"
 
+import { mediaInfoPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
 
 const execFile = (
@@ -17,6 +18,79 @@ const execFile = (
     execFileCallback
   )
 )
+
+export type AudioExtra = {
+  acmod?: string
+  BedChannelConfiguration?: string
+  BedChannelCount?: string
+  bsid?: string
+  ComplexityIndex?: string
+  compr_Average?: string
+  compr_Count?: string
+  compr_Maximum?: string
+  compr_Minimum?: string
+  compr?: string
+  dialnorm_Average?: string
+  dialnorm_Minimum?: string
+  dialnorm?: string
+  dsurmod?: string
+  dynrng_Average?: string
+  dynrng_Count?: string
+  dynrng_Maximum?: string
+  dynrng_Minimum?: string
+  dynrng?: string
+  lfeon?: string
+  NumberOfDynamicObjects?: string
+  OriginalSourceMedium?: string
+}
+
+export type AudioTrack = {
+  "@type": "Audio"
+  "@typeorder"?: string
+  BitDepth?: string
+  BitRate_Maximum?: string
+  BitRate_Mode: string
+  BitRate: string
+  ChannelLayout_Original: string
+  ChannelLayout: string
+  ChannelPositions: string
+  Channels_Original: string
+  Channels: string
+  CodecID: string
+  Compression_Mode: string
+  Default: string
+  Delay_Source: string
+  Delay: string
+  Duration: string
+  extra: AudioExtra
+  Forced: string
+  Format_AdditionalFeatures?: string
+  Format_Commercial_IfAny?: string
+  Format_Commercial: string
+  Format_Settings_Endianness?: string
+  Format_Settings_Mode?: string
+  Format: string
+  FrameCount: string
+  FrameRate_Den?: string
+  FrameRate_Num?: string
+  FrameRate: string
+  ID: string
+  Language?: string
+  OriginalSourceMedium_ID?: string
+  SamplesPerFrame: string
+  SamplingCount: string
+  SamplingRate: string
+  ServiceKind?: string
+  StreamOrder: string
+  StreamSize: string
+  Title?: string
+  UniqueID: string
+  Video_Delay: string
+}
+
+export type GenericExtra = {
+  OriginalSourceMedium: string
+}
 
 export type GeneralTrack = {
   "@type": "General"
@@ -47,8 +121,35 @@ export type GeneralTrack = {
   VideoCount: string
 }
 
-export type GenericExtra = {
-  OriginalSourceMedium: string
+export type MenuTrack = {
+  "@type": "Menu"
+  extra: (
+    Record<
+      string,
+      string
+    >
+  )
+}
+
+export type TextTrack = {
+  "@type": "Text"
+  "@typeorder": string
+  BitRate: string
+  CodecID: string
+  Default: string
+  Duration: string
+  ElementCount: string
+  extra: GenericExtra
+  Forced: string
+  Format: string
+  FrameCount: string
+  FrameRate: string
+  ID: string
+  Language: string
+  OriginalSourceMedium_ID: string
+  StreamOrder: string
+  StreamSize: string
+  UniqueID: string
 }
 
 export type VideoTrack = {
@@ -121,106 +222,6 @@ export type VideoTrack = {
   Width: string
 }
 
-export type AudioExtra = {
-  acmod?: string
-  BedChannelConfiguration?: string
-  BedChannelCount?: string
-  bsid?: string
-  ComplexityIndex?: string
-  compr_Average?: string
-  compr_Count?: string
-  compr_Maximum?: string
-  compr_Minimum?: string
-  compr?: string
-  dialnorm_Average?: string
-  dialnorm_Minimum?: string
-  dialnorm?: string
-  dsurmod?: string
-  dynrng_Average?: string
-  dynrng_Count?: string
-  dynrng_Maximum?: string
-  dynrng_Minimum?: string
-  dynrng?: string
-  lfeon?: string
-  NumberOfDynamicObjects?: string
-  OriginalSourceMedium?: string
-}
-
-export type AudioTrack = {
-  "@type": "Audio"
-  "@typeorder"?: string
-  BitDepth?: string
-  BitRate_Maximum?: string
-  BitRate_Mode: string
-  BitRate: string
-  ChannelLayout_Original: string
-  ChannelLayout: string
-  ChannelPositions: string
-  Channels_Original: string
-  Channels: string
-  CodecID: string
-  Compression_Mode: string
-  Default: string
-  Delay_Source: string
-  Delay: string
-  Duration: string
-  extra: AudioExtra
-  Forced: string
-  Format_AdditionalFeatures?: string
-  Format_Commercial_IfAny?: string
-  Format_Commercial: string
-  Format_Settings_Endianness?: string
-  Format_Settings_Mode?: string
-  Format: string
-  FrameCount: string
-  FrameRate_Den?: string
-  FrameRate_Num?: string
-  FrameRate: string
-  ID: string
-  Language?: string
-  OriginalSourceMedium_ID?: string
-  SamplesPerFrame: string
-  SamplingCount: string
-  SamplingRate: string
-  ServiceKind?: string
-  StreamOrder: string
-  StreamSize: string
-  Title?: string
-  UniqueID: string
-  Video_Delay: string
-}
-
-export type TextTrack = {
-  "@type": "Text"
-  "@typeorder": string
-  BitRate: string
-  CodecID: string
-  Default: string
-  Duration: string
-  ElementCount: string
-  extra: GenericExtra
-  Forced: string
-  Format: string
-  FrameCount: string
-  FrameRate: string
-  ID: string
-  Language: string
-  OriginalSourceMedium_ID: string
-  StreamOrder: string
-  StreamSize: string
-  UniqueID: string
-}
-
-export type MenuTrack = {
-  "@type": "Menu"
-  extra: (
-    Record<
-      string,
-      string
-    >
-  )
-}
-
 export type CreatingLibrary = {
   name: string
   url: string
@@ -257,7 +258,7 @@ export const getMediaInfo = (
 ) => (
   from(
     execFile(
-      "MediaInfo_CLI_23.07_Windows_x64/MediaInfo.exe",
+      mediaInfoPath,
       [
         "--Output=JSON",
         filePath,

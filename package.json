@@ -2,6 +2,7 @@
   "name": "media-file-naming",
   "packageManager": "yarn@3.6.1",
   "scripts": {
+    "addSubtitles": "ts-node src/addSubtitles.ts",
     "hasBetterAudio": "ts-node src/hasBetterAudio.ts",
     "hasBetterVersion": "ts-node src/hasBetterVersion.ts",
     "hasImaxEnhancedAudio": "ts-node src/hasImaxEnhancedAudio.ts",
@@ -10,6 +11,7 @@
     "nameDemoFiles": "ts-node src/nameDemoFiles.ts",
     "nameMovieDownloads": "ts-node src/nameMovieDownloads--needs-rewrite.ts",
     "nameSpecialFeatures": "ts-node src/nameSpecialFeatures.ts",
+    "nameTvShowEpisodes": "ts-node src/nameTvShowEpisodes.ts",
     "trimLanguages": "ts-node src/trimLanguages.ts"
   },
   "type": "module",
@@ -23,6 +25,7 @@
     "inquirer": "^9.2.9",
     "jsdom": "^22.1.0",
     "mal-scraper": "^2.13.1",
+    "openapi-fetch": "^0.7.6",
     "puppeteer": "^20.8.3",
     "rxjs": "^7.8.1",
     "yargs": "^17.7.2"
@@ -35,6 +38,7 @@
     "@types/node": "^20.2.3",
     "@types/yargs": "^17.0.24",
     "@yarnpkg/sdks": "^3.0.0-rc.44",
+    "openapi-typescript": "^6.7.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },

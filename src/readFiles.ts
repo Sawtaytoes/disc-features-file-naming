@@ -131,6 +131,7 @@ export const readFiles = ({
                   "[RENAMING]"
                 )
               ),
+              "\n",
               oldFilename,
               "\n",
               newFilename,
@@ -138,6 +139,7 @@ export const readFiles = ({
               "\n",
             )
           }),
+          // ignoreElements(), // UNCOMMENT TO PREVENT WRITING FILES
           mergeMap(({
             newFilename,
             oldFilename,
