@@ -8,7 +8,7 @@ import {
   concatMap,
   filter,
   map,
-  mergeMap,
+  mergeAll,
   tap,
 } from "rxjs"
 
@@ -51,9 +51,7 @@ export const addSubtitles = () => (
         ),
       })
       .pipe(
-        concatAll(
-          4
-        ),
+        mergeAll(),
         map((
           fileInfo,
         ) => ({
@@ -89,7 +87,7 @@ export const addSubtitles = () => (
             sourceFilePath
           )
         )),
-        mergeMap(({
+        map(({
           destinationFilePath,
           fileInfo,
           sourceFilePath,
@@ -120,7 +118,7 @@ export const addSubtitles = () => (
             filter(
               Boolean
             ),
-            mergeMap((
+            concatMap((
               newFilePath,
             ) => (
               rename(
@@ -133,6 +131,7 @@ export const addSubtitles = () => (
             )),
           )
         )),
+        concatAll(),
       )
     )),
     catchNamedError(
