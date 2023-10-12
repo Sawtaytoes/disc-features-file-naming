@@ -78,7 +78,6 @@ export const copySubtitles = ({
           "--no-video",
           "--no-audio",
           "--no-buttons",
-          "--no-attachments",
           "--no-chapters",
           "--no-global-tags",
           "--no-track-tags",
