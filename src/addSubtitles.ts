@@ -3,12 +3,11 @@ import "dotenv/config"
 
 import chalk from "chalk"
 import { rename } from "node:fs/promises"
-import os from "node:os"
 import {
+  concatAll,
   concatMap,
   filter,
   map,
-  mergeAll,
   mergeMap,
   tap,
 } from "rxjs"
@@ -52,7 +51,7 @@ export const addSubtitles = () => (
         ),
       })
       .pipe(
-        mergeAll(
+        concatAll(
           4
         ),
         map((
