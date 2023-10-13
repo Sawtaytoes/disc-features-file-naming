@@ -13,31 +13,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
-
-const cliProgressBar = (
-  new cliProgress
-  .SingleBar({
-    format: (
-      "Progress |"
-      .concat(
-        (
-          colors
-          .cyan(
-            "{bar}"
-          )
-        ),
-        "| {percentage}%",
-      )
-    ),
-    barCompleteChar: "\u2588",
-    barIncompleteChar: "\u2591",
-    hideCursor: true,
-  })
-)
-
-const progressRegex = (
-  /Progress: (\d+)%/
-)
+import { runMkvMerge } from "./runMkvMerge.js";
 
 export const languageTrimmedText = "[LANGUAGE-TRIMMED]"
 
@@ -54,224 +30,22 @@ export const keepSpecifiedLanguageTracks = ({
     string
   >
 ) => (
-  new Observable<
-    string
-  >((
-    observer,
-  ) => {
-    const newFilePath = (
+  runMkvMerge({
+    args: [
+      "--audio-tracks",
+      audioLanguage,
+
+      "--subtitle-tracks",
+      subtitleLanguage,
+
+      filePath,
+    ],
+    newFilePath: (
       filePath
       .replace(
-        /(\.mkv)/,
-        ` ${languageTrimmedText}$1`
+        /(\..+)/,
+        ` ${languageTrimmedText}$1`,
       )
-    )
-
-    const childProcess = (
-      spawn(
-        "mkvtoolnix-64-bit-78.0.7/mkvmerge.exe",
-        [
-          "--output",
-          newFilePath,
-
-          "--audio-tracks",
-          audioLanguage,
-
-          "--subtitle-tracks",
-          subtitleLanguage,
-
-          filePath,
-        ],
-      )
-    )
-
-    let hasStarted = false
-
-    childProcess
-    .stdout
-    .on(
-      'data',
-      (
-        data
-      ) => {
-        if (
-          data
-          .toString()
-          .startsWith(
-            "Progress:"
-          )
-        ) {
-          if (
-            !hasStarted
-          ) {
-            hasStarted = true
-
-            cliProgressBar
-            .start(
-              100,
-              Number(
-                data
-                .toString()
-                .replace(
-                  progressRegex,
-                  "$1",
-                )
-              ),
-              {},
-            )
-          }
-          else {
-            cliProgressBar
-            .update(
-              Number(
-                data
-                .toString()
-                .replace(
-                  progressRegex,
-                  "$1",
-                )
-              )
-            )
-          }
-        }
-        else {
-          console
-          .info(
-            data
-            .toString()
-          )
-        }
-      },
-    )
-
-    childProcess
-    .stderr
-    .on(
-      'data',
-      (
-        error,
-      ) => {
-        console
-        .error(
-          error
-          .toString()
-        )
-
-        observer
-        .error(
-          error
-        )
-      },
-    )
-
-    childProcess
-    .on(
-      'close',
-      (
-        code,
-      ) => {
-        (
-          (
-            code
-            === null
-          )
-          ? (
-            unlink(
-              newFilePath
-            )
-          )
-          : (
-            Promise
-            .resolve()
-          )
-        )
-        .finally(() => {
-          console
-          .info(
-            chalk
-            .red(
-              "Process canceled by user."
-            )
-          )
-
-          process
-          .exit()
-        })
-      },
-    )
-
-    childProcess
-    .on(
-      'exit',
-      (
-        code,
-      ) => {
-        console.log('exit', {code})
-        if (
-          code
-          === 0
-        ) {
-          observer
-          .next(
-            newFilePath
-          )
-        }
-
-        observer
-        .complete()
-
-        cliProgressBar
-        .stop()
-
-        process
-        .stdin
-        .setRawMode(
-          false
-        )
-      },
-    )
-
-    process
-    .stdin
-    .setRawMode(
-      true
-    )
-
-    process
-    .stdin
-    .resume()
-
-    process
-    .stdin
-    .setEncoding(
-      'utf8'
-    )
-
-    process.
-    stdin
-    .on(
-      'data',
-      (
-        key,
-      ) => {
-        // [CTRL][C]
-        if (
-          (
-            key
-            .toString()
-          )
-          === "\u0003"
-        ) {
-          childProcess
-          .kill()
-        }
-
-        process
-        .stdout
-        .write(
-          key
-        )
-      }
     )
   })
   .pipe(

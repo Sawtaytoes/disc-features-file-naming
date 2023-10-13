@@ -90,8 +90,8 @@ export const copySubtitles = ({
         newFilePath: (
           destinationFilePath
           .replace(
-            /(\.(.+))/,
-            ` ${subtitledText}$1`
+            /(\..+)/,
+            ` ${subtitledText}$1`,
           )
         )
       })
