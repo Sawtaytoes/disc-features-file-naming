@@ -12,7 +12,7 @@ export const cleanupFilename = (
   )
   .replaceAll(
     "?",
-    "",
+    "_",
   )
   .replaceAll(
     "\"",

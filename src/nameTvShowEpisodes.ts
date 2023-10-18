@@ -3,9 +3,7 @@ import "dotenv/config"
 
 import readline from "node:readline"
 import {
-  combineLatest,
   concatMap,
-  EMPTY,
   filter,
   from,
   map,
@@ -13,14 +11,14 @@ import {
   mergeAll,
   mergeMap,
   Observable,
-  of,
   tap,
   toArray,
-  zip,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { cleanupFilename } from "./cleanupFilename.js"
 import { getArgValues } from "./getArgValues.js"
+import { getRandomString } from "./getRandomString.js"
 import { getTvdbFetchClient } from "./tvdbApi.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
@@ -292,72 +290,47 @@ export const nameTvShowEpisodes = () => (
             }) => ({
               fileInfo,
               renamedFilename: (
-                (
-                  episode!
-                  .seriesName
-                )
-                .concat(
-                  " (",
+                cleanupFilename(
                   (
                     episode!
-                    .airedYear
-                  ),
-                  ") - ",
-                  "s",
-                  (
-                    episode!
-                    .seasonNumber
-                    .padStart(
-                      2,
-                      '0',
-                    )
-                  ),
-                  "e",
-                  (
-                    episode!
-                    .episodeNumber
-                    .padStart(
-                      2,
-                      '0',
-                    )
-                  ),
-                  " - ",
-                  (
-                    episode!
-                    .episodeName
-                  ),
-                )
-                .replaceAll(
-                  /: /g,
-                  " - ",
-                )
-                .replaceAll(
-                  /:/g,
-                  "-",
-                )
-                .replaceAll(
-                  "?",
-                  "",
-                )
-                .replaceAll(
-                  "\"",
-                  "",
-                )
-                .replaceAll(
-                  "/",
-                  "-",
-                )
-                .replaceAll(
-                  "<",
-                  "[",
-                )
-                .replaceAll(
-                  ">",
-                  "]",
-                )
-                .replaceAll(
-                  "*",
-                  "@",
+                    .seriesName
+                  )
+                  .concat(
+                    " (",
+                    (
+                      episode!
+                      .airedYear
+                    ),
+                    ") - ",
+                    "s",
+                    (
+                      episode!
+                      .seasonNumber
+                      .padStart(
+                        2,
+                        '0',
+                      )
+                    ),
+                    "e",
+                    (
+                      episode!
+                      .episodeNumber
+                      .padStart(
+                        2,
+                        '0',
+                      )
+                    ),
+                    " - ",
+                    (
+                      (
+                        episode!
+                        .episodeName
+                      )
+                      || (
+                        getRandomString()
+                      )
+                    ),
+                  )
                 )
               )
             })),
