@@ -55,14 +55,28 @@ export const runMkvMerge = ({
   >((
     observer,
   ) => {
+    const commandArgs = [
+      "--output",
+      newFilePath,
+      ...args
+    ]
+
+    console
+    .info(
+      (
+        [mkvMergePath]
+        .concat(
+          commandArgs
+        )
+        .join(" ")
+      ),
+      "\n",
+    )
+
     const childProcess = (
       spawn(
         mkvMergePath,
-        [
-          "--output",
-          newFilePath,
-          ...args
-        ]
+        commandArgs,
       )
     )
 

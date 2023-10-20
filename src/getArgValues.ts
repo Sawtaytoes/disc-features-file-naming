@@ -33,6 +33,31 @@ export const getArgValues = () => {
     || ""
   )
 
+  const globalOffsetInMilliseconds: (
+    | "automatic"
+    | number
+  ) = (
+    (
+      (
+        process
+        .argv
+        .at(4)
+      )
+      === "automatic"
+    )
+    ? "automatic"
+    : (
+      Number(
+        (
+          process
+          .argv
+          .at(4)
+        )
+        || 0
+      )
+    )
+  )
+
   const url = (
     (
       process
@@ -56,6 +81,7 @@ export const getArgValues = () => {
 
   return {
     destinationDirectory,
+    globalOffsetInMilliseconds,
     parentDirectory,
     // scriptName,
     searchString,

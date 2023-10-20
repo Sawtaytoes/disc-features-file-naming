@@ -1,6 +1,4 @@
-import colors from "ansi-colors"
 import chalk from "chalk"
-import cliProgress from "cli-progress"
 import {
   spawn,
 } from "node:child_process";
@@ -10,31 +8,6 @@ import {
 
 import { mkvPropEditPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
-
-const cliProgressBar = (
-  new cliProgress
-  .SingleBar({
-    format: (
-      "Progress |"
-      .concat(
-        (
-          colors
-          .cyan(
-            "{bar}"
-          )
-        ),
-        "| {percentage}%",
-      )
-    ),
-    barCompleteChar: "\u2588",
-    barIncompleteChar: "\u2591",
-    hideCursor: true,
-  })
-)
-
-const progressRegex = (
-  /Progress: (\d+)%/
-)
 
 export const runMkvPropEdit = ({
   args,
@@ -52,13 +25,27 @@ export const runMkvPropEdit = ({
   >((
     observer,
   ) => {
+    const commandArgs = [
+      filePath,
+      ...args
+    ]
+
+    console
+    .info(
+      (
+        [mkvPropEditPath]
+        .concat(
+          commandArgs
+        )
+        .join(" ")
+      ),
+      "\n",
+    )
+
     const childProcess = (
       spawn(
         mkvPropEditPath,
-        [
-          filePath,
-          ...args
-        ]
+        commandArgs,
       )
     )
 
@@ -161,9 +148,6 @@ export const runMkvPropEdit = ({
 
         observer
         .complete()
-
-        cliProgressBar
-        .stop()
 
         process
         .stdin
