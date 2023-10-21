@@ -2,9 +2,13 @@ import {
   dirname,
   join,
 } from "node:path"
+import {
+  concatMap,
+  endWith,
+} from "rxjs";
 
 import { runFfmpeg } from "./runFfmpeg.js";
-// import { runMkvPropEdit } from "./runMkvPropEdit.js";
+import { defineLanguageForUndefinedTracks } from "./defineLanguageForUndefinedTracks.js";
 
 export const mergedPath = "MERGED"
 
@@ -59,4 +63,19 @@ export const mergeTracksFfmpeg = ({
       )
     )
   })
+  .pipe(
+    concatMap(() => (
+      defineLanguageForUndefinedTracks({
+        filePath: destinationFilePath,
+        subtitleLanguage: "eng",
+        trackType: "subtitles",
+      })
+      .pipe(
+        // This would normally go to the next step in the pipeline, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter` stopped us.
+        endWith(
+          null
+        ),
+      )
+    ))
+  )
 )

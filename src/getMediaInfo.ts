@@ -19,6 +19,14 @@ const execFile = (
   )
 )
 
+export type MediaInfoTrackType = (
+  | "Audio"
+  | "General"
+  | "Menu"
+  | "Text"
+  | "Video"
+)
+
 export type AudioExtra = {
   acmod?: string
   BedChannelConfiguration?: string
@@ -45,7 +53,7 @@ export type AudioExtra = {
 }
 
 export type AudioTrack = {
-  "@type": "Audio"
+  "@type": "Audio",
   "@typeorder"?: string
   BitDepth?: string
   BitRate_Maximum?: string

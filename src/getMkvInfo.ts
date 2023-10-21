@@ -65,11 +65,17 @@ export type TrackProperties = {
   audio_bits_per_sample?: number
 }
 
+export type MkvTookNixTrackType = (
+  | "audio"
+  | "subtitles"
+  | "video"
+)
+
 export type Track = {
   codec: string
   id: number
   properties: TrackProperties
-  type: string
+  type: MkvTookNixTrackType
 }
 
 export type MkvInfo = {

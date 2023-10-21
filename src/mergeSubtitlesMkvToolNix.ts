@@ -6,15 +6,14 @@ import {
 import {
   concatMap,
   endWith,
-  filter,
-  from,
   of,
 } from "rxjs";
 
-import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
-import { getMkvInfo } from "./getMkvInfo.js";
+import { type Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
 import { runMkvMerge } from "./runMkvMerge.js";
-import { runMkvPropEdit } from "./runMkvPropEdit.js";
+import {
+  defineLanguageForUndefinedTracks,
+} from "./defineLanguageForUndefinedTracks.js";
 
 export const subtitledPath = "SUBTITLED"
 
@@ -50,57 +49,16 @@ export const mergeSubtitlesMkvToolNix = ({
       )
     )
     ? (
-      getMkvInfo(
-        sourceFilePath,
-      )
+      defineLanguageForUndefinedTracks({
+        filePath: sourceFilePath,
+        subtitleLanguage,
+        trackType: "subtitles",
+      })
       .pipe(
-        concatMap(({
-          tracks
-        }) => (
-          from(
-            tracks
-          )
-          .pipe(
-            filter((
-              track,
-            ) => (
-              (
-                track
-                .type
-              )
-              === "subtitles"
-            )),
-            filter((
-              track,
-            ) => (
-              (
-                track
-                .properties
-                .language
-              )
-              === "und"
-            )),
-            concatMap((
-              track,
-            ) => (
-              runMkvPropEdit({
-                args: [
-                  "--edit",
-                  `track:@${track.properties.number}`,
-
-                  "--set",
-                  `language=${subtitleLanguage}`,
-                ],
-                filePath: sourceFilePath,
-              })
-            )),
-
-            // This would normally go to the next `concatMap`, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter`s stopped us.
-            endWith(
-              null
-            ),
-          )
-        ))
+        // This would normally go to the next step in the pipeline, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter` stopped us.
+        endWith(
+          null
+        ),
       )
     )
     : (

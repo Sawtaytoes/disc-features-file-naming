@@ -1,9 +1,7 @@
 import colors from "ansi-colors"
 import chalk from "chalk"
 import cliProgress from "cli-progress"
-import fluentFfmpeg from "fluent-ffmpeg"
 import {
-  execSync,
   spawn,
 } from "node:child_process";
 import {

@@ -12,7 +12,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
+import { type Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
 import { runMkvMerge } from "./runMkvMerge.js";
 
 export const languageTrimmedText = "[LANGUAGE-TRIMMED]"
