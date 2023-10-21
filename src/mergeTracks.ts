@@ -4,12 +4,12 @@ import "dotenv/config"
 import chalk from "chalk"
 import {
   access,
-  mkdir,
-  stat,
 } from "node:fs/promises"
-import { join } from "node:path"
 import {
-  EMPTY,
+  extname,
+  join,
+} from "node:path"
+import {
   catchError,
   combineLatest,
   concatAll,
@@ -17,7 +17,6 @@ import {
   filter,
   from,
   map,
-  merge,
   of,
   take,
   tap,
@@ -27,9 +26,9 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { getArgValues } from "./getArgValues.js"
 import {
-  mergeTracksFfmpeg,
-  mergedPath,
-} from "./mergeTracksFfmpeg.js"
+  fileExtensionsWithSubtitles,
+  mergeSubtitlesMkvToolNix,
+} from "./mergeSubtitlesMkvToolNix.js"
 import { readFiles } from "./readFiles.js"
 import { readFolders } from "./readFolders.js"
 
@@ -46,7 +45,7 @@ process
 
 const {
   destinationDirectory,
-  // globalOffsetInMilliseconds,
+  globalOffsetInMilliseconds,
   sourceDirectory,
 } = (
   getArgValues()
@@ -67,26 +66,6 @@ export const mergeTracks = () => (
           destinationDirectory
         ),
       })
-    ),
-    (
-      from(
-        access(
-          join(
-            destinationDirectory,
-            mergedPath,
-          )
-        )
-      )
-      .pipe(
-        catchError(() => (
-          mkdir(
-            join(
-              destinationDirectory,
-              mergedPath,
-            )
-          )
-        )),
-      )
     ),
   ])
   .pipe(
@@ -121,7 +100,7 @@ export const mergeTracks = () => (
             concatMap((
               folderInfo,
             ) => (
-              merge([
+              combineLatest([
                 (
                   readFiles({
                     parentDirectory: (
@@ -131,12 +110,24 @@ export const mergeTracks = () => (
                   })
                   .pipe(
                     concatAll(),
+                    filter((
+                      fileInfo,
+                    ) => (
+                      fileExtensionsWithSubtitles
+                      .has(
+                        extname(
+                          fileInfo
+                          .fullPath
+                        )
+                      )
+                    )),
+                    take(1),
                     map((
                       fileInfo,
-                    ) => ({
-                      fileInfo,
-                      type: "input",
-                    } as const)),
+                    ) => (
+                      fileInfo
+                      .fullPath
+                    )),
                   )
                 ),
                 (
@@ -168,81 +159,40 @@ export const mergeTracks = () => (
                     concatAll(),
                     map((
                       fileInfo,
-                    ) => ({
-                      fileInfo,
-                      type: "attachment",
-                    } as const)),
-                    catchError(() => (
-                      EMPTY
+                    ) => (
+                      fileInfo
+                      .fullPath
                     )),
+                    catchError(() => (
+                      of(
+                        null
+                      )
+                    )),
+                    toArray(),
+                    concatAll(),
+                    filter(
+                      Boolean
+                    ),
+                    toArray(),
                   )
                 ),
               ])
               .pipe(
-                concatAll(),
-                toArray(),
-                concatMap((
-                  files,
-                ) => (
-                  from(
-                    stat(
+                concatMap(([
+                  subtitlesFilePath,
+                  attachmentFilePaths,
+                ]) => (
+                  mergeSubtitlesMkvToolNix({
+                    attachmentFilePaths,
+                    audioLanguage: "jpn",
+                    destinationFilePath: (
                       destinationFileInfo
                       .fullPath
-                    )
-                  )
-                  .pipe(
-                    concatMap(({
-                      size,
-                    }) => (
-                      mergeTracksFfmpeg({
-                        attachmentFilePaths: (
-                          files
-                          .filter(({
-                            type,
-                          }) => (
-                            type
-                            === "attachment"
-                          ))
-                          .map(({
-                            fileInfo
-                          }) => (
-                            fileInfo
-                            .fullPath
-                          ))
-                        ),
-                        destinationFilePath: (
-                          destinationFileInfo
-                          .fullPath
-                        ),
-                        fileSizeInKilobytes: (
-                          size
-                          / 1024
-                        ),
-                        inputFilePaths: (
-                          [
-                            destinationFileInfo
-                            .fullPath
-                          ]
-                          .concat(
-                            files
-                            .filter(({
-                              type,
-                            }) => (
-                              type
-                              === "input"
-                            ))
-                            .map(({
-                              fileInfo
-                            }) => (
-                              fileInfo
-                              .fullPath
-                            ))
-                          )
-                        ),
-                        // offsetInMilliseconds,
-                      })
-                    ))
-                  )
+                    ),
+                    // offsetInMilliseconds,
+                    subtitlesFilePath,
+                    subtitlesLanguage: "eng",
+                  })
                 )),
                 tap(() => {
                   console

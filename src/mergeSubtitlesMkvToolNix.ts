@@ -1,12 +1,10 @@
 import {
   dirname,
-  extname,
   join,
 } from "node:path"
 import {
   concatMap,
   endWith,
-  of,
 } from "rxjs";
 
 import { type Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
@@ -17,102 +15,94 @@ import {
 
 export const subtitledPath = "SUBTITLED"
 
-export const fileExtensionsWithLanguages = (
+export const fileExtensionsWithSubtitles = (
   new Set([
-    ".m2ts",
-    ".mkv",
-    ".mp4",
-    ".ts",
+    ".ass",
+    ".srt",
+    ".ssa",
   ])
 )
 
 export const mergeSubtitlesMkvToolNix = ({
+  attachmentFilePaths,
   audioLanguage,
   destinationFilePath,
   offsetInMilliseconds,
-  sourceFilePath,
-  subtitleLanguage,
+  subtitlesFilePath,
+  subtitlesLanguage,
 }: {
+  attachmentFilePaths: string[],
   audioLanguage: Iso6392LanguageCode,
   destinationFilePath: string,
   offsetInMilliseconds?: number,
-  sourceFilePath: string,
-  subtitleLanguage: Iso6392LanguageCode,
+  subtitlesFilePath: string,
+  subtitlesLanguage: Iso6392LanguageCode,
 }) => (
-  (
-    (
-      fileExtensionsWithLanguages
-      .has(
-        extname(
-          sourceFilePath
+  runMkvMerge({
+    args: [
+      "--audio-tracks",
+      audioLanguage,
+
+      "--subtitle-tracks",
+      subtitlesLanguage,
+
+      destinationFilePath,
+
+      "--no-video",
+      "--no-audio",
+      "--no-buttons",
+      "--no-chapters",
+      "--no-global-tags",
+
+      ...(
+        offsetInMilliseconds
+        ? [
+          "--sync",
+          `-1:${offsetInMilliseconds}`,
+        ]
+        : []
+      ),
+
+      subtitlesFilePath,
+
+      ...(
+        (
+          attachmentFilePaths
+          || []
         )
-      )
-    )
-    ? (
-      defineLanguageForUndefinedTracks({
-        filePath: sourceFilePath,
-        subtitleLanguage,
-        trackType: "subtitles",
-      })
-      .pipe(
-        // This would normally go to the next step in the pipeline, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter` stopped us.
-        endWith(
-          null
+        .flatMap((
+          attachmentFilePath,
+        ) => ([
+          "--attach-file",
+          attachmentFilePath,
+        ]))
+      ),
+    ],
+    outputFilePath: (
+      destinationFilePath
+      .replace(
+        (
+          dirname(
+            destinationFilePath
+          )
+        ),
+        (
+          join(
+            (
+              dirname(
+                destinationFilePath
+              )
+            ),
+            subtitledPath,
+          )
         ),
       )
     )
-    : (
-      of(
-        null
-      )
-    )
-  )
+  })
   .pipe(
     concatMap(() => (
-      runMkvMerge({
-        args: [
-          "--audio-tracks",
-          audioLanguage,
-
-          "--subtitle-tracks",
-          subtitleLanguage,
-
-          destinationFilePath,
-
-          "--no-video",
-          "--no-audio",
-          "--no-buttons",
-          "--no-chapters",
-          "--no-global-tags",
-
-          ...(
-            offsetInMilliseconds
-            ? [
-              "--sync",
-              `-1:${offsetInMilliseconds}`,
-            ]
-            : []
-          ),
-
-          ...(
-            (
-              fileExtensionsWithLanguages
-              .has(
-                extname(
-                  sourceFilePath
-                )
-              )
-            )
-            ? [
-              "--subtitle-tracks",
-              subtitleLanguage,
-            ]
-            : []
-          ),
-
-          sourceFilePath,
-        ],
-        outputFilePath: (
+      defineLanguageForUndefinedTracks({
+        filePath: (
           destinationFilePath
           .replace(
             (
@@ -131,8 +121,16 @@ export const mergeSubtitlesMkvToolNix = ({
               )
             ),
           )
-        )
+        ),
+        subtitleLanguage: subtitlesLanguage,
+        trackType: "subtitles",
       })
+      .pipe(
+        // This would normally go to the next step in the pipeline, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter` stopped us.
+        endWith(
+          null
+        ),
+      )
     )),
   )
 )

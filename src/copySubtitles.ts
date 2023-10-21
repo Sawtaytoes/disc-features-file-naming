@@ -18,7 +18,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { mergeSubtitlesMkvToolNix } from "./mergeSubtitlesMkvToolNix.js"
+import { copySubtitlesMkvToolNix } from "./copySubtitlesMkvToolNix.js"
 import { getArgValues } from "./getArgValues.js"
 import { readFiles } from "./readFiles.js"
 import { getMediaInfo } from "./getMediaInfo.js"
@@ -228,12 +228,12 @@ export const copySubtitles = () => (
             concatMap((
               offsetInMilliseconds,
             ) => (
-              mergeSubtitlesMkvToolNix({
+              copySubtitlesMkvToolNix({
                 audioLanguage: "jpn",
                 destinationFilePath,
                 offsetInMilliseconds,
                 sourceFilePath,
-                subtitleLanguage: "eng",
+                subtitlesLanguage: "eng",
               })
             )),
             tap(() => {

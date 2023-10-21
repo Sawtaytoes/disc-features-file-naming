@@ -37,7 +37,6 @@ export const runMkvPropEdit = ({
         .concat(
           commandArgs
         )
-        .join(" ")
       ),
       "\n",
     )

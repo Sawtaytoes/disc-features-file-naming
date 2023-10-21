@@ -68,7 +68,6 @@ export const runMkvMerge = ({
         .concat(
           commandArgs
         )
-        .join(" ")
       ),
       "\n",
     )
