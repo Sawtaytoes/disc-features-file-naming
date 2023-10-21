@@ -2,7 +2,6 @@ import "@total-typescript/ts-reset"
 import "dotenv/config"
 
 import chalk from "chalk"
-import { rename } from "node:fs/promises"
 import {
   EMPTY,
   combineLatest,
@@ -206,14 +205,14 @@ export const addSubtitles = () => (
                   return (
                     (
                       offsetInMilliseconds
-                      !== 0
+                      === 0
                     )
-                    ? (
+                    ? EMPTY
+                    : (
                       of(
                         offsetInMilliseconds
                       )
                     )
-                    : EMPTY
                   )
                 }),
                 take(1),
@@ -257,17 +256,6 @@ export const addSubtitles = () => (
             filter(
               Boolean
             ),
-            // concatMap((
-            //   newFilePath,
-            // ) => (
-            //   rename(
-            //     newFilePath,
-            //     (
-            //       fileInfo
-            //       .fullPath
-            //     ),
-            //   )
-            // )),
           )
         )),
         concatAll(),
