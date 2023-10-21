@@ -40,7 +40,7 @@ export const keepSpecifiedLanguageTracks = ({
 
       filePath,
     ],
-    newFilePath: (
+    outputFilePath: (
       filePath
       .replace(
         /(\..+)/,

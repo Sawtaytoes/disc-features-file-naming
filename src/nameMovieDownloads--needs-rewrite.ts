@@ -4,7 +4,7 @@ import {
   stat,
 } from 'node:fs/promises';
 import os from 'node:os';
-import path from 'node:path';
+import path, { join } from 'node:path';
 import {
   catchError,
   EMPTY,
@@ -49,9 +49,8 @@ from(
   map((
     filename,
   ) => (
-    parentDirectory
-    .concat(
-      path.sep,
+    join(
+      parentDirectory,
       filename,
     )
   )),

@@ -1,179 +1,276 @@
+import "@total-typescript/ts-reset"
+import "dotenv/config"
+
+import chalk from "chalk"
 import {
-  dirname,
-  extname,
-  sep,
-} from "node:path"
-import {
+  EMPTY,
+  combineLatest,
+  concatAll,
   concatMap,
-  endWith,
   filter,
   from,
+  map,
   of,
-} from "rxjs";
+  take,
+  tap,
+  toArray,
+  zip,
+} from "rxjs"
 
-import { Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
-import { getMkvInfo } from "./getMkvInfo.js";
-import { runMkvMerge } from "./runMkvMerge.js";
-import { runMkvPropEdit } from "./runMkvPropEdit.js";
+import { catchNamedError } from "./catchNamedError.js"
+import { mergeSubtitlesMkvToolNix } from "./mergeSubtitlesMkvToolNix.js"
+import { getArgValues } from "./getArgValues.js"
+import { readFiles } from "./readFiles.js"
+import { getMediaInfo } from "./getMediaInfo.js"
 
-export const subtitledPath = "SUBTITLED"
-
-export const fileExtensionsWithLanguages = (
-  new Set([
-    ".m2ts",
-    ".mkv",
-    ".mp4",
-    ".ts",
-  ])
+process
+.on(
+  "uncaughtException",
+  (exception) => {
+    console
+    .error(
+      exception
+    )
+  },
 )
 
-export const copySubtitles = ({
-  audioLanguage,
-  destinationFilePath,
-  offsetInMilliseconds,
-  sourceFilePath,
-  subtitleLanguage,
-}: {
-  audioLanguage: Iso6392LanguageCode,
-  destinationFilePath: string,
-  offsetInMilliseconds?: number,
-  sourceFilePath: string,
-  subtitleLanguage: Iso6392LanguageCode,
-}) => (
-  (
-    (
-      fileExtensionsWithLanguages
-      .has(
-        extname(
-          sourceFilePath
-        )
-      )
-    )
-    ? (
-      getMkvInfo(
-        sourceFilePath,
-      )
+const {
+  destinationDirectory,
+  globalOffsetInMilliseconds,
+  sourceDirectory,
+} = (
+  getArgValues()
+)
+
+export const copySubtitles = () => (
+  readFiles({
+    parentDirectory: (
+      sourceDirectory
+    ),
+  })
+  .pipe(
+    concatMap((
+      sourceDirectoryFiles,
+    ) => (
+      readFiles({
+        parentDirectory: (
+          destinationDirectory
+        ),
+      })
       .pipe(
-        concatMap(({
-          tracks
+        concatAll(),
+        map((
+          fileInfo,
+        ) => ({
+          destinationFilePath: (
+            fileInfo
+            .fullPath
+          ),
+          fileInfo,
+          sourceFilePath: (
+            (
+              sourceDirectoryFiles
+              .find((
+                sourceFileInfo,
+              ) => (
+                (
+                  sourceFileInfo
+                  .filename
+                )
+                === (
+                  fileInfo
+                  .filename
+                )
+              ))
+              ?.fullPath
+            )
+            || ""
+          ),
+        })),
+        filter(({
+          sourceFilePath,
         }) => (
-          from(
-            tracks
+          Boolean(
+            sourceFilePath
+          )
+        )),
+        map(({
+          destinationFilePath,
+          fileInfo,
+          sourceFilePath,
+        }) => (
+          (
+            (
+              globalOffsetInMilliseconds
+              === "automatic"
+            )
+            ? (
+              combineLatest([
+                getMediaInfo(
+                  sourceFilePath
+                ),
+                getMediaInfo(
+                  destinationFilePath
+                ),
+              ])
+              .pipe(
+                concatAll(),
+                map((
+                  mediaInfo,
+                ) => (
+                  mediaInfo
+                  ?.media
+                  ?.track
+                  .flatMap((
+                    track,
+                  ) => (
+                    (
+                      track
+                      ["@type"]
+                    )
+                    === "Menu"
+                  )
+                  ? track
+                  : []
+                  )
+                  .find(
+                    Boolean
+                  )
+                  ?.extra
+                )),
+                filter(
+                  Boolean
+                ),
+                map((
+                  chapters,
+                ) => (
+                  Object
+                  .keys(
+                    chapters
+                  )
+                  .map((
+                    chapterTimestamp,
+                  ) => {
+                    // Example: "_00_01_31_799"
+                    const [
+                      hours,
+                      minutes,
+                      seconds,
+                      milliseconds,
+                    ] = (
+                      chapterTimestamp
+                      .split("_")
+                      .slice(1)
+                      .map((
+                        timeValue,
+                      ) => (
+                        Number(
+                          timeValue
+                          || ""
+                        )
+                      ))
+                    )
+
+                    return (
+                      hours * 60 * 60
+                      + minutes * 60
+                      + seconds * 1000
+                      + milliseconds
+                    )
+                  })
+                )),
+                toArray(),
+                concatMap(([
+                  sourceFileChapterTimestamps,
+                  destinationFileChapterTimestamps,
+                ]) => (
+                  zip([
+                    from(
+                      sourceFileChapterTimestamps,
+                    ),
+                    from(
+                      destinationFileChapterTimestamps
+                    ),
+                  ])
+                )),
+                concatMap(([
+                  sourceFileChapterTimestamp,
+                  destinationFileChapterTimestamp,
+                ]) => {
+                  const offsetInMilliseconds = (
+                    destinationFileChapterTimestamp
+                    - sourceFileChapterTimestamp
+                  )
+
+                  return (
+                    (
+                      offsetInMilliseconds
+                      === 0
+                    )
+                    ? EMPTY
+                    : (
+                      of(
+                        offsetInMilliseconds
+                      )
+                    )
+                  )
+                }),
+                take(1),
+              )
+            )
+            : (
+              of(
+                globalOffsetInMilliseconds
+              )
+            )
           )
           .pipe(
-            filter((
-              track,
-            ) => (
-              (
-                track
-                .type
-              )
-              === "subtitles"
-            )),
-            filter((
-              track,
-            ) => (
-              (
-                track
-                .properties
-                .language
-              )
-              === "und"
-            )),
             concatMap((
-              track,
+              offsetInMilliseconds,
             ) => (
-              runMkvPropEdit({
-                args: [
-                  "--edit",
-                  `track:@${track.properties.number}`,
-
-                  "--set",
-                  `language=${subtitleLanguage}`,
-                ],
-                filePath: sourceFilePath,
+              mergeSubtitlesMkvToolNix({
+                audioLanguage: "jpn",
+                destinationFilePath,
+                offsetInMilliseconds,
+                sourceFilePath,
+                subtitleLanguage: "eng",
               })
             )),
-
-            // This would normally go to the next `concatMap`, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter`s stopped us.
-            endWith(
-              null
+            tap(() => {
+              console
+              .info(
+                (
+                  chalk
+                  .green(
+                    "[CREATED SUBTITLED FILE]"
+                  )
+                ),
+                (
+                  fileInfo
+                  .fullPath
+                ),
+                "\n",
+                "\n",
+              )
+            }),
+            filter(
+              Boolean
             ),
           )
-        ))
+        )),
+        concatAll(),
+        toArray(),
+        tap(() => {
+          process
+          .exit()
+        })
       )
-    )
-    : (
-      of(
-        null
-      )
-    )
-  )
-  .pipe(
-    concatMap(() => (
-      runMkvMerge({
-        args: [
-          "--audio-tracks",
-          audioLanguage,
-
-          "--subtitle-tracks",
-          subtitleLanguage,
-
-          destinationFilePath,
-
-          "--no-video",
-          "--no-audio",
-          "--no-buttons",
-          "--no-chapters",
-          "--no-global-tags",
-
-          ...(
-            offsetInMilliseconds
-            ? [
-              "--sync",
-              `-1:${offsetInMilliseconds}`,
-            ]
-            : []
-          ),
-
-          ...(
-            (
-              fileExtensionsWithLanguages
-              .has(
-                extname(
-                  sourceFilePath
-                )
-              )
-            )
-            ? [
-              "--subtitle-tracks",
-              subtitleLanguage,
-            ]
-            : []
-          ),
-
-          sourceFilePath,
-        ],
-        newFilePath: (
-          destinationFilePath
-          .replace(
-            (
-              dirname(
-                destinationFilePath
-              )
-            ),
-            (
-              dirname(
-                destinationFilePath
-              )
-            )
-            .concat(
-              sep,
-              subtitledPath,
-            )
-          )
-        )
-      })
     )),
+    catchNamedError(
+      copySubtitles
+    ),
   )
 )
+
+copySubtitles()
+.subscribe()

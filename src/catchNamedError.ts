@@ -24,7 +24,7 @@ export const catchNamedError = (
         .red(
           (
             typeof func
-            === 'function'
+            === "function"
           )
           ? (
             func
@@ -33,7 +33,23 @@ export const catchNamedError = (
           : func
         )
       ),
-      error,
+      (
+        (
+          (
+            Buffer
+            .isBuffer(
+              error
+            )
+          )
+        )
+        ? (
+          error
+          .toString(
+            "utf8"
+          )
+        )
+        : error
+      ),
     )
 
     // TODO: See if this needs to be removed.

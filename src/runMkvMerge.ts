@@ -41,10 +41,10 @@ const progressRegex = (
 
 export const runMkvMerge = ({
   args,
-  newFilePath,
+  outputFilePath,
 }: {
   args: string[]
-  newFilePath: string
+  outputFilePath: string
 }): (
   Observable<
     string
@@ -57,7 +57,7 @@ export const runMkvMerge = ({
   ) => {
     const commandArgs = [
       "--output",
-      newFilePath,
+      outputFilePath,
       ...args
     ]
 
@@ -172,7 +172,7 @@ export const runMkvMerge = ({
           )
           ? (
             unlink(
-              newFilePath
+              outputFilePath
             )
             .then(() => {
               console
@@ -212,7 +212,7 @@ export const runMkvMerge = ({
         ) {
           observer
           .next(
-            newFilePath
+            outputFilePath
           )
         }
 
@@ -246,8 +246,8 @@ export const runMkvMerge = ({
       'utf8'
     )
 
-    process.
-    stdin
+    process
+    .stdin
     .on(
       'data',
       (

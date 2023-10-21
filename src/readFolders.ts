@@ -5,7 +5,7 @@ import {
   readdir,
   stat,
 } from "node:fs/promises"
-import path from "node:path"
+import path, { join } from "node:path"
 import {
   bindNodeCallback,
   catchError,
@@ -67,9 +67,8 @@ export const readFolders = ({
     ) => ({
       folderName,
       fullPath: (
-        parentDirectory
-        .concat(
-          path.sep,
+        join(
+          parentDirectory,
           folderName,
         )
       ),
@@ -78,23 +77,21 @@ export const readFolders = ({
       ) => (
         of({
           oldFolderName: (
-            parentDirectory
-            .concat(
-              path.sep,
+            join(
+              parentDirectory,
               folderName,
             )
           ),
           newFolderName: (
-            parentDirectory
-            .concat(
-              path.sep,
+            join(
+              parentDirectory,
               renamedFolderName,
-              (
-                path
-                .extname(
-                  folderName
-                )
-              ),
+            )
+            .concat(
+              path
+              .extname(
+                folderName
+              )
             )
           )
         })

@@ -173,8 +173,8 @@ export const runMkvPropEdit = ({
       'utf8'
     )
 
-    process.
-    stdin
+    process
+    .stdin
     .on(
       'data',
       (

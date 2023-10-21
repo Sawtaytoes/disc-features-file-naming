@@ -6,7 +6,7 @@ import {
   readdir,
   stat,
 } from "node:fs/promises"
-import path from "node:path"
+import path, { join } from "node:path"
 import {
   bindNodeCallback,
   filter,
@@ -80,9 +80,8 @@ export const readFiles = ({
         )
       ),
       fullPath: (
-        parentDirectory
-        .concat(
-          path.sep,
+        join(
+          parentDirectory,
           filename,
         )
       ),
@@ -91,17 +90,17 @@ export const readFiles = ({
       ) => (
         of({
           oldFilename: (
-            parentDirectory
-            .concat(
-              path.sep,
+            join(
+              parentDirectory,
               filename,
             )
           ),
           newFilename: (
-            parentDirectory
-            .concat(
-              path.sep,
+            join(
+              parentDirectory,
               renamedFilename,
+            )
+            .concat(
               (
                 path
                 .extname(
