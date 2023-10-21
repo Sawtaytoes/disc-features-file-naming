@@ -40,18 +40,6 @@ const progressRegex = (
   /.*size=[\s\t]*(\d+)kB.*/
 )
 
-export const escapeFilename = (
-  filename: string,
-) => (
-  // `${filename}`
-  filename
-  // filename
-  // .replace(
-  //   /([\\])/g,
-  //   "\\\\",
-  // )
-)
-
 export type ExtensionMimeType = (
   | ".otf"
   | ".ttf"
@@ -89,113 +77,6 @@ export const runFfmpeg = ({
   >((
     observer,
   ) => {
-    // const ffmpeg = fluentFfmpeg()
-
-    // inputFilePaths
-    // ?.filter((
-    //   inputFilePath,
-    // ) => (
-    //   (
-    //     extname(
-    //       inputFilePath
-    //     )
-    //   )
-    //   !== ".xml"
-    // ))
-    // .forEach((
-    //   inputFilePath,
-    // ) => (
-    //   ffmpeg
-    //   .addInput(
-    //     inputFilePath
-    //   )
-    // ))
-
-    // attachmentFilePaths
-    // ?.map((
-    //   attachmentFilePath,
-    // ) => ({
-    //   attachmentFilePath,
-    //   fileExtension: (
-    //     extname(
-    //       attachmentFilePath
-    //     )
-    //   ),
-    // }))
-    // .filter(({
-    //   fileExtension,
-    // }) => (
-    //   fileExtension
-    //   in extensionMimeType
-    // ))
-    // .forEach(({
-    //   attachmentFilePath,
-    //   fileExtension,
-    // }) => {
-    //   attachmentFilePath
-    //   ffmpeg
-    //   .addOption([
-    //     "-attach",
-    //     (
-    //       escapeFilename(
-    //         attachmentFilePath
-    //       )
-    //     ),
-    //     "-metadata:s:t",
-    //     (
-    //       extensionMimeType
-    //       [fileExtension as ExtensionMimeType]
-    //     ),
-    //   ])
-    // })
-
-    // ffmpeg
-    // .addOption(
-    //   args
-    // )
-
-    // ffmpeg
-    // .output(
-    //   outputFilePath
-    // )
-
-    // ffmpeg
-    // .on(
-    //   'progress',
-    //   (
-    //     progress,
-    //   ) => {
-    //     cliProgressBar
-    //     .update(
-    //       Number(
-    //         data
-    //         .toString()
-    //         .replace(
-    //           progressRegex,
-    //           "$1",
-    //         )
-    //       )
-    //     )
-    //   },
-    // )
-
-    // cliProgressBar
-    // .start(
-    //   100,
-    //   0,
-    //   {},
-    // )
-
-    // ffmpeg
-    // .run()
-
-// ----------------------------------------------------
-// ----------------------------------------------------
-// ----------------------------------------------------
-// ----------------------------------------------------
-// ----------------------------------------------------
-
-
     const commandArgs = (
       [
         ...(
@@ -214,11 +95,7 @@ export const runFfmpeg = ({
             inputFilePath,
           ) => ([
             "-i",
-            (
-              escapeFilename(
-                inputFilePath
-              )
-            ),
+            inputFilePath,
           ]))
         ),
 
@@ -248,11 +125,7 @@ export const runFfmpeg = ({
             fileExtension,
           }) => ([
             "-attach",
-            (
-              escapeFilename(
-                attachmentFilePath
-              )
-            ),
+            attachmentFilePath,
             "-metadata:s:t",
             (
               extensionMimeType
@@ -270,7 +143,6 @@ export const runFfmpeg = ({
 
         "-stats",
 
-        // `${outputFilePath}`,
         outputFilePath,
       ]
       .filter(
@@ -293,50 +165,8 @@ export const runFfmpeg = ({
       spawn(
         ffmpegPath,
         commandArgs,
-        // {detached: true},
       )
     )
-
-    // const childProcess = (
-    //   execSync(
-    //     [ffmpegPath].concat(commandArgs).join(" "),
-    //     // { stdio: "inherit" },
-    //   )
-    // )
-
-    // childProcess.unref()
-
-    // childProcess.stdout.on('data', (...args) => {
-    //   console.log(`Got data`, ...args)
-    // })
-
-    // childProcess.stdout.on('close', (...args) => {
-    //   console.log(`Got close`, ...args)
-    // })
-
-    // childProcess.stdout.on('exit', (...args) => {
-    //   console.log(`Got exit`, ...args)
-    // })
-
-    // childProcess.stdout.on('end', (...args) => {
-    //   console.log(`Got end`, ...args)
-    // })
-
-    // childProcess.stdout.on('error', (...args) => {
-    //   console.log(`Got error`, ...args)
-    // })
-
-    // childProcess.stdout.on('pause', (...args) => {
-    //   console.log(`Got pause`, ...args)
-    // })
-
-    // childProcess.stdout.on('resume', (...args) => {
-    //   console.log(`Got resume`, ...args)
-    // })
-
-    // childProcess.stdout.on('readable', (...args) => {
-    //   console.log(`Got readable`, ...args)
-    // })
 
     let hasStarted = false
 
