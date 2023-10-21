@@ -195,7 +195,7 @@ export const runFfmpeg = ({
         if (
           data
           .toString()
-          .startsWith(
+          .includes(
             "size="
           )
         ) {

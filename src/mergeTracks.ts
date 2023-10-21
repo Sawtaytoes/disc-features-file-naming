@@ -78,17 +78,12 @@ export const mergeTracks = () => (
         )
       )
       .pipe(
-        concatMap(() => (
+        catchError(() => (
           mkdir(
             join(
               destinationDirectory,
               mergedPath,
             )
-          )
-        )),
-        catchError(() => (
-          of(
-            null
           )
         )),
       )
