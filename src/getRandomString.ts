@@ -1,12 +1,8 @@
 export const getRandomString = () => (
-  Math
-  .floor(
-    (
-      Math
-      .random()
-    )
-    + 1
+  (
+    Math
+    .random()
   )
   .toString(36)
-  .slice(0, 6)
+  .slice(2)
 )
