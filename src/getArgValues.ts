@@ -79,7 +79,17 @@ export const getArgValues = () => {
     .at(4)
   )
 
+  const chapterSplitsList = (
+    (
+      process
+      .argv
+      .slice(3)
+    )
+    || []
+  )
+
   return {
+    chapterSplitsList,
     destinationDirectory,
     globalOffsetInMilliseconds,
     parentDirectory,

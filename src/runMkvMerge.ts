@@ -58,6 +58,7 @@ export const runMkvMerge = ({
     const commandArgs = [
       "--output",
       outputFilePath,
+
       ...args
     ]
 

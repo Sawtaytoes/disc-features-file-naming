@@ -13,6 +13,7 @@
     "nameMovieDownloads": "ts-node src/nameMovieDownloads--needs-rewrite.ts",
     "nameSpecialFeatures": "ts-node src/nameSpecialFeatures.ts",
     "nameTvShowEpisodes": "ts-node src/nameTvShowEpisodes.ts",
+    "splitChapters": "ts-node src/splitChapters.ts",
     "trimLanguages": "ts-node src/trimLanguages.ts"
   },
   "type": "module",

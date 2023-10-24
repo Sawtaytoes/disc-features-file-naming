@@ -2,7 +2,10 @@ import "@total-typescript/ts-reset"
 import "dotenv/config"
 
 import malScraper from "mal-scraper"
-import path from "node:path"
+import {
+  basename,
+  extname,
+} from "node:path"
 import readline from "node:readline"
 import {
   concatMap,
@@ -22,16 +25,25 @@ import { getArgValues } from "./getArgValues.js"
 import { getRandomString } from "./getRandomString.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
+import { videoFileExtensions } from "./videoFileExtensions.js"
 
-const {
-  parentDirectory,
+// const {
+//   parentDirectory,
+//   seasonNumber,
+//   searchString,
+// } = (
+//   getArgValues()
+// )
+
+export const nameAnimeEpisodes = ({
+  directory: parentDirectory,
   seasonNumber,
   searchString,
-} = (
-  getArgValues()
-)
-
-export const nameAnimeEpisodes = () => (
+}: {
+  directory: string,
+  seasonNumber: number,
+  searchString: string,
+}) => (
   readFiles({
     parentDirectory,
   })
@@ -45,8 +57,7 @@ export const nameAnimeEpisodes = () => (
           (
             searchString
             || (
-              path
-              .basename(
+              basename(
                 parentDirectory
               )
             )
@@ -202,6 +213,17 @@ export const nameAnimeEpisodes = () => (
             })
           )
           .pipe(
+            filter((
+              fileInfo,
+            ) => (
+              videoFileExtensions
+              .has(
+                extname(
+                  fileInfo
+                  .fullPath
+                )
+              )
+            )),
             map((
               fileInfo,
               index,
