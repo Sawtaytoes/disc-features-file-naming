@@ -10,19 +10,11 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { combineMediaWithData } from "./combineMediaWithData.js"
-import { getArgValues } from "./getArgValues.js"
 import { getFileDurationTimecode } from "./getFileDurationTimecode.js"
 import { parseSpecialFeatures } from "./parseSpecialFeatures.js"
 import { readFiles } from "./readFiles.js"
 import { searchDvdCompare } from "./searchDvdCompare.js"
 import { getMediaInfo } from "./getMediaInfo.js"
-
-const {
-  parentDirectory,
-  url,
-} = (
-  getArgValues()
-)
 
 const getNextFilenameCount = (
   previousCount?: number,
@@ -34,7 +26,13 @@ const getNextFilenameCount = (
   + 1
 )
 
-export const nameSpecialFeatures = () => (
+export const nameSpecialFeatures = ({
+  sourcePath,
+  url,
+}: {
+  sourcePath: string,
+  url: string,
+}) => (
   searchDvdCompare({
     url,
   })
@@ -50,7 +48,7 @@ export const nameSpecialFeatures = () => (
       specialFeatures,
     ) => (
       readFiles({
-        parentDirectory,
+        sourcePath,
       })
       .pipe(
         mergeAll(),
@@ -186,6 +184,3 @@ export const nameSpecialFeatures = () => (
     )
   )
 )
-
-nameSpecialFeatures()
-.subscribe()

@@ -21,19 +21,10 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { cleanupFilename } from "./cleanupFilename.js"
-import { getArgValues } from "./getArgValues.js"
 import { getRandomString } from "./getRandomString.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 import { videoFileExtensions } from "./videoFileExtensions.js"
-
-// const {
-//   parentDirectory,
-//   seasonNumber,
-//   searchString,
-// } = (
-//   getArgValues()
-// )
 
 export const nameAnimeEpisodes = ({
   searchTerm,
@@ -45,7 +36,7 @@ export const nameAnimeEpisodes = ({
   sourcePath: string,
 }) => (
   readFiles({
-    parentDirectory: sourcePath,
+    sourcePath,
   })
   .pipe(
     map((
@@ -329,6 +320,3 @@ export const nameAnimeEpisodes = ({
     )
   )
 )
-
-// nameAnimeEpisodes()
-// .subscribe()

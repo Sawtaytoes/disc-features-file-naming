@@ -24,7 +24,7 @@ const {
 /** Useful for determining which demos have probably too many audio tracks. */
 export const hasManyAudioTracks = () => (
   readFiles({
-    parentDirectory,
+    sourcePath: parentDirectory,
   })
   .pipe(
     mergeAll(),

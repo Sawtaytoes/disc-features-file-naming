@@ -40,9 +40,9 @@ export type FileInfo = {
 }
 
 export const readFiles = ({
-  parentDirectory,
+  sourcePath,
 }: {
-  parentDirectory: string,
+  sourcePath: string,
 }): (
   Observable<
     FileInfo[]
@@ -50,7 +50,7 @@ export const readFiles = ({
 ) => (
   from(
     readdir(
-      parentDirectory
+      sourcePath
     )
   )
   .pipe(
@@ -81,7 +81,7 @@ export const readFiles = ({
       ),
       fullPath: (
         join(
-          parentDirectory,
+          sourcePath,
           filename,
         )
       ),
@@ -91,13 +91,13 @@ export const readFiles = ({
         of({
           oldFilename: (
             join(
-              parentDirectory,
+              sourcePath,
               filename,
             )
           ),
           newFilename: (
             join(
-              parentDirectory,
+              sourcePath,
               renamedFilename,
             )
             .concat(

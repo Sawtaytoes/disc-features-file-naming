@@ -35,7 +35,7 @@ export const hasBetterAudio = () => (
       folderInfo,
     ) => (
       readFiles({
-        parentDirectory: (
+        sourcePath: (
           folderInfo
           .fullPath
         )

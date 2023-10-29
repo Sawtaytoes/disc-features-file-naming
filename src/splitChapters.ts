@@ -41,7 +41,7 @@ const {
 
 export const splitChapters = () => (
   readFiles({
-    parentDirectory,
+    sourcePath: parentDirectory,
   })
   .pipe(
     concatMap((

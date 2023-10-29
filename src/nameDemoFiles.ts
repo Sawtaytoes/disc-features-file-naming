@@ -31,7 +31,7 @@ const {
 
 export const nameDemoFiles = () => (
   readFiles({
-    parentDirectory,
+    sourcePath: parentDirectory,
   })
   .pipe(
     mergeAll(),

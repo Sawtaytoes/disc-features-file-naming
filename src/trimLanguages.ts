@@ -37,7 +37,7 @@ const {
 
 export const trimLanguages = () => (
   readFiles({
-    parentDirectory,
+    sourcePath: parentDirectory,
   })
   .pipe(
     mergeAll(),

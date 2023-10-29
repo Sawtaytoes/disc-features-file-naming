@@ -33,7 +33,7 @@ const {
 
 export const nameTvShowEpisodes = () => (
   readFiles({
-    parentDirectory,
+    sourcePath: parentDirectory,
   })
   .pipe(
     concatMap((

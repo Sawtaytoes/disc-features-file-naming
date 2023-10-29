@@ -62,7 +62,7 @@ export const mergeTracks = () => (
     ),
     (
       readFiles({
-        parentDirectory: (
+        sourcePath: (
           destinationDirectory
         ),
       })
@@ -103,7 +103,7 @@ export const mergeTracks = () => (
               combineLatest([
                 (
                   readFiles({
-                    parentDirectory: (
+                    sourcePath: (
                       folderInfo
                       .fullPath
                     ),
@@ -145,7 +145,7 @@ export const mergeTracks = () => (
                   .pipe(
                     concatMap(() => (
                       readFiles({
-                        parentDirectory: (
+                        sourcePath: (
                           join(
                             (
                               folderInfo

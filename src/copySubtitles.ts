@@ -44,7 +44,7 @@ const {
 
 export const copySubtitles = () => (
   readFiles({
-    parentDirectory: (
+    sourcePath: (
       sourceDirectory
     ),
   })
@@ -53,7 +53,7 @@ export const copySubtitles = () => (
       sourceDirectoryFiles,
     ) => (
       readFiles({
-        parentDirectory: (
+        sourcePath: (
           destinationDirectory
         ),
       })

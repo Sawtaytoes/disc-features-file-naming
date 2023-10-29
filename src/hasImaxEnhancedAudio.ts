@@ -30,7 +30,7 @@ export const hasImaxEnhancedAudio = () => (
       folderInfo,
     ) => (
       readFiles({
-        parentDirectory: (
+        sourcePath: (
           folderInfo
           .fullPath
         )
