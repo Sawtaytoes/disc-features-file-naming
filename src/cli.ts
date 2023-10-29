@@ -6,6 +6,7 @@ import { hideBin } from "yargs/helpers"
 
 import { nameAnimeEpisodes } from "./nameAnimeEpisodes.js"
 import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
+import { copySubtitles } from "./copySubtitles.js"
 
 process
 .on(
@@ -29,6 +30,77 @@ yargs(
 )
 .usage(
   "Usage: $0 <cmd> [args]"
+)
+.command(
+  "copySubtitles <sourcePath> <destinationPath>",
+  "Name all special features in a directory according to a DVDCompare.net URL.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
+      "Names all special features in the movie folder using the DVDCompare.net release at `#1`."
+    )
+    .positional(
+      "mediaFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with media files that need subtitles.",
+        type: "string",
+      },
+    )
+    .positional(
+      "subtitlesPath",
+      {
+        demandOption: true,
+        describe: "Directory containing subdirectories with subtitle files and `attachments/` that match the name of the media files in `mediaFilesPath`.",
+        type: "string",
+      },
+    )
+    .option(
+      "automaticOffset",
+      {
+        alias: "a",
+        default: true,
+        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
+        nargs: 1,
+        type: "boolean",
+      },
+    )
+    .option(
+      "globalOffset",
+      {
+        alias: "o",
+        default: 1,
+        describe: "The offset in milliseconds to apply to all subtitles being transferred.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
+  ),
+  (argv) => {
+    copySubtitles({
+      globalOffsetInMilliseconds: (
+        argv
+        .globalOffset
+      ),
+      hasAutomaticOffset: (
+        argv
+        .automaticOffset
+      ),
+      mediaFilesPath: (
+        argv
+        .mediaFilesPath
+      ),
+      subtitlesPath: (
+        argv
+        .subtitlesPath
+      ),
+    })
+    .subscribe()
+  }
 )
 .command(
   "nameAnimeEpisodes <sourcePath> <searchTerm>",
@@ -103,7 +175,6 @@ yargs(
       {
         demandOption: true,
         describe: "Directory where speical features are located.",
-        string: true,
         type: "string",
       },
     )

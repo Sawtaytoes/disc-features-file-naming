@@ -2,7 +2,6 @@
   "name": "media-file-naming",
   "packageManager": "yarn@3.6.1",
   "scripts": {
-    "copySubtitles": "ts-node src/copySubtitles.ts",
     "hasBetterAudio": "ts-node src/hasBetterAudio.ts",
     "hasBetterVersion": "ts-node src/hasBetterVersion.ts",
     "hasImaxEnhancedAudio": "ts-node src/hasImaxEnhancedAudio.ts",

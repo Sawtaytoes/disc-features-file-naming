@@ -1,6 +1,3 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import chalk from "chalk"
 import {
   EMPTY,
@@ -19,33 +16,23 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { copySubtitlesMkvToolNix } from "./copySubtitlesMkvToolNix.js"
-import { getArgValues } from "./getArgValues.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
 
-process
-.on(
-  "uncaughtException",
-  (exception) => {
-    console
-    .error(
-      exception
-    )
-  },
-)
-
-const {
-  destinationDirectory,
+export const copySubtitles = ({
   globalOffsetInMilliseconds,
-  sourceDirectory,
-} = (
-  getArgValues()
-)
-
-export const copySubtitles = () => (
+  hasAutomaticOffset,
+  mediaFilesPath,
+  subtitlesPath,
+}: {
+  globalOffsetInMilliseconds: number
+  hasAutomaticOffset: boolean
+  mediaFilesPath: string
+  subtitlesPath: string
+}) => (
   readFiles({
     sourcePath: (
-      sourceDirectory
+      subtitlesPath
     ),
   })
   .pipe(
@@ -54,7 +41,7 @@ export const copySubtitles = () => (
     ) => (
       readFiles({
         sourcePath: (
-          destinationDirectory
+          mediaFilesPath
         ),
       })
       .pipe(
@@ -100,10 +87,7 @@ export const copySubtitles = () => (
           sourceFilePath,
         }) => (
           (
-            (
-              globalOffsetInMilliseconds
-              === "automatic"
-            )
+            hasAutomaticOffset
             ? (
               combineLatest([
                 getMediaInfo(
@@ -271,6 +255,3 @@ export const copySubtitles = () => (
     ),
   )
 )
-
-copySubtitles()
-.subscribe()

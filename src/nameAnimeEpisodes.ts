@@ -1,6 +1,3 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import malScraper from "mal-scraper"
 import {
   basename,
