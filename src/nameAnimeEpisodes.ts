@@ -36,16 +36,16 @@ import { videoFileExtensions } from "./videoFileExtensions.js"
 // )
 
 export const nameAnimeEpisodes = ({
-  directory: parentDirectory,
+  searchTerm,
   seasonNumber,
-  searchString,
+  sourcePath,
 }: {
-  directory: string,
+  searchTerm: string,
   seasonNumber: number,
-  searchString: string,
+  sourcePath: string,
 }) => (
   readFiles({
-    parentDirectory,
+    parentDirectory: sourcePath,
   })
   .pipe(
     map((
@@ -55,10 +55,10 @@ export const nameAnimeEpisodes = ({
         malScraper
         .getResultsFromSearch(
           (
-            searchString
+            searchTerm
             || (
               basename(
-                parentDirectory
+                sourcePath
               )
             )
           ),
@@ -255,7 +255,9 @@ export const nameAnimeEpisodes = ({
               ),
               fileInfo,
               seasonNumber: (
-                seasonNumber
+                String(
+                  seasonNumber
+                )
                 || "1"
               ),
               title: (
@@ -328,5 +330,5 @@ export const nameAnimeEpisodes = ({
   )
 )
 
-nameAnimeEpisodes()
-.subscribe()
+// nameAnimeEpisodes()
+// .subscribe()

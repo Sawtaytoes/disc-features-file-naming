@@ -22,15 +22,15 @@ process
   },
 )
 
-export type TaskRunnerProps = {
+export type RunTaskProps = {
   options: {} // This needs to be a union of possible types tied to each for each script name. The whole params object needs to be a union.
   scriptName: string // This needs to define the actual script that has X options.
 }
 
-export const taskRunner = ({
+export const runTask = ({
   options,
   scriptName,
-}: TaskRunnerProps) => (
+}: RunTaskProps) => (
   from(
     // TODO: Change this to a function import
     import(
