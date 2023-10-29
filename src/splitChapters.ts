@@ -9,6 +9,7 @@ import {
   filter,
   from,
   map,
+  take,
   tap,
   toArray,
 } from "rxjs"
@@ -71,6 +72,10 @@ export const splitChapters = () => (
             )
           )
         )),
+        take(
+          chapterSplitsList
+          .length
+        ),
         map((
           fileInfo,
           index,
