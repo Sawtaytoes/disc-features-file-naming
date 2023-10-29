@@ -30,7 +30,7 @@ import {
   mergeSubtitlesMkvToolNix,
 } from "./mergeSubtitlesMkvToolNix.js"
 import { readFiles } from "./readFiles.js"
-import { readFolders } from "./readFolders.js"
+import { readFolder } from "./readFolder.js"
 
 process
 .on(
@@ -54,8 +54,8 @@ const {
 export const mergeTracks = () => (
   combineLatest([
     (
-      readFolders({
-        parentDirectory: (
+      readFolder({
+        sourcePath: (
           sourceDirectory
         ),
       })

@@ -11,41 +11,38 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
+import { getIsVideoFile } from "./getIsVideoFile.js"
 import {
   getMediaInfo,
   type AudioTrack,
 } from "./getMediaInfo.js"
-import { readFiles } from "./readFiles.js"
-import { readFolders } from "./readFolders.js"
+import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
-const {
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-export const hasBetterAudio = () => (
-  readFolders({
-    parentDirectory,
+export const hasBetterAudio = ({
+  isRecursive,
+  sourcePath,
+}: {
+  isRecursive: boolean,
+  sourcePath: string
+}) => (
+  readFilesAtDepth({
+    depth: (
+      isRecursive
+      ? 1
+      : 0
+    ),
+    sourcePath,
   })
   .pipe(
     mergeAll(),
-    mergeMap((
-      folderInfo,
+    filter((
+      fileInfo
     ) => (
-      readFiles({
-        sourcePath: (
-          folderInfo
-          .fullPath
-        )
-      })
+      getIsVideoFile(
+        fileInfo
+        .filename
+      )
     )),
-  // readFiles({
-  //   parentDirectory,
-  // })
-  // .pipe(
-    mergeAll(),
     mergeMap((
       fileInfo,
     ) => (
@@ -270,6 +267,3 @@ export const hasBetterAudio = () => (
     ),
   )
 )
-
-hasBetterAudio()
-.subscribe()

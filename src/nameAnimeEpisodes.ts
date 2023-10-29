@@ -22,6 +22,7 @@ import { getRandomString } from "./getRandomString.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 import { videoFileExtensions } from "./videoFileExtensions.js"
+import { getIsVideoFile } from "./getIsVideoFile.js"
 
 export const nameAnimeEpisodes = ({
   searchTerm,
@@ -204,12 +205,9 @@ export const nameAnimeEpisodes = ({
             filter((
               fileInfo,
             ) => (
-              videoFileExtensions
-              .has(
-                extname(
-                  fileInfo
-                  .fullPath
-                )
+              getIsVideoFile(
+                fileInfo
+                .fullPath
               )
             )),
             map((

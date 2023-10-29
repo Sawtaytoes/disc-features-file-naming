@@ -12,7 +12,7 @@ import { catchNamedError } from "./catchNamedError.js"
 import { getArgValues } from "./getArgValues.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
-import { readFolders } from "./readFolders.js"
+import { readFolder } from "./readFolder.js"
 
 const {
   parentDirectory,
@@ -21,8 +21,8 @@ const {
 )
 
 export const hasImaxEnhancedAudio = () => (
-  readFolders({
-    parentDirectory,
+  readFolder({
+    sourcePath: parentDirectory,
   })
   .pipe(
     mergeAll(),

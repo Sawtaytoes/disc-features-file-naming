@@ -14,7 +14,7 @@ import { runMkvMerge } from "./runMkvMerge.js";
 import {
   defineLanguageForUndefinedTracks,
 } from "./defineLanguageForUndefinedTracks.js";
-import { videoFileExtensions } from "./videoFileExtensions.js";
+import { getIsVideoFile } from "./getIsVideoFile.js";
 
 export const subtitledPath = "SUBTITLED"
 
@@ -33,11 +33,8 @@ export const copySubtitlesMkvToolNix = ({
 }) => (
   (
     (
-      videoFileExtensions
-      .has(
-        extname(
-          sourceFilePath
-        )
+      getIsVideoFile(
+        sourceFilePath,
       )
     )
     ? (
@@ -88,11 +85,8 @@ export const copySubtitlesMkvToolNix = ({
 
           ...(
             (
-              videoFileExtensions
-              .has(
-                extname(
-                  sourceFilePath
-                )
+              getIsVideoFile(
+                sourceFilePath
               )
             )
             ? [

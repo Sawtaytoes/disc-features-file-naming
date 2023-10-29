@@ -37,10 +37,10 @@ export type FolderInfo = {
   )
 }
 
-export const readFolders = ({
-  parentDirectory,
+export const readFolder = ({
+  sourcePath,
 }: {
-  parentDirectory: string,
+  sourcePath: string,
 }): (
   Observable<
     FolderInfo[]
@@ -48,7 +48,7 @@ export const readFolders = ({
 ) => (
   from(
     readdir(
-      parentDirectory
+      sourcePath
     )
   )
   .pipe(
@@ -68,7 +68,7 @@ export const readFolders = ({
       folderName,
       fullPath: (
         join(
-          parentDirectory,
+          sourcePath,
           folderName,
         )
       ),
@@ -78,13 +78,13 @@ export const readFolders = ({
         of({
           oldFolderName: (
             join(
-              parentDirectory,
+              sourcePath,
               folderName,
             )
           ),
           newFolderName: (
             join(
-              parentDirectory,
+              sourcePath,
               renamedFolderName,
             )
             .concat(
@@ -138,7 +138,7 @@ export const readFolders = ({
             )
           )),
           catchNamedError(
-            readFolders
+            readFolder
           ),
         )
       )
@@ -170,7 +170,7 @@ export const readFolders = ({
     )),
     toArray(),
     catchNamedError(
-      readFolders
+      readFolder
     ),
   )
 )

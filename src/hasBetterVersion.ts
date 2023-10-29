@@ -1,6 +1,3 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import {
   filter,
   map,
@@ -10,52 +7,65 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
 import { getDiscWorthIt } from "./getDiscWorthIt.js"
-import { readFolders } from "./readFolders.js"
+import { getIsVideoFile } from "./getIsVideoFile.js"
+import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
-process
-.on(
-  "uncaughtException",
-  (exception) => {
-    console
-    .error(
-      exception
-    )
-  },
-)
-
-const {
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-export const hasBetterVersion = () => (
+export const hasBetterVersion = ({
+  isRecursive,
+  sourcePath,
+}: {
+  isRecursive: boolean,
+  sourcePath: string
+}) => (
   getDiscWorthIt()
   .pipe(
     mergeMap((
       worthItGroups,
     ) => (
-      readFolders({
-        parentDirectory,
+      readFilesAtDepth({
+        depth: (
+          isRecursive
+          ? 1
+          : 0
+        ),
+        sourcePath,
       })
       .pipe(
         mergeAll(),
+        filter((
+          fileInfo
+        ) => (
+          getIsVideoFile(
+            fileInfo
+            .filename
+          )
+        )),
+        filter((
+          fileInfo
+        ) => (
+          !(
+            /^.+ (-\w+)$/
+            .test(
+              fileInfo
+              .filename
+            )
+          )
+        )),
         map((
-          fileFolder,
+          fileInfo,
         ) => ({
           movieName: (
-            fileFolder
-            .folderName
+            fileInfo
+            .filename
             .replace(
               /(.+) \(\d{4}\)/,
               "$1",
             )
           ),
           movieNameWithYear: (
-            fileFolder
-            .folderName
+            fileInfo
+            .filename
           ),
         })),
         map(({
@@ -134,6 +144,3 @@ export const hasBetterVersion = () => (
     )
   )
 )
-
-hasBetterVersion()
-.subscribe()

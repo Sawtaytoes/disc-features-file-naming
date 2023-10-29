@@ -20,6 +20,7 @@ import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 import { splitChaptersMkvToolNix } from "./splitChaptersMkvToolNix.js"
 import { videoFileExtensions } from "./videoFileExtensions.js"
+import { getIsVideoFile } from "./getIsVideoFile.js"
 
 process
 .on(
@@ -64,12 +65,9 @@ export const splitChapters = () => (
         filter((
           fileInfo,
         ) => (
-          videoFileExtensions
-          .has(
-            extname(
-              fileInfo
-              .fullPath
-            )
+          getIsVideoFile(
+            fileInfo
+            .fullPath
           )
         )),
         take(
