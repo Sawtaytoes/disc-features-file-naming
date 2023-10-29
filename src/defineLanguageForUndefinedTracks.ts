@@ -4,7 +4,7 @@ import {
   from,
 } from "rxjs";
 
-import { type Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { getMkvInfo } from "./getMkvInfo.js";
 import { runMkvPropEdit } from "./runMkvPropEdit.js";
 import { type MkvTookNixTrackType } from "./getMkvInfo.js";

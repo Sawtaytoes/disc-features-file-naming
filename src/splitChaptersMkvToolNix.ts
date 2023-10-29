@@ -5,6 +5,8 @@ import {
 
 import { runMkvMerge } from "./runMkvMerge.js";
 
+export const splitsFolderName = "SPLITS"
+
 export const splitChaptersMkvToolNix = ({
   chapterSplits,
   filePath,
@@ -34,7 +36,7 @@ export const splitChaptersMkvToolNix = ({
                 filePath
               )
             ),
-            "SPLITS",
+            splitsFolderName,
           )
         ),
       )

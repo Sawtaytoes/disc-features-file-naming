@@ -1,25 +1,32 @@
 import chalk from "chalk"
-import { rename } from "node:fs/promises"
 import {
+  concatAll,
   filter,
+  map,
   mergeAll,
-  mergeMap,
   tap,
+  toArray,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
 import {
   keepSpecifiedLanguageTracks,
-  languageTrimmedText,
+  languageTrimmedFolderName,
 } from "./keepSpecifiedLanguageTracks.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
+import { Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 
+/** @experimental Untested and has some missing features. */
 export const trimLanguages = ({
+  audioLanguages,
   isRecursive,
   sourcePath,
+  subtitlesLanguages,
 }: {
-  isRecursive: boolean,
+  audioLanguages: Iso6392LanguageCode[],
+  isRecursive: boolean
   sourcePath: string
+  subtitlesLanguages: Iso6392LanguageCode[],
 }) => (
   readFilesAtDepth({
     depth: (
@@ -36,13 +43,13 @@ export const trimLanguages = ({
     ) => (
       !(
         fileInfo
-        .filename
+        .fullPath
         .includes(
-          languageTrimmedText
+          languageTrimmedFolderName
         )
       )
     )),
-    mergeMap((
+    map((
       fileInfo,
     ) => (
       // TODO: before doing this, figure out what tracks exist. If no English tracks, we probably shouldn't touch the file.
@@ -50,12 +57,12 @@ export const trimLanguages = ({
       // TODO: We should make sure Japanese anime aren't touched as we don't want to remove the Japanese audio.
 
       keepSpecifiedLanguageTracks({
-        audioLanguage: "eng",
+        audioLanguages: audioLanguages,
         filePath: (
           fileInfo
           .fullPath
         ),
-        subtitleLanguage: "eng",
+        subtitlesLanguages: subtitlesLanguages,
       })
       .pipe(
         tap(() => {
@@ -64,7 +71,7 @@ export const trimLanguages = ({
             (
               chalk
               .green(
-                "[SWAPPING IN TRIMMED FILE]"
+                "[CREATED TRIMMED FILE]"
               )
             ),
             (
@@ -78,19 +85,14 @@ export const trimLanguages = ({
         filter(
           Boolean
         ),
-        mergeMap((
-          newFilePath,
-        ) => (
-          rename(
-            newFilePath,
-            (
-              fileInfo
-              .fullPath
-            ),
-          )
-        )),
       )
     )),
+    concatAll(),
+    toArray(),
+    tap(() => {
+      process
+      .exit()
+    }),
     catchNamedError(
       trimLanguages
     )

@@ -12,19 +12,20 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { type Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { runMkvMerge } from "./runMkvMerge.js";
+import { dirname, join } from "node:path";
 
-export const languageTrimmedText = "[LANGUAGE-TRIMMED]"
+export const languageTrimmedFolderName = "LANGUAGE-TRIMMED"
 
 export const keepSpecifiedLanguageTracks = ({
-  audioLanguage,
+  audioLanguages,
   filePath,
-  subtitleLanguage,
+  subtitlesLanguages,
 }: {
-  audioLanguage: Iso6392LanguageCode,
+  audioLanguages: Iso6392LanguageCode[],
   filePath: string,
-  subtitleLanguage: Iso6392LanguageCode,
+  subtitlesLanguages: Iso6392LanguageCode[],
 }): (
   Observable<
     string
@@ -33,18 +34,37 @@ export const keepSpecifiedLanguageTracks = ({
   runMkvMerge({
     args: [
       "--audio-tracks",
-      audioLanguage,
+      (
+        audioLanguages
+        .join(",")
+      ),
 
       "--subtitle-tracks",
-      subtitleLanguage,
+      (
+        subtitlesLanguages
+        .join(",")
+      ),
 
       filePath,
     ],
     outputFilePath: (
       filePath
       .replace(
-        /(\..+)/,
-        ` ${languageTrimmedText}$1`,
+        (
+          dirname(
+            filePath
+          )
+        ),
+        (
+          join(
+            (
+              dirname(
+                filePath
+              )
+            ),
+            languageTrimmedFolderName,
+          )
+        ),
       )
     )
   })

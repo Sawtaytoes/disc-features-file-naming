@@ -9,9 +9,14 @@ import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
 import { hasManyAudioTracks } from "./hasManyAudioTracks.js"
+import { Iso6392LanguageCode, iso6392LanguageCodes } from "./iso6392LanguageCodes.js"
 import { nameAnimeEpisodes } from "./nameAnimeEpisodes.js"
 import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
+import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
+import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
+import { splitChapters } from "./splitChapters.js"
+import { trimLanguages } from "./trimLanguages.js"
 
 process
 .on(
@@ -277,7 +282,7 @@ yargs(
 )
 .command(
   "nameAnimeEpisodes <sourcePath> <searchTerm>",
-  "Name all anime episodes in a directory according to episode names in MyAnimeList.",
+  "Name all anime episodes in a directory according to episode names on MyAnimeList.",
   (
     yargs
   ) => (
@@ -333,36 +338,6 @@ yargs(
   }
 )
 .command(
-  "renameMovieDemoDownloads <sourcePath>",
-  "Rename TomSawyer's movie rips from the AVSForums to follow the demo format.",
-  (
-    yargs
-  ) => (
-    yargs
-    .example(
-      "$0 \"~/movie-demos\"",
-      "Renames all video files in '~/movie-demos' based the demo format for renaming with other commands."
-    )
-    .positional(
-      "sourcePath",
-      {
-        demandOption: true,
-        describe: "Directory where all episodes for that season are located.",
-        type: "string",
-      },
-    )
-  ),
-  (argv) => {
-    renameMovieDemoDownloads({
-      sourcePath: (
-        argv
-        .sourcePath
-      ),
-    })
-    .subscribe()
-  }
-)
-.command(
   "nameSpecialFeatures <sourcePath> <url>",
   "Name all special features in a directory according to a DVDCompare.net URL.",
   (
@@ -399,6 +374,253 @@ yargs(
       url: (
         argv
         .url
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "nameTvShowEpisodes <sourcePath> <searchTerm>",
+  "Name all TV show episodes in a directory according to episode names on TVDB.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/shows\" \"beast wars\"",
+      "Names all video files in '~/shows' based on the episode names on TVDB."
+    )
+    .option(
+      "seasonNumber",
+      {
+        alias: "s",
+        demandOption: true,
+        describe: "The season number to lookup when renaming.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory where all episodes for that season are located.",
+        type: "string",
+      },
+    )
+    .positional(
+      "searchTerm",
+      {
+        demandOption: true,
+        describe: "Name of the TV show for searching TVDB.com.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    nameTvShowEpisodes({
+      searchTerm: (
+        argv
+        .searchTerm
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      seasonNumber: (
+        argv
+        .seasonNumber
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "renameMovieDemoDownloads <sourcePath>",
+  "Rename TomSawyer's movie rips from the AVSForums to follow the demo format.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/movie-demos\"",
+      "Renames all video files in '~/movie-demos' based the demo format for renaming with other commands."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory where downloaded movie demos are located.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    renameMovieDemoDownloads({
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "renameDemos <sourcePath>",
+  "Rename demo files (such as Dolby's Amaze) to a format which accurately states all capabilities for easier searching and sorting in media apps (like Plex).",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/demos\"",
+      "Renames all video files in '~/demos' with the correct media information. This will also replace incorrect information."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory where demo files are located.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    renameDemos({
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "splitChapters <sourcePath> [chapterSplits]",
+  "Breaks apart large video files based on chapter markers. The split occurs at the beginning of the given chapters. This is useful for anime discs which typically rip 4-6 episodes into a single large file.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/disc-rips/gintama\" 7,18,26,33 6,17,25 6",
+      "Breaks apart video files in '~/disc-rips/gintama' using the comma-separated chapter splits in filename order. Splits occur at the beginning of the given chapters."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory where video files are located.",
+        type: "string",
+      },
+    )
+    .positional(
+      "chapterSplits",
+      {
+        array: true,
+        demandOption: true,
+        describe: "Space-separated list of comma-separated chapter markers. Splits occur at the beginning of the chapter.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    splitChapters({
+      chapterSplitsList: (
+        argv
+        .chapterSplits
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "trimLanguages <sourcePath> [args]",
+  "Trims out audio and subtitles that don't match a video language from media files into a separate directory.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/demos\"",
+      "Creates new files in '~/demos' with only English audio and subtitles tracks."
+    )
+    .example(
+      "$0 \"~/movies\" -r",
+      "Recursively looks through all folders in '~/movies' and creates new files that only include English audio and subtitles."
+    )
+    .example(
+      "$0 \"~/anime\" -r -a jpn",
+      "Recursively looks through all folders in '~/anime' and creates new files that ony include Japanese audio and English subtitles tracks."
+    )
+    .example(
+      "$0 \"~/spanish-soaps\" -r -a spa -s eng -s spa",
+      "Recursively looks through all folders in '~/spanish-soaps' and creates new files that only include Spanish audio and both English and Spanish subtitles tracks."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 1,
+        type: "boolean",
+      },
+    )
+    .option(
+      "audioLanguages",
+      {
+        alias: "a",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: ["eng"] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
+    .option(
+      "subtitlesLanguages",
+      {
+        alias: "s",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: ["eng"] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
+  ),
+  (argv) => {
+    trimLanguages({
+      audioLanguages: (
+        argv
+        .audioLanguages
+      ),
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      subtitlesLanguages: (
+        argv
+        .subtitlesLanguages
       ),
     })
     .subscribe()

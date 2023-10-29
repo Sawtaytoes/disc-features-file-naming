@@ -9,14 +9,14 @@ import {
   of,
 } from "rxjs";
 
-import { type Iso6392LanguageCode } from "./Iso6392LanguageCode.js"
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { runMkvMerge } from "./runMkvMerge.js";
 import {
   defineLanguageForUndefinedTracks,
 } from "./defineLanguageForUndefinedTracks.js";
 import { getIsVideoFile } from "./getIsVideoFile.js";
 
-export const subtitledPath = "SUBTITLED"
+export const subtitledFolderName = "SUBTITLED"
 
 export const copySubtitlesMkvToolNix = ({
   audioLanguage,
@@ -113,7 +113,7 @@ export const copySubtitlesMkvToolNix = ({
                     destinationFilePath
                   )
                 ),
-                subtitledPath,
+                subtitledFolderName,
               )
             ),
           )

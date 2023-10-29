@@ -2,12 +2,7 @@
   "name": "media-file-naming",
   "packageManager": "yarn@3.6.1",
   "scripts": {
-    "media": "ts-node src/cli.ts",
-    "mergeTracks": "ts-node src/mergeTracks.ts",
-    "nameDemoFiles": "ts-node src/nameDemoFiles.ts",
-    "nameTvShowEpisodes": "ts-node src/nameTvShowEpisodes.ts",
-    "splitChapters": "ts-node src/splitChapters.ts",
-    "trimLanguages": "ts-node src/trimLanguages.ts"
+    "media": "ts-node src/cli.ts"
   },
   "type": "module",
   "dependencies": {

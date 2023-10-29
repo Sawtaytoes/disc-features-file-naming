@@ -8,7 +8,7 @@ import { getDemoName } from "./getDemoName.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
 
-export const nameDemoFiles = ({
+export const renameDemos = ({
   sourcePath,
 }: {
   sourcePath: string
@@ -48,7 +48,7 @@ export const nameDemoFiles = ({
       )
     )),
     catchNamedError(
-      nameDemoFiles
+      renameDemos
     )
   )
 )
