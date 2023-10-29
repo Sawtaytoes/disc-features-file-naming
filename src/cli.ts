@@ -7,8 +7,11 @@ import { hideBin } from "yargs/helpers"
 import { copySubtitles } from "./copySubtitles.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
+import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
+import { hasManyAudioTracks } from "./hasManyAudioTracks.js"
 import { nameAnimeEpisodes } from "./nameAnimeEpisodes.js"
 import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
+import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
 
 process
 .on(
@@ -64,7 +67,7 @@ yargs(
       "automaticOffset",
       {
         alias: "a",
-        default: true,
+        default: false,
         describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
         nargs: 1,
         type: "boolean",
@@ -74,7 +77,6 @@ yargs(
       "globalOffset",
       {
         alias: "o",
-        default: 1,
         describe: "The offset in milliseconds to apply to all subtitles being transferred.",
         nargs: 1,
         number: true,
@@ -128,7 +130,7 @@ yargs(
       {
         alias: "r",
         boolean: true,
-        default: true,
+        default: false,
         describe: "Recursively looks in folders for media files.",
         nargs: 1,
         type: "boolean",
@@ -144,77 +146,6 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
-      ),
-    })
-    .subscribe()
-  }
-)
-.command(
-  "copySubtitles <sourcePath> <destinationPath>",
-  "Name all special features in a directory according to a DVDCompare.net URL.",
-  (
-    yargs
-  ) => (
-    yargs
-    .example(
-      "$0 \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
-      "Names all special features in the movie folder using the DVDCompare.net release at `#1`."
-    )
-    .positional(
-      "mediaFilesPath",
-      {
-        demandOption: true,
-        describe: "Directory with media files that need subtitles.",
-        type: "string",
-      },
-    )
-    .positional(
-      "subtitlesPath",
-      {
-        demandOption: true,
-        describe: "Directory containing subdirectories with subtitle files and `attachments/` that match the name of the media files in `mediaFilesPath`.",
-        type: "string",
-      },
-    )
-    .option(
-      "automaticOffset",
-      {
-        alias: "a",
-        default: true,
-        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
-        nargs: 1,
-        type: "boolean",
-      },
-    )
-    .option(
-      "globalOffset",
-      {
-        alias: "o",
-        default: 1,
-        describe: "The offset in milliseconds to apply to all subtitles being transferred.",
-        nargs: 1,
-        number: true,
-        type: "number",
-      },
-    )
-  ),
-  (argv) => {
-    copySubtitles({
-      globalOffsetInMilliseconds: (
-        argv
-        .globalOffset
-      ),
-      hasAutomaticOffset: (
-        argv
-        .automaticOffset
-      ),
-      mediaFilesPath: (
-        argv
-        .mediaFilesPath
-      ),
-      subtitlesPath: (
-        argv
-        .subtitlesPath
       ),
     })
     .subscribe()
@@ -244,7 +175,7 @@ yargs(
       {
         alias: "r",
         boolean: true,
-        default: true,
+        default: false,
         describe: "Recursively looks in folders for media files.",
         nargs: 1,
         type: "boolean",
@@ -266,6 +197,85 @@ yargs(
   }
 )
 .command(
+  "hasImaxEnhancedAudio <sourcePath>",
+  "Lists any files with an IMAX Enhanced audio track. Useful for checking movies and demos.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/demos\"",
+      "Lists any media files in '~/demos' with at least one IMAX Enhanced audio track."
+    )
+    .example(
+      "$0 \"~/movies\" -r",
+      "Recursively goes through '~/movies', and lists any media files with at least one IMAX Enhanced audio track."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 1,
+        type: "boolean",
+      },
+    )
+  ),
+  (argv) => {
+    hasImaxEnhancedAudio({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "hasManyAudioTracks <sourcePath>",
+  "Lists any files that have more than one audio track. Useful for determining which demo files may have unused audio tracks.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/demos\"",
+      "Lists any media files in '~/demos' with more than 1 audio track."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    hasManyAudioTracks({
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
   "nameAnimeEpisodes <sourcePath> <searchTerm>",
   "Name all anime episodes in a directory according to episode names in MyAnimeList.",
   (
@@ -274,7 +284,7 @@ yargs(
     yargs
     .example(
       "$0 \"~/anime\" \"psycho-pass\"",
-      "Names all video files in the directory based on the episode names on MyAnimeList."
+      "Names all video files in '~/anime' based on the episode names on MyAnimeList."
     )
     .option(
       "seasonNumber",
@@ -317,6 +327,36 @@ yargs(
       seasonNumber: (
         argv
         .seasonNumber
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "renameMovieDemoDownloads <sourcePath>",
+  "Rename TomSawyer's movie rips from the AVSForums to follow the demo format.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/movie-demos\"",
+      "Renames all video files in '~/movie-demos' based the demo format for renaming with other commands."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory where all episodes for that season are located.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    renameMovieDemoDownloads({
+      sourcePath: (
+        argv
+        .sourcePath
       ),
     })
     .subscribe()

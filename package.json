@@ -2,12 +2,9 @@
   "name": "media-file-naming",
   "packageManager": "yarn@3.6.1",
   "scripts": {
-    "hasImaxEnhancedAudio": "ts-node src/hasImaxEnhancedAudio.ts",
-    "hasManyAudioTracks": "ts-node src/hasManyAudioTracks.ts",
     "media": "ts-node src/cli.ts",
     "mergeTracks": "ts-node src/mergeTracks.ts",
     "nameDemoFiles": "ts-node src/nameDemoFiles.ts",
-    "nameMovieDownloads": "ts-node src/nameMovieDownloads--needs-rewrite.ts",
     "nameTvShowEpisodes": "ts-node src/nameTvShowEpisodes.ts",
     "splitChapters": "ts-node src/splitChapters.ts",
     "trimLanguages": "ts-node src/trimLanguages.ts"

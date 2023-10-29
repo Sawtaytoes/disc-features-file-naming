@@ -25,7 +25,7 @@ export const copySubtitles = ({
   mediaFilesPath,
   subtitlesPath,
 }: {
-  globalOffsetInMilliseconds: number
+  globalOffsetInMilliseconds?: number
   hasAutomaticOffset: boolean
   mediaFilesPath: string
   subtitlesPath: string

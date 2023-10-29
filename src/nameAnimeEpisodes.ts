@@ -1,7 +1,6 @@
 import malScraper from "mal-scraper"
 import {
   basename,
-  extname,
 } from "node:path"
 import readline from "node:readline"
 import {
@@ -18,11 +17,10 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { cleanupFilename } from "./cleanupFilename.js"
+import { getIsVideoFile } from "./getIsVideoFile.js"
 import { getRandomString } from "./getRandomString.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
-import { videoFileExtensions } from "./videoFileExtensions.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
 
 export const nameAnimeEpisodes = ({
   searchTerm,

@@ -9,33 +9,25 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
 import { getMediaInfo } from "./getMediaInfo.js"
-import { readFiles } from "./readFiles.js"
-import { readFolder } from "./readFolder.js"
+import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
-const {
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-export const hasImaxEnhancedAudio = () => (
-  readFolder({
-    sourcePath: parentDirectory,
+export const hasImaxEnhancedAudio = ({
+  isRecursive,
+  sourcePath,
+}: {
+  isRecursive: boolean,
+  sourcePath: string
+}) => (
+  readFilesAtDepth({
+    depth: (
+      isRecursive
+      ? 1
+      : 0
+    ),
+    sourcePath,
   })
   .pipe(
-    mergeAll(),
-    mergeMap((
-      folderInfo,
-    ) => (
-      readFiles({
-        sourcePath: (
-          folderInfo
-          .fullPath
-        )
-      })
-    )),
     mergeAll(),
     mergeMap((
       fileInfo,
@@ -98,6 +90,3 @@ export const hasImaxEnhancedAudio = () => (
     ),
   )
 )
-
-hasImaxEnhancedAudio()
-.subscribe()

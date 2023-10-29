@@ -11,20 +11,16 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
 
-const {
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-/** Useful for determining which demos have probably too many audio tracks. */
-export const hasManyAudioTracks = () => (
+export const hasManyAudioTracks = ({
+  sourcePath,
+}: {
+  sourcePath: string
+}) => (
   readFiles({
-    sourcePath: parentDirectory,
+    sourcePath,
   })
   .pipe(
     mergeAll(),
@@ -95,6 +91,3 @@ export const hasManyAudioTracks = () => (
     ),
   )
 )
-
-hasManyAudioTracks()
-.subscribe()

@@ -1,6 +1,3 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import chalk from "chalk"
 import {
   access,
@@ -24,7 +21,6 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
 import {
   fileExtensionsWithSubtitles,
   mergeSubtitlesMkvToolNix,
@@ -32,38 +28,25 @@ import {
 import { readFiles } from "./readFiles.js"
 import { readFolder } from "./readFolder.js"
 
-process
-.on(
-  "uncaughtException",
-  (exception) => {
-    console
-    .error(
-      exception
-    )
-  },
-)
-
-const {
-  destinationDirectory,
-  globalOffsetInMilliseconds,
-  sourceDirectory,
-} = (
-  getArgValues()
-)
-
-export const mergeTracks = () => (
+export const mergeTracks = ({
+  mediaFilesPath,
+  subtitlesPath,
+}: {
+  mediaFilesPath: string
+  subtitlesPath: string
+}) => (
   combineLatest([
     (
       readFolder({
         sourcePath: (
-          sourceDirectory
+          mediaFilesPath
         ),
       })
     ),
     (
       readFiles({
         sourcePath: (
-          destinationDirectory
+          subtitlesPath
         ),
       })
     ),
@@ -231,6 +214,3 @@ export const mergeTracks = () => (
     )
   )
 )
-
-mergeTracks()
-.subscribe()

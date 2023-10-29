@@ -1,6 +1,3 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import chalk from "chalk"
 import { rename } from "node:fs/promises"
 import {
@@ -11,33 +8,26 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
 import {
   keepSpecifiedLanguageTracks,
   languageTrimmedText,
 } from "./keepSpecifiedLanguageTracks.js"
-import { readFiles } from "./readFiles.js"
+import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
-process
-.on(
-  "uncaughtException",
-  (exception) => {
-    console
-    .error(
-      exception
-    )
-  },
-)
-
-const {
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-export const trimLanguages = () => (
-  readFiles({
-    sourcePath: parentDirectory,
+export const trimLanguages = ({
+  isRecursive,
+  sourcePath,
+}: {
+  isRecursive: boolean,
+  sourcePath: string
+}) => (
+  readFilesAtDepth({
+    depth: (
+      isRecursive
+      ? 1
+      : 0
+    ),
+    sourcePath,
   })
   .pipe(
     mergeAll(),
@@ -106,6 +96,3 @@ export const trimLanguages = () => (
     )
   )
 )
-
-trimLanguages()
-.subscribe()

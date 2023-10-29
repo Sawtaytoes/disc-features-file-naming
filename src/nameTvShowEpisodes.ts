@@ -1,13 +1,9 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import readline from "node:readline"
 import {
   concatMap,
   filter,
   from,
   map,
-  merge,
   mergeAll,
   mergeMap,
   Observable,
@@ -17,23 +13,22 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { cleanupFilename } from "./cleanupFilename.js"
-import { getArgValues } from "./getArgValues.js"
 import { getRandomString } from "./getRandomString.js"
 import { getTvdbFetchClient } from "./tvdbApi.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 
-const {
-  parentDirectory,
+export const nameTvShowEpisodes = ({
+  searchTerm,
   seasonNumber,
-  searchString,
-} = (
-  getArgValues()
-)
-
-export const nameTvShowEpisodes = () => (
+  sourcePath,
+}: {
+  searchTerm: string,
+  seasonNumber: number,
+  sourcePath: string,
+}) => (
   readFiles({
-    sourcePath: parentDirectory,
+    sourcePath,
   })
   .pipe(
     concatMap((
@@ -53,7 +48,7 @@ export const nameTvShowEpisodes = () => (
               {
                 params: {
                   query: {
-                    query: searchString,
+                    query: searchTerm,
                     type: "series",
                   },
                 },
@@ -164,9 +159,7 @@ export const nameTvShowEpisodes = () => (
                     query: {
                       page: 0,
                       season: (
-                        Number(
-                          seasonNumber
-                        )
+                        seasonNumber
                       ),
                     }
                   },
@@ -354,6 +347,3 @@ export const nameTvShowEpisodes = () => (
     )
   )
 )
-
-nameTvShowEpisodes()
-.subscribe()

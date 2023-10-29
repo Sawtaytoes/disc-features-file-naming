@@ -1,8 +1,4 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import chalk from "chalk"
-import { extname } from "node:path"
 import {
   concatAll,
   concatMap,
@@ -15,34 +11,20 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
+import { getIsVideoFile } from "./getIsVideoFile.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 import { splitChaptersMkvToolNix } from "./splitChaptersMkvToolNix.js"
-import { videoFileExtensions } from "./videoFileExtensions.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
 
-process
-.on(
-  "uncaughtException",
-  (exception) => {
-    console
-    .error(
-      exception
-    )
-  },
-)
-
-const {
+export const splitChapters = ({
   chapterSplitsList,
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-export const splitChapters = () => (
+  sourcePath,
+}: {
+  chapterSplitsList: string[]
+  sourcePath: string
+}) => (
   readFiles({
-    sourcePath: parentDirectory,
+    sourcePath,
   })
   .pipe(
     concatMap((
@@ -126,6 +108,3 @@ export const splitChapters = () => (
     ),
   )
 )
-
-splitChapters()
-.subscribe()

@@ -1,37 +1,20 @@
-import "@total-typescript/ts-reset"
-import "dotenv/config"
-
 import {
   mergeAll,
   mergeMap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getArgValues } from "./getArgValues.js"
+import { getDemoName } from "./getDemoName.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
-import { getDemoName } from "./getDemoName.js"
 
-process
-.on(
-  "uncaughtException",
-  (exception) => {
-    console
-    .error(
-      exception
-    )
-  },
-)
-
-const {
-  parentDirectory,
-} = (
-  getArgValues()
-)
-
-export const nameDemoFiles = () => (
+export const nameDemoFiles = ({
+  sourcePath,
+}: {
+  sourcePath: string
+}) => (
   readFiles({
-    sourcePath: parentDirectory,
+    sourcePath,
   })
   .pipe(
     mergeAll(),
@@ -69,6 +52,3 @@ export const nameDemoFiles = () => (
     )
   )
 )
-
-nameDemoFiles()
-.subscribe()
