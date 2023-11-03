@@ -52,17 +52,17 @@ export const trimLanguages = ({
     map((
       fileInfo,
     ) => (
-      // TODO: before doing this, figure out what tracks exist. If no English tracks, we probably shouldn't touch the file.
+      // TODO: Before doing this, figure out what tracks exist. If no audio tracks of the given language, we probably shouldn't touch the file.
 
-      // TODO: We should make sure Japanese anime aren't touched as we don't want to remove the Japanese audio.
+      // TODO: If the selected Language is already first and the default, don't bother changing it.
 
       keepSpecifiedLanguageTracks({
-        audioLanguages: audioLanguages,
+        audioLanguages,
         filePath: (
           fileInfo
           .fullPath
         ),
-        subtitlesLanguages: subtitlesLanguages,
+        subtitlesLanguages,
       })
       .pipe(
         tap(() => {

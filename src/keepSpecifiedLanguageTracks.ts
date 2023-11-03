@@ -1,12 +1,3 @@
-import colors from "ansi-colors"
-import chalk from "chalk"
-import cliProgress from "cli-progress"
-import {
-  spawn,
-} from "node:child_process";
-import {
-  unlink,
-} from "node:fs/promises"
 import {
   Observable,
 } from "rxjs"
