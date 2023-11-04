@@ -497,7 +497,7 @@ yargs(
   }
 )
 .command(
-  "splitChapters <sourcePath> [chapterSplits]",
+  "splitChapters <sourcePath> <chapterSplits...>",
   "Breaks apart large video files based on chapter markers. The split occurs at the beginning of the given chapters. This is useful for anime discs which typically rip 4-6 episodes into a single large file.",
   (
     yargs
