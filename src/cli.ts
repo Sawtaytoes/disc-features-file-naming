@@ -42,7 +42,7 @@ yargs(
   "Usage: $0 <cmd> [args]"
 )
 .command(
-  "copySubtitles <sourcePath> <destinationPath>",
+  "copySubtitles <subtitlesPath> <mediaFilesPath>",
   "Name all special features in a directory according to a DVDCompare.net URL.",
   (
     yargs
@@ -74,7 +74,7 @@ yargs(
         alias: "a",
         default: false,
         describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
-        nargs: 1,
+        nargs: 0,
         type: "boolean",
       },
     )
