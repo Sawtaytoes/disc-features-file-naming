@@ -1,3 +1,4 @@
+import chalk from "chalk"
 import malScraper from "mal-scraper"
 import {
   basename,
@@ -5,12 +6,14 @@ import {
 import readline from "node:readline"
 import {
   concatMap,
+  EMPTY,
   filter,
   from,
   map,
   mergeAll,
   mergeMap,
   Observable,
+  of,
   toArray,
   zip,
 } from "rxjs"
@@ -18,7 +21,6 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { cleanupFilename } from "./cleanupFilename.js"
 import { getIsVideoFile } from "./getIsVideoFile.js"
-import { getRandomString } from "./getRandomString.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 
@@ -253,11 +255,43 @@ export const nameAnimeEpisodes = ({
                   episode
                   ?.japaneseTitle
                 )
-                || (
-                  getRandomString()
-                )
+                || ""
               ),
             })),
+            mergeMap((
+              item,
+            ) => {
+              if (
+                item
+                .title
+              ) {
+                return (
+                  of(
+                    item
+                  )
+                )
+              }
+              else {
+                console
+                .info(
+                  (
+                    chalk
+                    .green(
+                      "[NO EPISODE NAME]"
+                    )
+                  ),
+                  (
+                    item
+                    .fileInfo
+                    .filename
+                  ),
+                  "\n",
+                  "\n",
+                )
+
+                return EMPTY
+              }
+            }),
             map(({
               episodeNumber,
               fileInfo,
