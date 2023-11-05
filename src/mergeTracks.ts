@@ -39,76 +39,76 @@ export const mergeTracks = ({
     (
       readFolder({
         sourcePath: (
-          mediaFilesPath
+          subtitlesPath
         ),
       })
     ),
     (
       readFiles({
         sourcePath: (
-          subtitlesPath
+          mediaFilesPath
         ),
       })
     ),
   ])
   .pipe(
     concatMap(([
-      sourceFolders,
-      destinationFiles,
+      subtitlesFolder,
+      mediaFiles,
     ]) => (
       from(
-        destinationFiles
+        mediaFiles
       )
       .pipe(
         map((
-          destinationFileInfo,
+          mediaFileInfo,
         ) => (
           from(
-            sourceFolders
+            subtitlesFolder
           )
           .pipe(
             filter((
-              folderInfo,
+              subtitlesFolderInfo,
             ) => (
               (
-                folderInfo
+                subtitlesFolderInfo
                 .folderName
               )
               === (
-                destinationFileInfo
+                mediaFileInfo
                 .filename
               )
             )),
             take(1),
             concatMap((
-              folderInfo,
+              subtitlesFolderInfo,
             ) => (
               combineLatest([
                 (
                   readFiles({
                     sourcePath: (
-                      folderInfo
+                      subtitlesFolderInfo
                       .fullPath
                     ),
                   })
                   .pipe(
                     concatAll(),
                     filter((
-                      fileInfo,
+                      subtitlesFileInfo,
                     ) => (
                       fileExtensionsWithSubtitles
                       .has(
                         extname(
-                          fileInfo
+                          subtitlesFileInfo
                           .fullPath
                         )
                       )
                     )),
                     take(1),
                     map((
-                      fileInfo,
+                      subtitlesFileInfo,
                     ) => (
-                      fileInfo
+                      subtitlesFileInfo
                       .fullPath
                     )),
                   )
@@ -118,7 +118,7 @@ export const mergeTracks = ({
                     access(
                       join(
                         (
-                          folderInfo
+                          subtitlesFolderInfo
                           .fullPath
                         ),
                         "attachments",
@@ -131,7 +131,7 @@ export const mergeTracks = ({
                         sourcePath: (
                           join(
                             (
-                              folderInfo
+                              subtitlesFolderInfo
                               .fullPath
                             ),
                             "attachments",
@@ -141,9 +141,9 @@ export const mergeTracks = ({
                     )),
                     concatAll(),
                     map((
-                      fileInfo,
+                      attachmentsFileInfo,
                     ) => (
-                      fileInfo
+                      attachmentsFileInfo
                       .fullPath
                     )),
                     catchError(() => (
@@ -169,7 +169,7 @@ export const mergeTracks = ({
                     attachmentFilePaths,
                     audioLanguage: "jpn",
                     destinationFilePath: (
-                      destinationFileInfo
+                      mediaFileInfo
                       .fullPath
                     ),
                     // offsetInMilliseconds,
@@ -187,7 +187,7 @@ export const mergeTracks = ({
                       )
                     ),
                     (
-                      destinationFileInfo
+                      mediaFileInfo
                       .fullPath
                     ),
                     "\n",
