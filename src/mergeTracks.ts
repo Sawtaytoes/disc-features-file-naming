@@ -28,7 +28,6 @@ import {
 import { readFiles } from "./readFiles.js"
 import { readFolder } from "./readFolder.js"
 
-/** @deprecated This function is broken. Do not use! It removes things from media files such as audio tracks more than a single one and doesn't copy correctly.. Originally, this used ffmpeg to merge subtitle files into MKV files, but it's been superceded by `copySubtitles` which now does this. */
 export const mergeTracks = ({
   mediaFilesPath,
   subtitlesPath,

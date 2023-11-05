@@ -1,4 +1,3 @@
-import "@total-typescript/ts-reset"
 import "dotenv/config"
 
 import yargs from "yargs"
@@ -9,7 +8,11 @@ import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
 import { hasManyAudioTracks } from "./hasManyAudioTracks.js"
-import { Iso6392LanguageCode, iso6392LanguageCodes } from "./iso6392LanguageCodes.js"
+import {
+  Iso6392LanguageCode,
+  iso6392LanguageCodes,
+} from "./iso6392LanguageCodes.js"
+import { mergeTracks } from "./mergeTracks.js"
 import { nameAnimeEpisodes } from "./nameAnimeEpisodes.js"
 import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
 import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
@@ -43,7 +46,7 @@ yargs(
 )
 .command(
   "copySubtitles <subtitlesPath> <mediaFilesPath>",
-  "Name all special features in a directory according to a DVDCompare.net URL.",
+  "Copy subtitles tracks from one media file to another making sure to only keep the chosen audio and subtitles languages.",
   (
     yargs
   ) => (
@@ -64,7 +67,7 @@ yargs(
       "subtitlesPath",
       {
         demandOption: true,
-        describe: "Directory containing subdirectories with subtitle files and `attachments/` that match the name of the media files in `mediaFilesPath`.",
+        describe: "Directory containing media files with subtitles that can be copied.",
         type: "string",
       },
     )
@@ -275,6 +278,48 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "mergeTracks <subtitlesPath> <mediaFilesPath>",
+  "Merge subtitles files with media files and only keep specified languages.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
+      "Names all special features in the movie folder using the DVDCompare.net release at `#1`."
+    )
+    .positional(
+      "mediaFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with media files that need subtitles.",
+        type: "string",
+      },
+    )
+    .positional(
+      "subtitlesPath",
+      {
+        demandOption: true,
+        describe: "Directory containing subdirectories with subtitle files and `attachments/` that match the name of the media files in `mediaFilesPath`.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    mergeTracks({
+      mediaFilesPath: (
+        argv
+        .mediaFilesPath
+      ),
+      subtitlesPath: (
+        argv
+        .subtitlesPath
       ),
     })
     .subscribe()

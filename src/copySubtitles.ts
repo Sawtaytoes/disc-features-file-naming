@@ -37,7 +37,7 @@ export const copySubtitles = ({
   })
   .pipe(
     concatMap((
-      sourceDirectoryFiles,
+      subtitlesFiles,
     ) => (
       readFiles({
         sourcePath: (
@@ -47,25 +47,25 @@ export const copySubtitles = ({
       .pipe(
         concatAll(),
         map((
-          fileInfo,
+          mediaFileInfo,
         ) => ({
           destinationFilePath: (
-            fileInfo
+            mediaFileInfo
             .fullPath
           ),
-          fileInfo,
-          sourceFilePath: (
+          mediaFileInfo,
+          subtitlesFilePath: (
             (
-              sourceDirectoryFiles
+              subtitlesFiles
               .find((
-                sourceFileInfo,
+                subtitlesFileInfo,
               ) => (
                 (
-                  sourceFileInfo
+                  subtitlesFileInfo
                   .filename
                 )
                 === (
-                  fileInfo
+                  mediaFileInfo
                   .filename
                 )
               ))
@@ -75,23 +75,23 @@ export const copySubtitles = ({
           ),
         })),
         filter(({
-          sourceFilePath,
+          subtitlesFilePath,
         }) => (
           Boolean(
-            sourceFilePath
+            subtitlesFilePath
           )
         )),
         map(({
           destinationFilePath,
-          fileInfo,
-          sourceFilePath,
+          mediaFileInfo,
+          subtitlesFilePath,
         }) => (
           (
             hasAutomaticOffset
             ? (
               combineLatest([
                 getMediaInfo(
-                  sourceFilePath
+                  subtitlesFilePath
                 ),
                 getMediaInfo(
                   destinationFilePath
@@ -216,7 +216,7 @@ export const copySubtitles = ({
                 audioLanguage: "jpn",
                 destinationFilePath,
                 offsetInMilliseconds,
-                sourceFilePath,
+                sourceFilePath: subtitlesFilePath,
                 subtitlesLanguage: "eng",
               })
             )),
@@ -230,7 +230,7 @@ export const copySubtitles = ({
                   )
                 ),
                 (
-                  fileInfo
+                  mediaFileInfo
                   .fullPath
                 ),
                 "\n",
