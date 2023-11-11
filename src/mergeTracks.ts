@@ -227,7 +227,6 @@ export const mergeTracks = ({
                                 .ChapterAtom
                               )),
                               concatAll(),
-                              skip(1),
                               map((
                                 chapterAtom,
                               ) => (
@@ -292,11 +291,11 @@ export const mergeTracks = ({
                                 ))
                               )),
                               concatAll(),
-                              skip(1),
                             )
                           ),
                         ])
                         .pipe(
+                          skip(1),
                           concatMap(([
                             subtitlesChapterTimestamp,
                             mediaFileChapterTimestamp,
@@ -305,6 +304,13 @@ export const mergeTracks = ({
                               mediaFileChapterTimestamp
                               - subtitlesChapterTimestamp
                             )
+
+                            console
+                            .info({
+                              mediaFileChapterTimestamp,
+                              subtitlesChapterTimestamp,
+                              offsetInMilliseconds,
+                            })
 
                             return (
                               (
