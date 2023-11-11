@@ -310,9 +310,23 @@ yargs(
         type: "string",
       },
     )
+    .option(
+      "automaticOffset",
+      {
+        alias: "a",
+        default: false,
+        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
   ),
   (argv) => {
     mergeTracks({
+      hasAutomaticOffset: (
+        argv
+        .automaticOffset
+      ),
       mediaFilesPath: (
         argv
         .mediaFilesPath

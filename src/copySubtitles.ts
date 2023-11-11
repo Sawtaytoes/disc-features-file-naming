@@ -18,6 +18,7 @@ import { catchNamedError } from "./catchNamedError.js"
 import { copySubtitlesMkvToolNix } from "./copySubtitlesMkvToolNix.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { readFiles } from "./readFiles.js"
+import { parseMediaFileChapterTimestamp } from "./parseTimestamps.js"
 
 export const copySubtitles = ({
   globalOffsetInMilliseconds,
@@ -90,11 +91,15 @@ export const copySubtitles = ({
             hasAutomaticOffset
             ? (
               combineLatest([
-                getMediaInfo(
-                  subtitlesFilePath
+                (
+                  getMediaInfo(
+                    subtitlesFilePath
+                  )
                 ),
-                getMediaInfo(
-                  destinationFilePath
+                (
+                  getMediaInfo(
+                    destinationFilePath
+                  )
                 ),
               ])
               .pipe(
@@ -134,34 +139,11 @@ export const copySubtitles = ({
                   )
                   .map((
                     chapterTimestamp,
-                  ) => {
-                    // Example: "_00_01_31_799"
-                    const [
-                      hours,
-                      minutes,
-                      seconds,
-                      milliseconds,
-                    ] = (
+                  ) => (
+                    parseMediaFileChapterTimestamp(
                       chapterTimestamp
-                      .split("_")
-                      .slice(1)
-                      .map((
-                        timeValue,
-                      ) => (
-                        Number(
-                          timeValue
-                          || ""
-                        )
-                      ))
                     )
-
-                    return (
-                      hours * 60 * 60
-                      + minutes * 60
-                      + seconds * 1000
-                      + milliseconds
-                    )
-                  })
+                  ))
                 )),
                 toArray(),
                 concatMap(([

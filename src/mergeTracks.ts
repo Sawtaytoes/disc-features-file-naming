@@ -1,12 +1,14 @@
 import chalk from "chalk"
+import { XMLParser } from "fast-xml-parser"
 import {
-  access,
+  access, readFile,
 } from "node:fs/promises"
 import {
   extname,
   join,
 } from "node:path"
 import {
+  EMPTY,
   catchError,
   combineLatest,
   concatAll,
@@ -15,23 +17,37 @@ import {
   from,
   map,
   of,
+  skip,
   take,
   tap,
   toArray,
+  zip,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { ChaptersXml } from "./ChaptersXml.js"
+import { getMediaInfo } from "./getMediaInfo.js"
 import {
   fileExtensionsWithSubtitles,
   mergeSubtitlesMkvToolNix,
 } from "./mergeSubtitlesMkvToolNix.js"
+import {
+  parseMediaFileChapterTimestamp,
+  parseSubtitlesChapterTimestamp,
+} from "./parseTimestamps.js"
 import { readFiles } from "./readFiles.js"
 import { readFolder } from "./readFolder.js"
 
+const xmlParser = (
+  new XMLParser()
+)
+
 export const mergeTracks = ({
+  hasAutomaticOffset = false,
   mediaFilesPath,
   subtitlesPath,
 }: {
+  hasAutomaticOffset?: boolean,
   mediaFilesPath: string
   subtitlesPath: string
 }) => (
@@ -159,11 +175,165 @@ export const mergeTracks = ({
                     toArray(),
                   )
                 ),
+                (
+                  hasAutomaticOffset
+                  ? (
+                    readFiles({
+                      sourcePath: (
+                        subtitlesFolderInfo
+                        .fullPath
+                      ),
+                    })
+                    .pipe(
+                      concatAll(),
+                      filter((
+                        subtitlesFileInfo,
+                      ) => (
+                        subtitlesFileInfo
+                        .fullPath
+                        .endsWith(
+                          "chapters.xml"
+                        )
+                      )),
+                      take(1),
+                      concatMap((
+                        subtitlesFileInfo,
+                      ) => (
+                        zip([
+                          (
+                            from(
+                              readFile(
+                                subtitlesFileInfo
+                                .fullPath
+                              )
+                            )
+                            .pipe(
+                              map((
+                                chaptersXml,
+                              ) => (
+                                xmlParser
+                                .parse(
+                                  chaptersXml
+                                ) as (
+                                  ChaptersXml
+                                )
+                              )),
+                              map((
+                                chaptersJson,
+                              ) => (
+                                chaptersJson
+                                .Chapters
+                                .EditionEntry
+                                .ChapterAtom
+                              )),
+                              concatAll(),
+                              skip(1),
+                              map((
+                                chapterAtom,
+                              ) => (
+                                chapterAtom
+                                .ChapterTimeStart
+                              )),
+                              map((
+                                subtitlesChapterTimestamp
+                              ) => (
+                                parseSubtitlesChapterTimestamp(
+                                  subtitlesChapterTimestamp
+                                )
+                              )),
+                            )
+                          ),
+                          (
+                            getMediaInfo(
+                              mediaFileInfo
+                              .fullPath
+                            )
+                            .pipe(
+                              map((
+                                mediaInfo,
+                              ) => (
+                                mediaInfo
+                                ?.media
+                                ?.track
+                                .flatMap((
+                                  track,
+                                ) => (
+                                  (
+                                    track
+                                    ["@type"]
+                                  )
+                                  === "Menu"
+                                )
+                                ? track
+                                : []
+                                )
+                                .find(
+                                  Boolean
+                                )
+                                ?.extra
+                              )),
+                              filter(
+                                Boolean
+                              ),
+                              take(1),
+                              map((
+                                chapters,
+                              ) => (
+                                Object
+                                .keys(
+                                  chapters
+                                )
+                                .map((
+                                  chapterTimestamp,
+                                ) => (
+                                  parseMediaFileChapterTimestamp(
+                                    chapterTimestamp
+                                  )
+                                ))
+                              )),
+                              concatAll(),
+                              skip(1),
+                            )
+                          ),
+                        ])
+                        .pipe(
+                          concatMap(([
+                            subtitlesChapterTimestamp,
+                            mediaFileChapterTimestamp,
+                          ]) => {
+                            const offsetInMilliseconds = (
+                              mediaFileChapterTimestamp
+                              - subtitlesChapterTimestamp
+                            )
+
+                            return (
+                              (
+                                offsetInMilliseconds
+                                === 0
+                              )
+                              ? EMPTY
+                              : (
+                                of(
+                                  offsetInMilliseconds
+                                )
+                              )
+                            )
+                          }),
+                          take(1),
+                        )
+                      )),
+                    )
+                  )
+                  : (
+                    of(0)
+                  )
+                ),
               ])
               .pipe(
                 concatMap(([
                   subtitlesFilePath,
                   attachmentFilePaths,
+                  offsetInMilliseconds,
                 ]) => (
                   mergeSubtitlesMkvToolNix({
                     attachmentFilePaths,
@@ -172,7 +342,7 @@ export const mergeTracks = ({
                       mediaFileInfo
                       .fullPath
                     ),
-                    // offsetInMilliseconds,
+                    offsetInMilliseconds,
                     subtitlesFilePath,
                     subtitlesLanguage: "eng",
                   })
