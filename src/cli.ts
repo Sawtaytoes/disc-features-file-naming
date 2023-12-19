@@ -165,7 +165,7 @@ yargs(
   }
 )
 .command(
-  "hasBetterAudio <sourcePath>",
+  "hasBetterVersion <sourcePath>",
   "Output a list of Ultra HD Blu-ray releases where a better version is available along with a reason. This information comes from a thread on criterionforum.org.",
   (
     yargs
