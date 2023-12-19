@@ -41,6 +41,11 @@ yargs(
 .scriptName(
   "media"
 )
+.wrap(
+  process
+  .stdout
+  .columns
+)
 .usage(
   "Usage: $0 <cmd> [args]"
 )
