@@ -296,22 +296,22 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
-      "Names all special features in the movie folder using the DVDCompare.net release at `#1`."
-    )
-    .positional(
-      "mediaFilesPath",
-      {
-        demandOption: true,
-        describe: "Directory with media files that need subtitles.",
-        type: "string",
-      },
+      "$0 \"G:\\Anime\\Code Geass Subs\" \"G:\\Anime\\Code Geass\"",
+      "Adds subtitles to all media files with a corresponding folder in the subs folder that shares the exact same name (minus the extension)."
     )
     .positional(
       "subtitlesPath",
       {
         demandOption: true,
         describe: "Directory containing subdirectories with subtitle files and `attachments/` that match the name of the media files in `mediaFilesPath`.",
+        type: "string",
+      },
+    )
+    .positional(
+      "mediaFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with media files that need subtitles.",
         type: "string",
       },
     )
