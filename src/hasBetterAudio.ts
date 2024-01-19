@@ -1,4 +1,7 @@
 import {
+  cpus,
+} from "node:os"
+import {
   concatMap,
   EMPTY,
   filter,
@@ -40,10 +43,10 @@ export const hasBetterAudio = ({
     ) => (
       getIsVideoFile(
         fileInfo
-        .filename
+        .fullPath
       )
     )),
-    mergeMap((
+    map((
       fileInfo,
     ) => (
       getMediaInfo(
@@ -262,6 +265,10 @@ export const hasBetterAudio = ({
         }),
       )
     )),
+    mergeAll(
+      cpus()
+      .length
+    )
     catchNamedError(
       hasBetterAudio
     ),
