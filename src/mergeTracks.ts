@@ -1,7 +1,8 @@
 import chalk from "chalk"
 import { XMLParser } from "fast-xml-parser"
 import {
-  access, readFile,
+  access,
+  readFile,
 } from "node:fs/promises"
 import {
   extname,

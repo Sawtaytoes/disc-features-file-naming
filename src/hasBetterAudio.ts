@@ -25,7 +25,7 @@ export const hasBetterAudio = ({
   isRecursive,
   sourcePath,
 }: {
-  isRecursive: boolean,
+  isRecursive: boolean
   sourcePath: string
 }) => (
   readFilesAtDepth({
@@ -268,7 +268,7 @@ export const hasBetterAudio = ({
     mergeAll(
       cpus()
       .length
-    )
+    ),
     catchNamedError(
       hasBetterAudio
     ),
