@@ -177,10 +177,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@total-typescript/ts-reset@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "@total-typescript/ts-reset@npm:0.4.2"
-  checksum: e3681b8fb48cf63538c19e7f203de5ec8b1abdcd0db5c6bd48e0881e2a86977771118c6c2930691947d11213b10a654bc2328b479c4dc0ddec7dfde129d08569
+"@total-typescript/ts-reset@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@total-typescript/ts-reset@npm:0.5.1"
+  checksum: f773a2b91707fab677c361837ef7855522d470e8a3abc0b9209a04832715feb0aa1ef0d10db880c1232acbd2c84222ec7c1bbf3f92d1d34d18c18ce08d304e45
   languageName: node
   linkType: hard
 
@@ -1894,7 +1894,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "media-file-naming@workspace:."
   dependencies:
-    "@total-typescript/ts-reset": ^0.4.2
+    "@total-typescript/ts-reset": ^0.5.1
     "@types/cli-progress": ^3.11.0
     "@types/ffmpeg-static": ^3.0.2
     "@types/he": ^1.2.0
