@@ -12,6 +12,7 @@ import {
 
 import { mediaInfoPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
+import { Iso6391LanguageCode } from "./iso6391LanguageCodes.js";
 
 const execFile = (
   promisify(
@@ -83,7 +84,7 @@ export type AudioTrack = {
   FrameRate_Num?: string
   FrameRate: string
   ID: string
-  Language?: string
+  Language?: Iso6391LanguageCode
   OriginalSourceMedium_ID?: string
   SamplesPerFrame: string
   SamplingCount: string
@@ -153,7 +154,7 @@ export type TextTrack = {
   FrameCount: string
   FrameRate: string
   ID: string
-  Language: string
+  Language: Iso6391LanguageCode
   OriginalSourceMedium_ID: string
   StreamOrder: string
   StreamSize: string
@@ -204,7 +205,7 @@ export type VideoTrack = {
   HDR_Format?: string
   Height: string
   ID: string
-  Language?: string
+  Language?: Iso6391LanguageCode
   MasteringDisplay_ColorPrimaries_Source?: string
   MasteringDisplay_ColorPrimaries?: string
   MasteringDisplay_Luminance_Source?: string

@@ -12,6 +12,7 @@ import {
   Iso6392LanguageCode,
   iso6392LanguageCodes,
 } from "./iso6392LanguageCodes.js"
+import { keepLanguages } from "./keepLanguages.js"
 import { mergeTracks } from "./mergeTracks.js"
 import { nameAnimeEpisodes } from "./nameAnimeEpisodes.js"
 import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
@@ -19,7 +20,6 @@ import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
 import { splitChapters } from "./splitChapters.js"
-import { trimLanguages } from "./trimLanguages.js"
 
 process
 .on(
@@ -283,6 +283,119 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "keepLanguages <sourcePath>",
+  "Keeps only the specified audio and subtitle languages.",
+  (
+    yargs
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/movies\" -r --firstAudio --firstSubtitles",
+      "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language and only subtitles tracks matching the first subtitles track's language."
+    )
+    .example(
+      "$0 \"~/movies\" -r --firstAudio -a eng --firstSubtitles",
+      "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language as well as the specified audio language and only subtitles tracks matching the first subtitles track's language. This is useful when movies are in another language, but have english commentary."
+    )
+    .example(
+      "$0 \"~/anime\" -r -a jpn -a eng -s eng",
+      "Recursively looks through media files and only keeps Japanese and English audio and English subtitles tracks."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory where demo files are located.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "audioLanguages",
+      {
+        alias: "a",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: ["eng"] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
+    .option(
+      "useFirstAudioLanguage",
+      {
+        alias: "firstAudio",
+        boolean: true,
+        default: false,
+        describe: "The language of the first audio track is the only language kept for audio tracks.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "subtitlesLanguages",
+      {
+        alias: "s",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: ["eng"] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
+    .option(
+      "useFirstSubtitlesLanguage",
+      {
+        alias: "firstSubtitles",
+        boolean: true,
+        default: false,
+        describe: "The language of the first subtitles track is the only language kept for subtitles tracks.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+  ),
+  (argv) => {
+    keepLanguages({
+      audioLanguages: (
+        argv
+        .audioLanguages
+      ),
+      hasFirstAudioLanguage: (
+        argv
+        .useFirstAudioLanguage
+      ),
+      hasFirstSubtitlesLanguage: (
+        argv
+        .useFirstSubtitlesLanguage
+      ),
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      subtitlesLanguages: (
+        argv
+        .subtitlesLanguages
       ),
     })
     .subscribe()
@@ -598,93 +711,6 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
-      ),
-    })
-    .subscribe()
-  }
-)
-.command(
-  "trimLanguages <sourcePath> [args]",
-  "Trims out audio and subtitles that don't match a video language from media files into a separate directory.",
-  (
-    yargs
-  ) => (
-    yargs
-    .example(
-      "$0 \"~/demos\"",
-      "Creates new files in '~/demos' with only English audio and subtitles tracks."
-    )
-    .example(
-      "$0 \"~/movies\" -r",
-      "Recursively looks through all folders in '~/movies' and creates new files that only include English audio and subtitles."
-    )
-    .example(
-      "$0 \"~/anime\" -r -a jpn",
-      "Recursively looks through all folders in '~/anime' and creates new files that ony include Japanese audio and English subtitles tracks."
-    )
-    .example(
-      "$0 \"~/spanish-soaps\" -r -a spa -s eng -s spa",
-      "Recursively looks through all folders in '~/spanish-soaps' and creates new files that only include Spanish audio and both English and Spanish subtitles tracks."
-    )
-    .positional(
-      "sourcePath",
-      {
-        demandOption: true,
-        describe: "Directory containing media files or containing other directories of media files.",
-        type: "string",
-      },
-    )
-    .option(
-      "isRecursive",
-      {
-        alias: "r",
-        boolean: true,
-        default: false,
-        describe: "Recursively looks in folders for media files.",
-        nargs: 0,
-        type: "boolean",
-      },
-    )
-    .option(
-      "audioLanguages",
-      {
-        alias: "a",
-        array: true,
-        choices: iso6392LanguageCodes,
-        default: ["eng"] satisfies Iso6392LanguageCode[],
-        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
-        type: "array",
-      },
-    )
-    .option(
-      "subtitlesLanguages",
-      {
-        alias: "s",
-        array: true,
-        choices: iso6392LanguageCodes,
-        default: ["eng"] satisfies Iso6392LanguageCode[],
-        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
-        type: "array",
-      },
-    )
-  ),
-  (argv) => {
-    trimLanguages({
-      audioLanguages: (
-        argv
-        .audioLanguages
-      ),
-      isRecursive: (
-        argv
-        .isRecursive
-      ),
-      sourcePath: (
-        argv
-        .sourcePath
-      ),
-      subtitlesLanguages: (
-        argv
-        .subtitlesLanguages
       ),
     })
     .subscribe()
