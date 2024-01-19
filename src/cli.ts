@@ -145,7 +145,7 @@ yargs(
         boolean: true,
         default: false,
         describe: "Recursively looks in folders for media files.",
-        nargs: 1,
+        nargs: 0,
         type: "boolean",
       },
     )
@@ -190,7 +190,7 @@ yargs(
         boolean: true,
         default: false,
         describe: "Recursively looks in folders for media files.",
-        nargs: 1,
+        nargs: 0,
         type: "boolean",
       },
     )
@@ -239,7 +239,7 @@ yargs(
         boolean: true,
         default: false,
         describe: "Recursively looks in folders for media files.",
-        nargs: 1,
+        nargs: 0,
         type: "boolean",
       },
     )
@@ -641,7 +641,7 @@ yargs(
         boolean: true,
         default: false,
         describe: "Recursively looks in folders for media files.",
-        nargs: 1,
+        nargs: 0,
         type: "boolean",
       },
     )
