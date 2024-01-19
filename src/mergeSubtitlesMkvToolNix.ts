@@ -20,6 +20,7 @@ export const fileExtensionsWithSubtitles = (
     ".ass",
     ".srt",
     ".ssa",
+    ".sup",
   ])
 )
 
