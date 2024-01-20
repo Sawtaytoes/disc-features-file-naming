@@ -3,6 +3,7 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
+import { copyAudio } from "./copyAudio.js"
 import { copySubtitles } from "./copySubtitles.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
@@ -50,15 +51,101 @@ yargs(
   "Usage: $0 <cmd> [args]"
 )
 .command(
-  "copySubtitles <subtitlesPath> <mediaFilesPath>",
-  "Copy subtitles tracks from one media file to another making sure to only keep the chosen audio and subtitles languages.",
+  "copyAudio <audioPath> <mediaFilesPath>",
+  "Copy audio tracks from one media file to another making sure to only keep the chosen audio and audio languages.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
-      "$0 \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
-      "Names all special features in the movie folder using the DVDCompare.net release at `#1`."
+      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -l jpn",
+      "Adds audio to all media files with a corresponding media file in the first path folder that shares the exact same name (minus the extension)."
+    )
+    .positional(
+      "mediaFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with media files that need audio.",
+        type: "string",
+      },
+    )
+    .positional(
+      "audioPath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files with audio that can be copied.",
+        type: "string",
+      },
+    )
+    .option(
+      "audioLanguages",
+      {
+        alias: "l",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: ["eng"] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
+    .option(
+      "automaticOffset",
+      {
+        alias: "a",
+        default: false,
+        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "globalOffset",
+      {
+        alias: "o",
+        default: 0,
+        describe: "The offset in milliseconds to apply to all audio being transferred.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
+  ),
+  (argv) => {
+    copyAudio({
+      audioLanguages: (
+        argv
+        .audioLanguages
+      ),
+      audioPath: (
+        argv
+        .audioPath
+      ),
+      globalOffsetInMilliseconds: (
+        argv
+        .globalOffset
+      ),
+      hasAutomaticOffset: (
+        argv
+        .automaticOffset
+      ),
+      mediaFilesPath: (
+        argv
+        .mediaFilesPath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "copySubtitles <subtitlesPath> <mediaFilesPath>",
+  "Copy subtitles tracks from one media file to another making sure to only keep the chosen audio and subtitles languages.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\"",
+      "Adds subtitles to all media files with a corresponding media file in the subs folder that shares the exact same name (minus the extension)."
     )
     .positional(
       "mediaFilesPath",
@@ -123,7 +210,7 @@ yargs(
   "hasBetterAudio <sourcePath>",
   "Output a list of files that have a higher channel count audio track not listed as the first one.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -168,7 +255,7 @@ yargs(
   "hasBetterVersion <sourcePath>",
   "Output a list of Ultra HD Blu-ray releases where a better version is available along with a reason. This information comes from a thread on criterionforum.org.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -213,7 +300,7 @@ yargs(
   "hasImaxEnhancedAudio <sourcePath>",
   "Lists any files with an IMAX Enhanced audio track. Useful for checking movies and demos.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -262,7 +349,7 @@ yargs(
   "hasManyAudioTracks <sourcePath>",
   "Lists any files that have more than one audio track. Useful for determining which demo files may have unused audio tracks.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -292,7 +379,7 @@ yargs(
   "keepLanguages <sourcePath>",
   "Keeps only the specified audio and subtitle languages.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -300,11 +387,11 @@ yargs(
       "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language and only subtitles tracks matching the first subtitles track's language."
     )
     .example(
-      "$0 \"~/movies\" -r --firstAudio -a eng --firstSubtitles",
+      "$0 \"~/movies\" -r --firstAudio -l eng --firstSubtitles",
       "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language as well as the specified audio language and only subtitles tracks matching the first subtitles track's language. This is useful when movies are in another language, but have english commentary."
     )
     .example(
-      "$0 \"~/anime\" -r -a jpn -a eng -s eng",
+      "$0 \"~/anime\" -r -a jpn -l eng -s eng",
       "Recursively looks through media files and only keeps Japanese and English audio and English subtitles tracks."
     )
     .positional(
@@ -329,7 +416,7 @@ yargs(
     .option(
       "audioLanguages",
       {
-        alias: "a",
+        alias: "l",
         array: true,
         choices: iso6392LanguageCodes,
         default: ["eng"] satisfies Iso6392LanguageCode[],
@@ -405,7 +492,7 @@ yargs(
   "mergeTracks <subtitlesPath> <mediaFilesPath>",
   "Merge subtitles files with media files and only keep specified languages.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -461,7 +548,7 @@ yargs(
   "nameAnimeEpisodes <sourcePath> <searchTerm>",
   "Name all anime episodes in a directory according to episode names on MyAnimeList.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -518,7 +605,7 @@ yargs(
   "nameSpecialFeatures <sourcePath> <url>",
   "Name all special features in a directory according to a DVDCompare.net URL.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -560,7 +647,7 @@ yargs(
   "nameTvShowEpisodes <sourcePath> <searchTerm>",
   "Name all TV show episodes in a directory according to episode names on TVDB.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -617,7 +704,7 @@ yargs(
   "renameMovieDemoDownloads <sourcePath>",
   "Rename TomSawyer's movie rips from the AVSForums to follow the demo format.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -647,7 +734,7 @@ yargs(
   "renameDemos <sourcePath>",
   "Rename demo files (such as Dolby's Amaze) to a format which accurately states all capabilities for easier searching and sorting in media apps (like Plex).",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
@@ -677,7 +764,7 @@ yargs(
   "splitChapters <sourcePath> <chapterSplits...>",
   "Breaks apart large video files based on chapter markers. The split occurs at the beginning of the given chapters. This is useful for anime discs which typically rip 4-6 episodes into a single large file.",
   (
-    yargs
+    yargs,
   ) => (
     yargs
     .example(
