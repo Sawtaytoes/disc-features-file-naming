@@ -3,7 +3,6 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
-import { replaceAudioTracks } from "./replaceAudioTracks.js"
 import { copySubtitles } from "./copySubtitles.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
@@ -20,6 +19,7 @@ import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
 import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
+import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
 
 process
@@ -675,39 +675,47 @@ yargs(
   }
 )
 .command(
-  "replaceAudioTracks <audioPath> <mediaFilesPath>",
-  "Replace audio tracks from one media file from another making sure to only keep the chosen audio and audio languages.",
+  "replaceAudioTracks <sourceFilesPath> <destinationFilesPath>",
+  "Copy tracks from one media file and replace them in another making sure to only keep the chosen languages.",
   (
     yargs,
   ) => (
     yargs
     .example(
-      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -l jpn",
-      "Adds audio to all media files with a corresponding media file in the first path folder that shares the exact same name (minus the extension)."
+      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn",
+      "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file."
+    )
+    .example(
+      "$0 \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\" -subs-lang eng",
+      "For all media files that have matching names (minus the extension), it replaces the unsubbed media file's subtitles with English subtitles from the subbed media file."
+    )
+    .example(
+      "$0 \"G:\\Anime\\Code Geass with Chapters\" \"G:\\Anime\\Code Geass missing Chapters\" -c",
+      "For all media files that have matching names (minus the extension), it adds chapters to the media files missing them."
     )
     .positional(
-      "mediaFilesPath",
+      "sourceFilesPath",
       {
         demandOption: true,
-        describe: "Directory with media files that need audio.",
+        describe: "Directory with containing media files with tracks you want to copy.",
         type: "string",
       },
     )
     .positional(
-      "audioPath",
+      "destinationFilesPath",
       {
         demandOption: true,
-        describe: "Directory containing media files with audio that can be copied.",
+        describe: "Directory containing media files with tracks you want to replace.",
         type: "string",
       },
     )
     .option(
       "audioLanguages",
       {
-        alias: "l",
+        alias: "audio-lang",
         array: true,
         choices: iso6392LanguageCodes,
-        default: ["eng"] satisfies Iso6392LanguageCode[],
+        default: [] satisfies Iso6392LanguageCode[],
         describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
         type: "array",
       },
@@ -743,16 +751,27 @@ yargs(
         type: "boolean",
       },
     )
+    .option(
+      "subtitlesLanguages",
+      {
+        alias: "subs-lang",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: [] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
   ),
   (argv) => {
-    replaceAudioTracks({
+    replaceTracks({
       audioLanguages: (
         argv
         .audioLanguages
       ),
-      audioPath: (
+      destinationFilesPath: (
         argv
-        .audioPath
+        .destinationFilesPath
       ),
       globalOffsetInMilliseconds: (
         argv
@@ -766,9 +785,13 @@ yargs(
         argv
         .includeChapters
       ),
-      mediaFilesPath: (
+      sourceFilesPath: (
         argv
-        .mediaFilesPath
+        .sourceFilesPath
+      ),
+      subtitlesLanguages: (
+        argv
+        .subtitlesLanguages
       ),
     })
     .subscribe()
