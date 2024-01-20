@@ -26,12 +26,14 @@ export const replaceAudioTracks = ({
   audioPath,
   globalOffsetInMilliseconds,
   hasAutomaticOffset,
+  hasChapters,
   mediaFilesPath,
 }: {
   audioLanguages: Iso6392LanguageCode[]
   audioPath: string
   globalOffsetInMilliseconds?: number
   hasAutomaticOffset: boolean
+  hasChapters: boolean
   mediaFilesPath: string
 }) => (
   readFiles({
@@ -200,6 +202,7 @@ export const replaceAudioTracks = ({
               replaceAudioTracksMkvToolNix({
                 audioLanguages,
                 destinationFilePath,
+                hasChapters,
                 offsetInMilliseconds,
                 sourceFilePath: audioFilePath,
               })

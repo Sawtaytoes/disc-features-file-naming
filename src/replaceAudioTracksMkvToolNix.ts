@@ -17,13 +17,15 @@ export const betterAudioFolderName = "BETTER-AUDIO"
 export const replaceAudioTracksMkvToolNix = ({
   audioLanguages,
   destinationFilePath,
+  hasChapters,
   offsetInMilliseconds,
   sourceFilePath,
 }: {
-  audioLanguages: Iso6392LanguageCode[],
-  destinationFilePath: string,
-  offsetInMilliseconds?: number,
-  sourceFilePath: string,
+  audioLanguages: Iso6392LanguageCode[]
+  destinationFilePath: string
+  hasChapters: boolean
+  offsetInMilliseconds?: number
+  sourceFilePath: string
 }) => (
   (
     (
@@ -48,10 +50,15 @@ export const replaceAudioTracksMkvToolNix = ({
               destinationFilePath,
 
               "--no-buttons",
-              "--no-chapters",
               "--no-global-tags",
               "--no-subtitles",
               "--no-video",
+
+              ...(
+                hasChapters
+                ? []
+                : ["--no-chapters"]
+              ),
 
               ...(
                 offsetInMilliseconds

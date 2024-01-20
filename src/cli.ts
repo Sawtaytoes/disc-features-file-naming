@@ -733,6 +733,16 @@ yargs(
         type: "number",
       },
     )
+    .option(
+      "includeChapters",
+      {
+        alias: "c",
+        default: false,
+        describe: "Adds chapters along with audio tracks.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
   ),
   (argv) => {
     replaceAudioTracks({
@@ -751,6 +761,10 @@ yargs(
       hasAutomaticOffset: (
         argv
         .automaticOffset
+      ),
+      hasChapters: (
+        argv
+        .includeChapters
       ),
       mediaFilesPath: (
         argv
