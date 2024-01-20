@@ -17,8 +17,8 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { copySubtitlesMkvToolNix } from "./copySubtitlesMkvToolNix.js"
 import { getMediaInfo } from "./getMediaInfo.js"
-import { readFiles } from "./readFiles.js"
 import { parseMediaFileChapterTimestamp } from "./parseTimestamps.js"
+import { readFiles } from "./readFiles.js"
 
 export const copySubtitles = ({
   globalOffsetInMilliseconds,
