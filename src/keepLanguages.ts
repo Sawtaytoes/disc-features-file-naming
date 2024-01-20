@@ -12,7 +12,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { getIsVideoFile } from "./getIsVideoFile.js"
 import { getTrackLanguages } from "./getTrackLanguages.js"
-import { Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { keepSpecifiedLanguageTracks } from "./keepSpecifiedLanguageTracks.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 

@@ -15,11 +15,11 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { replaceTracksMkvToolNix } from "./replaceTracksMkvToolNix.js"
 import { getMediaInfo } from "./getMediaInfo.js"
-import { Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { parseMediaFileChapterTimestamp } from "./parseTimestamps.js"
 import { readFiles } from "./readFiles.js"
+import { replaceTracksMkvToolNix } from "./replaceTracksMkvToolNix.js"
 
 export const replaceTracks = ({
   audioLanguages,
@@ -27,6 +27,7 @@ export const replaceTracks = ({
   globalOffsetInMilliseconds,
   hasAutomaticOffset,
   hasChapters,
+  offsets,
   sourceFilesPath,
   subtitlesLanguages,
 }: {
@@ -35,6 +36,7 @@ export const replaceTracks = ({
   globalOffsetInMilliseconds?: number
   hasAutomaticOffset: boolean
   hasChapters: boolean
+  offsets: number[]
   sourceFilesPath: string
   subtitlesLanguages: Iso6392LanguageCode[]
 }) => (
@@ -89,11 +91,14 @@ export const replaceTracks = ({
             audioFilePath
           )
         )),
-        map(({
-          destinationFilePath,
-          mediaFileInfo,
-          audioFilePath,
-        }) => (
+        map((
+          {
+            destinationFilePath,
+            mediaFileInfo,
+            audioFilePath,
+          },
+          index,
+        ) => (
           (
             hasAutomaticOffset
             ? (
@@ -205,7 +210,15 @@ export const replaceTracks = ({
                 audioLanguages,
                 destinationFilePath,
                 hasChapters,
-                offsetInMilliseconds,
+                offsetInMilliseconds: (
+                  (
+                    offsets
+                    [index]
+                  )
+                  ?? (
+                    offsetInMilliseconds
+                  )
+                ),
                 sourceFilePath: audioFilePath,
                 subtitlesLanguages,
               })

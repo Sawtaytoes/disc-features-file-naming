@@ -1,5 +1,5 @@
-import { Iso6391LanguageCode } from "./iso6391LanguageCodes.js"
-import { Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
+import { type Iso6391LanguageCode } from "./iso6391LanguageCodes.js"
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 
 const iso6391ToIso6392: (
   Record<

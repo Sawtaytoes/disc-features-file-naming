@@ -13,7 +13,7 @@ import {
   type AudioTrack,
   type TextTrack,
 } from "./getMediaInfo.js"
-import { Iso6391LanguageCode } from "./iso6391LanguageCodes.js"
+import { type Iso6391LanguageCode } from "./iso6391LanguageCodes.js"
 
 export type TrackTypeLanguages = (
   Record<

@@ -8,6 +8,7 @@ import {
   of,
 } from "rxjs";
 
+import { defineLanguageForUndefinedTracks } from "./defineLanguageForUndefinedTracks.js";
 import { getIsVideoFile } from "./getIsVideoFile.js";
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { runMkvMerge } from "./runMkvMerge.js";
@@ -36,9 +37,17 @@ export const replaceTracksMkvToolNix = ({
       )
     )
     ? (
-      of(
-        null
-      )
+      defineLanguageForUndefinedTracks({
+        filePath: sourceFilePath,
+        subtitleLanguage: (
+          (
+            subtitlesLanguages
+            [0]
+          )
+          || "eng"
+        ),
+        trackType: "subtitles",
+      })
       .pipe(
         // This would normally go to the next step in the pipeline, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter` stopped us.
         endWith(

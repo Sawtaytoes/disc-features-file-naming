@@ -8,8 +8,8 @@ import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
 import { hasManyAudioTracks } from "./hasManyAudioTracks.js"
 import {
-  Iso6392LanguageCode,
   iso6392LanguageCodes,
+  type Iso6392LanguageCode,
 } from "./iso6392LanguageCodes.js"
 import { keepLanguages } from "./keepLanguages.js"
 import { mergeTracks } from "./mergeTracks.js"
