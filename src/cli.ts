@@ -3,7 +3,6 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
-import { copySubtitles } from "./copySubtitles.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
@@ -49,76 +48,6 @@ yargs(
 )
 .usage(
   "Usage: $0 <cmd> [args]"
-)
-.command(
-  "copySubtitles <subtitlesPath> <mediaFilesPath>",
-  "Copy subtitles tracks from one media file to another making sure to only keep the chosen audio and subtitles languages.",
-  (
-    yargs,
-  ) => (
-    yargs
-    .example(
-      "$0 \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\"",
-      "Adds subtitles to all media files with a corresponding media file in the subs folder that shares the exact same name (minus the extension)."
-    )
-    .positional(
-      "mediaFilesPath",
-      {
-        demandOption: true,
-        describe: "Directory with media files that need subtitles.",
-        type: "string",
-      },
-    )
-    .positional(
-      "subtitlesPath",
-      {
-        demandOption: true,
-        describe: "Directory containing media files with subtitles that can be copied.",
-        type: "string",
-      },
-    )
-    .option(
-      "automaticOffset",
-      {
-        alias: "a",
-        default: false,
-        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
-        nargs: 0,
-        type: "boolean",
-      },
-    )
-    .option(
-      "globalOffset",
-      {
-        alias: "o",
-        describe: "The offset in milliseconds to apply to all subtitles being transferred.",
-        nargs: 1,
-        number: true,
-        type: "number",
-      },
-    )
-  ),
-  (argv) => {
-    copySubtitles({
-      globalOffsetInMilliseconds: (
-        argv
-        .globalOffset
-      ),
-      hasAutomaticOffset: (
-        argv
-        .automaticOffset
-      ),
-      mediaFilesPath: (
-        argv
-        .mediaFilesPath
-      ),
-      subtitlesPath: (
-        argv
-        .subtitlesPath
-      ),
-    })
-    .subscribe()
-  }
 )
 .command(
   "hasBetterAudio <sourcePath>",
@@ -675,7 +604,7 @@ yargs(
   }
 )
 .command(
-  "replaceAudioTracks <sourceFilesPath> <destinationFilesPath>",
+  "replaceTracks <sourceFilesPath> <destinationFilesPath> [offsets...]",
   "Copy tracks from one media file and replace them in another making sure to only keep the chosen languages.",
   (
     yargs,
@@ -684,6 +613,10 @@ yargs(
     .example(
       "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn",
       "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file."
+    )
+    .example(
+      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn 0.3 0.8 0.8 0.8 0.75",
+      "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file and time-aligns them by the following values in file alphabetical order: 0.3, 0.8, 0.8, 0.8, 0.75."
     )
     .example(
       "$0 \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\" -subs-lang eng",
@@ -706,6 +639,16 @@ yargs(
       {
         demandOption: true,
         describe: "Directory containing media files with tracks you want to replace.",
+        type: "string",
+      },
+    )
+    .positional(
+      "offsets",
+      {
+        array: true,
+        demandOption: false,
+        describe: "Space-separated list of time-alignment offsets to set for each individual file in milliseconds.",
+        default: [] satisfies number[],
         type: "string",
       },
     )
@@ -784,6 +727,17 @@ yargs(
       hasChapters: (
         argv
         .includeChapters
+      ),
+      offsets: (
+        argv
+        .offsets
+        .map((
+          offset
+        ) => (
+          Number(
+            offset
+          )
+        ))
       ),
       sourceFilesPath: (
         argv
