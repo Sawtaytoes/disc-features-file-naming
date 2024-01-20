@@ -3,7 +3,7 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
-import { copyAudio } from "./copyAudio.js"
+import { replaceAudioTracks } from "./replaceAudioTracks.js"
 import { copySubtitles } from "./copySubtitles.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
@@ -49,92 +49,6 @@ yargs(
 )
 .usage(
   "Usage: $0 <cmd> [args]"
-)
-.command(
-  "copyAudio <audioPath> <mediaFilesPath>",
-  "Copy audio tracks from one media file to another making sure to only keep the chosen audio and audio languages.",
-  (
-    yargs,
-  ) => (
-    yargs
-    .example(
-      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -l jpn",
-      "Adds audio to all media files with a corresponding media file in the first path folder that shares the exact same name (minus the extension)."
-    )
-    .positional(
-      "mediaFilesPath",
-      {
-        demandOption: true,
-        describe: "Directory with media files that need audio.",
-        type: "string",
-      },
-    )
-    .positional(
-      "audioPath",
-      {
-        demandOption: true,
-        describe: "Directory containing media files with audio that can be copied.",
-        type: "string",
-      },
-    )
-    .option(
-      "audioLanguages",
-      {
-        alias: "l",
-        array: true,
-        choices: iso6392LanguageCodes,
-        default: ["eng"] satisfies Iso6392LanguageCode[],
-        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
-        type: "array",
-      },
-    )
-    .option(
-      "automaticOffset",
-      {
-        alias: "a",
-        default: false,
-        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
-        nargs: 0,
-        type: "boolean",
-      },
-    )
-    .option(
-      "globalOffset",
-      {
-        alias: "o",
-        default: 0,
-        describe: "The offset in milliseconds to apply to all audio being transferred.",
-        nargs: 1,
-        number: true,
-        type: "number",
-      },
-    )
-  ),
-  (argv) => {
-    copyAudio({
-      audioLanguages: (
-        argv
-        .audioLanguages
-      ),
-      audioPath: (
-        argv
-        .audioPath
-      ),
-      globalOffsetInMilliseconds: (
-        argv
-        .globalOffset
-      ),
-      hasAutomaticOffset: (
-        argv
-        .automaticOffset
-      ),
-      mediaFilesPath: (
-        argv
-        .mediaFilesPath
-      ),
-    })
-    .subscribe()
-  }
 )
 .command(
   "copySubtitles <subtitlesPath> <mediaFilesPath>",
@@ -755,6 +669,92 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "replaceAudioTracks <audioPath> <mediaFilesPath>",
+  "Replace audio tracks from one media file from another making sure to only keep the chosen audio and audio languages.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -l jpn",
+      "Adds audio to all media files with a corresponding media file in the first path folder that shares the exact same name (minus the extension)."
+    )
+    .positional(
+      "mediaFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with media files that need audio.",
+        type: "string",
+      },
+    )
+    .positional(
+      "audioPath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files with audio that can be copied.",
+        type: "string",
+      },
+    )
+    .option(
+      "audioLanguages",
+      {
+        alias: "l",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: ["eng"] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
+    .option(
+      "automaticOffset",
+      {
+        alias: "a",
+        default: false,
+        describe: "Calculate subtitle offsets for each file using differences in chapter markers.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "globalOffset",
+      {
+        alias: "o",
+        default: 0,
+        describe: "The offset in milliseconds to apply to all audio being transferred.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
+  ),
+  (argv) => {
+    replaceAudioTracks({
+      audioLanguages: (
+        argv
+        .audioLanguages
+      ),
+      audioPath: (
+        argv
+        .audioPath
+      ),
+      globalOffsetInMilliseconds: (
+        argv
+        .globalOffset
+      ),
+      hasAutomaticOffset: (
+        argv
+        .automaticOffset
+      ),
+      mediaFilesPath: (
+        argv
+        .mediaFilesPath
       ),
     })
     .subscribe()

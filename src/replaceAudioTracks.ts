@@ -15,13 +15,13 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { copyAudioMkvToolNix } from "./copyAudioMkvToolNix.js"
+import { replaceAudioTracksMkvToolNix } from "./replaceAudioTracksMkvToolNix.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import { Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { parseMediaFileChapterTimestamp } from "./parseTimestamps.js"
 import { readFiles } from "./readFiles.js"
 
-export const copyAudio = ({
+export const replaceAudioTracks = ({
   audioLanguages,
   audioPath,
   globalOffsetInMilliseconds,
@@ -197,7 +197,7 @@ export const copyAudio = ({
             concatMap((
               offsetInMilliseconds,
             ) => (
-              copyAudioMkvToolNix({
+              replaceAudioTracksMkvToolNix({
                 audioLanguages,
                 destinationFilePath,
                 offsetInMilliseconds,
@@ -235,7 +235,7 @@ export const copyAudio = ({
       )
     )),
     catchNamedError(
-      copyAudio
+      replaceAudioTracks
     ),
   )
 )

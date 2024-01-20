@@ -14,7 +14,7 @@ import { runMkvMerge } from "./runMkvMerge.js";
 
 export const betterAudioFolderName = "BETTER-AUDIO"
 
-export const copyAudioMkvToolNix = ({
+export const replaceAudioTracksMkvToolNix = ({
   audioLanguages,
   destinationFilePath,
   offsetInMilliseconds,
