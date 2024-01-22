@@ -8,12 +8,13 @@ import {
   unlink,
 } from "node:fs/promises"
 import {
-  Observable,
+  Observable, concatMap, from, mergeMap, reduce,
 } from "rxjs"
 
 import { ffmpegPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
 import { extname } from "node:path";
+import { stat } from "node:fs/promises";
 
 const cliProgressBar = (
   new cliProgress
@@ -57,14 +58,10 @@ export const extensionMimeType: (
 
 export const runFfmpeg = ({
   args,
-  attachmentFilePaths,
-  fileSizeInKilobytes,
   inputFilePaths,
   outputFilePath,
 }: {
   args: string[]
-  attachmentFilePaths?: string[]
-  fileSizeInKilobytes: number
   inputFilePaths: string[]
   outputFilePath: string
 }): (
@@ -72,307 +69,337 @@ export const runFfmpeg = ({
     string
   >
 ) => (
-  new Observable<
-    string
-  >((
-    observer,
-  ) => {
-    const commandArgs = (
-      [
-        ...(
-          inputFilePaths
-          .filter((
-            inputFilePath,
-          ) => (
-            (
-              extname(
-                inputFilePath
-              )
-            )
-            !== ".xml"
-          ))
-          .flatMap((
-            inputFilePath,
-          ) => ([
-            "-i",
-            inputFilePath,
-          ]))
-        ),
-
-        ...(
-          (
-            attachmentFilePaths
-            || []
-          )
-          .map((
-            attachmentFilePath,
-          ) => ({
-            attachmentFilePath,
-            fileExtension: (
-              extname(
-                attachmentFilePath
-              )
-            ),
-          }))
-          .filter(({
-            fileExtension,
-          }) => (
-            fileExtension
-            in extensionMimeType
-          ))
-          .flatMap(({
-            attachmentFilePath,
-            fileExtension,
-          }) => ([
-            "-attach",
-            attachmentFilePath,
-            "-metadata:s:t",
-            (
-              extensionMimeType
-              [fileExtension as ExtensionMimeType]
-            ),
-          ]))
-        ),
-
-        ...args,
-
-        "-loglevel",
-        "info",
-
-        "-y",
-
-        "-stats",
-
-        outputFilePath,
-      ]
-      .filter(
-        Boolean
+  from(
+    inputFilePaths
+  )
+  .pipe(
+    mergeMap((
+      inputFilePath,
+    ) => (
+      stat(
+        inputFilePath
       )
-    )
-
-    console
-    .info(
+    )),
+    reduce(
       (
-        [ffmpegPath]
-        .concat(
-          commandArgs
+        fileSizeInKilobytes,
+        fileStats,
+      ) => (
+        fileSizeInKilobytes
+        + (
+          (
+            fileStats
+            .size
+          )
+          / 1024
         )
       ),
-      "\n",
-    )
-
-    const childProcess = (
-      spawn(
-        ffmpegPath,
-        commandArgs,
-      )
-    )
-
-    let hasStarted = false
-
-    childProcess
-    .stdout
-    .on(
-      'data',
-      (
-        data
+      0,
+    ),
+    concatMap((
+      fileSizeInKilobytes,
+    ) => (
+      new Observable<
+        string
+      >((
+        observer,
       ) => {
+        const commandArgs = (
+          [
+            "-loglevel",
+            "info",
+
+            "-y",
+
+            "-stats",
+
+            ...(
+              inputFilePaths
+              .filter((
+                inputFilePath,
+              ) => (
+                (
+                  extname(
+                    inputFilePath
+                  )
+                )
+                !== ".xml"
+              ))
+              .flatMap((
+                inputFilePath,
+              ) => ([
+                "-i",
+                inputFilePath,
+              ]))
+            ),
+
+            ...args,
+
+            // ...(
+            //   (
+            //     attachmentFilePaths
+            //     || []
+            //   )
+            //   .map((
+            //     attachmentFilePath,
+            //   ) => ({
+            //     attachmentFilePath,
+            //     fileExtension: (
+            //       extname(
+            //         attachmentFilePath
+            //       )
+            //     ),
+            //   }))
+            //   .filter(({
+            //     fileExtension,
+            //   }) => (
+            //     fileExtension
+            //     in extensionMimeType
+            //   ))
+            //   .flatMap(({
+            //     attachmentFilePath,
+            //     fileExtension,
+            //   }) => ([
+            //     "-attach",
+            //     attachmentFilePath,
+            //     "-metadata:s:t",
+            //     (
+            //       extensionMimeType
+            //       [fileExtension as ExtensionMimeType]
+            //     ),
+            //   ]))
+            // ),
+
+            outputFilePath,
+          ]
+          .filter(
+            Boolean
+          )
+        )
+
         console
         .info(
-          data
-          .toString()
+          (
+            [ffmpegPath]
+            .concat(
+              commandArgs
+            )
+          ),
+          "\n",
         )
-      },
-    )
 
-    childProcess
-    .stderr
-    .on(
-      'data',
-      (
-        data,
-      ) => {
-        if (
-          data
-          .toString()
-          .includes(
-            "size="
+        const childProcess = (
+          spawn(
+            ffmpegPath,
+            commandArgs,
           )
-        ) {
-          if (hasStarted) {
-            cliProgressBar
-            .update(
-              Number(
-                data
-                .toString()
-                .replace(
-                  progressRegex,
-                  "$1",
-                )
-              )
-            )
-          }
-          else {
-            hasStarted = true
+        )
 
-            cliProgressBar
-            .start(
-              fileSizeInKilobytes,
-              Number(
-                data
-                .toString()
-                .replace(
-                  progressRegex,
-                  "$1",
-                )
-              ),
-              {},
-            )
-          }
-        }
-        else {
-          console
-          .info(
+        let hasStarted = false
+
+        childProcess
+        .stdout
+        .on(
+          'data',
+          (
             data
-            .toString()
-          )
-        }
-      },
-    )
-
-    childProcess
-    .on(
-      'close',
-      (
-        code,
-      ) => {
-        if (
-          code
-          === null
-        ) {
-          unlink(
-            outputFilePath
-          )
-          .then(() => {
+          ) => {
             console
             .info(
-              chalk
-              .red(
-                "Process canceled by user."
+              data
+              .toString()
+            )
+          },
+        )
+
+        childProcess
+        .stderr
+        .on(
+          'data',
+          (
+            data,
+          ) => {
+            if (
+              data
+              .toString()
+              .includes(
+                "size="
               )
+            ) {
+              if (hasStarted) {
+                cliProgressBar
+                .update(
+                  Number(
+                    data
+                    .toString()
+                    .replace(
+                      progressRegex,
+                      "$1",
+                    )
+                  )
+                )
+              }
+              else {
+                hasStarted = true
+
+                cliProgressBar
+                .start(
+                  fileSizeInKilobytes,
+                  Number(
+                    data
+                    .toString()
+                    .replace(
+                      progressRegex,
+                      "$1",
+                    )
+                  ),
+                  {},
+                )
+              }
+            }
+            else {
+              console
+              .info(
+                data
+                .toString()
+              )
+            }
+          },
+        )
+
+        childProcess
+        .on(
+          'close',
+          (
+            code,
+          ) => {
+            if (
+              code
+              === null
+            ) {
+              unlink(
+                outputFilePath
+              )
+              .then(() => {
+                console
+                .info(
+                  chalk
+                  .red(
+                    "Process canceled by user."
+                  )
+                )
+
+                setTimeout(
+                  () => {
+                    process
+                    .exit()
+                  },
+                  500,
+                )
+              })
+            }
+          },
+        )
+
+        childProcess
+        .on(
+          'exit',
+          (
+            code,
+          ) => {
+            if (
+              code
+              === 0
+            ) {
+              observer
+              .next(
+                outputFilePath
+              )
+            }
+
+            observer
+            .complete()
+
+            cliProgressBar
+            .stop()
+
+            process
+            .stdin
+            .setRawMode(
+              false
             )
 
-            setTimeout(
-              () => {
-                process
-                .exit()
-              },
-              500,
-            )
-          })
-        }
-      },
-    )
+            childProcess
+            .stderr
+            .unpipe()
 
-    childProcess
-    .on(
-      'exit',
-      (
-        code,
-      ) => {
-        if (
-          code
-          === 0
-        ) {
-          observer
-          .next(
-            outputFilePath
-          )
-        }
+            childProcess
+            .stderr
+            .destroy()
 
-        observer
-        .complete()
+            childProcess
+            .stdout
+            .unpipe()
 
-        cliProgressBar
-        .stop()
+            childProcess
+            .stdout
+            .destroy()
+
+            childProcess
+            .stdin
+            .end()
+
+            childProcess
+            .stdin
+            .destroy()
+          },
+        )
 
         process
         .stdin
         .setRawMode(
-          false
+          true
         )
 
-        childProcess
-        .stderr
-        .unpipe()
-
-        childProcess
-        .stderr
-        .destroy()
-
-        childProcess
-        .stdout
-        .unpipe()
-
-        childProcess
-        .stdout
-        .destroy()
-
-        childProcess
+        process
         .stdin
-        .end()
+        .resume()
 
-        childProcess
+        process
         .stdin
-        .destroy()
-      },
-    )
+        .setEncoding(
+          'utf8'
+        )
 
-    process
-    .stdin
-    .setRawMode(
-      true
-    )
-
-    process
-    .stdin
-    .resume()
-
-    process
-    .stdin
-    .setEncoding(
-      'utf8'
-    )
-
-    process
-    .stdin
-    .on(
-      'data',
-      (
-        key,
-      ) => {
-        // [CTRL][C]
-        if (
+        process
+        .stdin
+        .on(
+          'data',
           (
-            key
-            .toString()
-          )
-          === "\u0003"
-        ) {
-          childProcess
-          .kill()
-        }
-        else {
-          process
-          .stdout
-          .write(
-            key
-          )
-        }
-      }
-    )
-  })
-  .pipe(
+            key,
+          ) => {
+            // [CTRL][C]
+            if (
+              (
+                key
+                .toString()
+              )
+              === "\u0003"
+            ) {
+              childProcess
+              .kill()
+            }
+            else {
+              process
+              .stdout
+              .write(
+                key
+              )
+            }
+          }
+        )
+      })
+  )),
     catchNamedError(
       runFfmpeg
     ),

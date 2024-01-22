@@ -43,6 +43,9 @@ export type Container = {
 }
 
 export type TrackProperties = {
+  audio_bits_per_sample?: number
+  audio_channels?: number
+  audio_sampling_frequency?: number
   codec_id: string
   codec_private_data?: string
   codec_private_length: number
@@ -58,11 +61,8 @@ export type TrackProperties = {
   number: number
   packetizer?: string
   pixel_dimensions?: string
-  uid: number
-  audio_channels?: number
-  audio_sampling_frequency?: number
   track_name?: string
-  audio_bits_per_sample?: number
+  uid: number
 }
 
 export type MkvTookNixTrackType = (

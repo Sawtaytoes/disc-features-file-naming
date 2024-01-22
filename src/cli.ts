@@ -3,10 +3,12 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
+import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
 import { hasManyAudioTracks } from "./hasManyAudioTracks.js"
+import { isMissingSubtitles } from "./isMissingSubtitles.js"
 import {
   iso6392LanguageCodes,
   type Iso6392LanguageCode,
@@ -48,6 +50,55 @@ yargs(
 )
 .usage(
   "Usage: $0 <cmd> [args]"
+)
+.command(
+  "convertFlacToPcm <sourcePath>",
+  "Converts any FLAC audio tracks in media files to PCM tracks at the same bit depth. This is especially useful when you might have acquired a copy of media that came with FLAC audio and want PCM audio for compatibility with your home theater system.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/anime\"",
+      "Replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
+    )
+    .example(
+      "$0 \"~/anime\" -r",
+      "Recursively replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+  ),
+  (argv) => {
+    replaceFlacWithPcmAudio({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
 )
 .command(
   "hasBetterAudio <sourcePath>",
@@ -210,6 +261,55 @@ yargs(
   ),
   (argv) => {
     hasManyAudioTracks({
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "isMissingSubtitles <sourcePath>",
+  "Lists all folders and files where subtitles are missing. This is useful when you have a lot of media in a different language and may need to add subtitles.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/code geass\"",
+      "Looks through all media files in '~/code geass' and notes any that are missing subtitles."
+    )
+    .example(
+      "$0 \"~/anime\" -r",
+      "Recursively Looks through all media files in '~/anime' and notes any that are missing subtitles."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+  ),
+  (argv) => {
+    isMissingSubtitles({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
       sourcePath: (
         argv
         .sourcePath

@@ -3,12 +3,9 @@ import {
 } from "node:os"
 import {
   concatMap,
-  EMPTY,
   filter,
   map,
   mergeAll,
-  mergeMap,
-  of,
   reduce,
   tap,
 } from "rxjs"
@@ -70,22 +67,14 @@ export const hasBetterAudio = ({
         }) => (
           track
         )),
-        concatMap((
+        filter((
           track,
-        ) => (
+        ): track is AudioTrack => (
           (
-            (
-              track
-              ["@type"]
-            )
-            === "Audio"
+            track
+            ["@type"]
           )
-          ? (
-            of(
-              track
-            )
-          )
-          : EMPTY
+          === "Audio"
         )),
         map((
           track,
