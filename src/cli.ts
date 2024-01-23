@@ -22,6 +22,7 @@ import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
 import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
+import { changeTrackLanguages } from "./changeTrackLanguages.js"
 
 process
 .on(
@@ -50,6 +51,98 @@ yargs(
 )
 .usage(
   "Usage: $0 <cmd> [args]"
+)
+.command(
+  "changeTrackLanguages <sourcePath>",
+  "Change the language of all video, audio, or subtitles tracks. This is useful when your media files had the wrong language set. For example, if the English subtitles track was listed as Japanese because it translates the Japanese audio.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"G:\\Anime\\dot.hack--SIGN\" -subs-lang eng",
+      "This changes the subtitles language to English where it was incorrectly set to Japanese. This is best used after removing subtitle languages you don't want as it sets all subtitles tracks to English."
+    )
+    .example(
+      "$0 \"G:\\Anime\\Code Geass\" -audio-lang jpn",
+      "Changes the audio language to Japanese where it may have been missing (set as undefined). This can be powerful when used with the keepLanguages command."
+    )
+    .example(
+      "$0 \"G:\\Movies\\Osmosis Jones\" -video-lang eng",
+      "Pretty much every media file will have the video language set to English even if it's a foreign media file. In some cases this language is undefined, so you may want to change it back to English. It's also possible you want to set the video language based on the content for better searching and sorting."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory with containing media files with tracks you want to copy.",
+        type: "string",
+      },
+    )
+    .option(
+      "audioLanguage",
+      {
+        alias: "audio-lang",
+        choices: iso6392LanguageCodes,
+        describe: "A 3-letter ISO-6392 language code for audio tracks to keep. All others will be removed",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "subtitlesLanguage",
+      {
+        alias: "subs-lang",
+        choices: iso6392LanguageCodes,
+        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
+        type: "string",
+      },
+    )
+    .option(
+      "videoLanguage",
+      {
+        alias: "video-lang",
+        choices: iso6392LanguageCodes,
+        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    changeTrackLanguages({
+      audioLanguage: (
+        argv
+        .audioLanguage
+      ),
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      subtitlesLanguage: (
+        argv
+        .subtitlesLanguage
+      ),
+      videoLanguage: (
+        argv
+        .videoLanguage
+      ),
+    })
+    .subscribe()
+  }
 )
 .command(
   "hasBetterAudio <sourcePath>",
