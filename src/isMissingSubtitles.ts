@@ -77,7 +77,11 @@ export const isMissingSubtitles = ({
           === "Text"
         )),
         tap(() => {
-          // TODO
+          console
+          .info(
+            fileInfo
+            .filename
+          )
         }),
       )
     )),
