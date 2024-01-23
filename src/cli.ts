@@ -3,6 +3,7 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
+import { changeTrackLanguages } from "./changeTrackLanguages.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
@@ -19,10 +20,14 @@ import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
 import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
+import {
+  reorderTracks,
+  type TrackAlias,
+  type TrackReorder,
+} from "./reorderTracks.js"
 import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
-import { changeTrackLanguages } from "./changeTrackLanguages.js"
 
 process
 .on(
@@ -742,6 +747,125 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "reorderTracks <sourcePath>",
+  "Swap the order of tracks. This is especially helpful when watching media files in a different language, and the translated subtitles track is the second one.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"G:\\Anime\\dot.hack--SIGN\" -o s:2:1",
+      "This reorders subtitles track 2 to position 1."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory with containing media files with tracks you want to copy.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "trackReorders",
+      {
+        alias: "o",
+        array: true,
+        default: [] as string[],
+        demandOption: true,
+        describe: "A special reorder string of track type alias (v, a, s) and the two track indexes being swapped.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    const trackAliasToTrackName: (
+      Record<
+        TrackAlias,
+        TrackReorder["trackType"]
+      >
+    ) = {
+      a: "audio",
+      s: "subtitles",
+      v: "video",
+    } as const
+
+    reorderTracks({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      trackReorders: (
+        argv
+        .trackReorders
+        .map((
+          trackReorder,
+        ) => ({
+          originalTrackIndex: (
+            Number(
+              trackReorder
+              .replace(
+                /[asv]:(\d):\d/,
+                "$1",
+              )
+            )
+          ),
+          swappedTrackIndex: (
+            Number(
+              trackReorder
+              .replace(
+                /[asv]:\d:(\d)/,
+                "$1",
+              )
+            )
+          ),
+          trackAlias: (
+            trackReorder
+            .replace(
+              /([asv]):\d:\d/,
+              "$1",
+            )
+          ) as (
+            TrackAlias
+          )
+        }))
+        .filter(({
+          trackAlias,
+        }) => (
+          Boolean(
+            trackAlias
+          )
+        ))
+        .map(({
+          trackAlias,
+          ...otherProps
+        }) => ({
+          ...otherProps,
+          trackType: (
+            trackAliasToTrackName
+            [trackAlias]
+          )
+        }))
       ),
     })
     .subscribe()
