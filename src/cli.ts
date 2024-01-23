@@ -3,7 +3,6 @@ import "dotenv/config"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
-import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
@@ -20,6 +19,7 @@ import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
 import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
+import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
 
@@ -50,55 +50,6 @@ yargs(
 )
 .usage(
   "Usage: $0 <cmd> [args]"
-)
-.command(
-  "convertFlacToPcm <sourcePath>",
-  "Converts any FLAC audio tracks in media files to PCM tracks at the same bit depth. This is especially useful when you might have acquired a copy of media that came with FLAC audio and want PCM audio for compatibility with your home theater system.",
-  (
-    yargs,
-  ) => (
-    yargs
-    .example(
-      "$0 \"~/anime\"",
-      "Replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
-    )
-    .example(
-      "$0 \"~/anime\" -r",
-      "Recursively replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
-    )
-    .positional(
-      "sourcePath",
-      {
-        demandOption: true,
-        describe: "Directory containing media files or containing other directories of media files.",
-        type: "string",
-      },
-    )
-    .option(
-      "isRecursive",
-      {
-        alias: "r",
-        boolean: true,
-        default: false,
-        describe: "Recursively looks in folders for media files.",
-        nargs: 0,
-        type: "boolean",
-      },
-    )
-  ),
-  (argv) => {
-    replaceFlacWithPcmAudio({
-      isRecursive: (
-        argv
-        .isRecursive
-      ),
-      sourcePath: (
-        argv
-        .sourcePath
-      ),
-    })
-    .subscribe()
-  }
 )
 .command(
   "hasBetterAudio <sourcePath>",
@@ -695,6 +646,55 @@ yargs(
   ),
   (argv) => {
     renameDemos({
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "replaceFlacWithPcmAudio <sourcePath>",
+  "Converts any FLAC audio tracks in media files to PCM tracks at the same bit depth. This is especially useful when you might have acquired a copy of media that came with FLAC audio and want PCM audio for compatibility with your home theater system.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 \"~/anime\"",
+      "Replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
+    )
+    .example(
+      "$0 \"~/anime\" -r",
+      "Recursively replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+  ),
+  (argv) => {
+    replaceFlacWithPcmAudio({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
       sourcePath: (
         argv
         .sourcePath
