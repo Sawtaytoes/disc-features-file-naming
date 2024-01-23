@@ -281,11 +281,11 @@ yargs(
       "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language and only subtitles tracks matching the first subtitles track's language."
     )
     .example(
-      "$0 \"~/movies\" -r --firstAudio -l eng --firstSubtitles",
+      "$0 \"~/movies\" -r --firstAudio --audio-lang eng --firstSubtitles",
       "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language as well as the specified audio language and only subtitles tracks matching the first subtitles track's language. This is useful when movies are in another language, but have english commentary."
     )
     .example(
-      "$0 \"~/anime\" -r -a jpn -l eng -s eng",
+      "$0 \"~/anime\" -r --audio-lang jpn --audio-lang eng --subs-lang eng",
       "Recursively looks through media files and only keeps Japanese and English audio and English subtitles tracks."
     )
     .positional(
@@ -310,7 +310,7 @@ yargs(
     .option(
       "audioLanguages",
       {
-        alias: "l",
+        alias: "audio-lang",
         array: true,
         choices: iso6392LanguageCodes,
         default: ["eng"] satisfies Iso6392LanguageCode[],
@@ -332,7 +332,7 @@ yargs(
     .option(
       "subtitlesLanguages",
       {
-        alias: "s",
+        alias: "subs-lang",
         array: true,
         choices: iso6392LanguageCodes,
         default: ["eng"] satisfies Iso6392LanguageCode[],
