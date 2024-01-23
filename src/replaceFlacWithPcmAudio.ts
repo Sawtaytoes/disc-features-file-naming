@@ -5,6 +5,7 @@ import {
   filter,
   map,
   mergeAll,
+  of,
   tap,
   toArray,
 } from "rxjs"
@@ -78,19 +79,12 @@ export const replaceFlacWithPcmAudio = ({
             )
             === "Audio"
           )
-          && (
-            (
-              track
-              .Format
-            )
-            === "FLAC"
-          )
         )),
         concatMap((
           track,
           index,
         ) => (
-          convertFlacToPcmAudio({
+          of({
             audioTrackIndex: (
               index
             ),
@@ -98,12 +92,31 @@ export const replaceFlacWithPcmAudio = ({
               track
               .BitDepth!
             ),
+          })
+          .pipe(
+            filter(() => (
+              (
+                track
+                .Format
+              )
+              === "FLAC"
+            )),
+          )
+        )),
+        toArray(),
+        concatMap((
+          audioTrackInfos,
+        ) => (
+          convertFlacToPcmAudio({
+            audioTrackInfos,
             filePath: (
               fileInfo
               .fullPath
             ),
           })
         )),
+      )
+      .pipe(
         tap(() => {
           console
           .info(

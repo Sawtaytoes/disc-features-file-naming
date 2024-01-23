@@ -12,18 +12,20 @@ import {
 } from "rxjs";
 
 import { addFolderNameBeforeFilename } from "./addFolderNameBeforeFilename.js";
-import { replaceFileExtension } from "./replaceFileExtension.js";
 import { runFfmpeg } from "./runFfmpeg.js";
 
 export const convertedPath = "AUDIO-CONVERTED"
 
-export const convertFlacToPcmAudio = ({
-  audioTrackIndex,
-  bitDepth,
-  filePath,
-}: {
+export type AudioTrackInfo = {
   audioTrackIndex: number
   bitDepth: string
+}
+
+export const convertFlacToPcmAudio = ({
+  audioTrackInfos,
+  filePath,
+}: {
+  audioTrackInfos: AudioTrackInfo[],
   filePath: string
 }) => (
   of(
@@ -63,8 +65,16 @@ export const convertFlacToPcmAudio = ({
           "-map",
           "0",
 
-          `-c:a:${audioTrackIndex}`,
-          `pcm_s${bitDepth}le`,
+          ...(
+            audioTrackInfos
+            .flatMap(({
+              audioTrackIndex,
+              bitDepth,
+            }) => ([
+              `-c:a:${audioTrackIndex}`,
+              `pcm_s${bitDepth}le`,
+            ]))
+          ),
 
           `-y`,
         ],
