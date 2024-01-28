@@ -84,6 +84,10 @@ export const reorderTracks = ({
                 .number
               )
             )),
+            // ffmpeg -i input.mp4 -map 0 -c copy -map 0:a:1 -map 0:a:0 output.mp4
+
+            // mkvmerge -o output.mkv --audio-tracks 2,1 input.mkv
+
             // concatMap((
             //   track,
             // ) => (
