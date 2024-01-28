@@ -13,7 +13,7 @@ import { getIsVideoFile } from "./getIsVideoFile.js";
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { runMkvMerge } from "./runMkvMerge.js";
 
-export const betterAudioFolderName = "BETTER-AUDIO"
+export const replacedTracksFolderName = "REPLACED-TRACKS"
 
 export const replaceTracksMkvToolNix = ({
   audioLanguages,
@@ -29,8 +29,24 @@ export const replaceTracksMkvToolNix = ({
   offsetInMilliseconds?: number
   sourceFilePath: string
   subtitlesLanguages: Iso6392LanguageCode[]
-}) => (
-  (
+}) => {
+  const hasAudioLanguages = (
+    (
+      audioLanguages
+      .length
+    )
+    > 0
+  )
+
+  const hasSubtitlesLanguages = (
+    (
+      subtitlesLanguages
+      .length
+    )
+    > 0
+  )
+
+  return (
     (
       getIsVideoFile(
         sourceFilePath,
@@ -56,13 +72,22 @@ export const replaceTracksMkvToolNix = ({
         concatMap(() => (
           runMkvMerge({
             args: [
-              "--no-audio",
+              ...(
+                hasAudioLanguages
+                ? ["--no-audio"]
+                : []
+              ),
+
+              ...(
+                hasSubtitlesLanguages
+                ? ["--no-subtitles"]
+                : []
+              ),
 
               destinationFilePath,
 
               "--no-buttons",
               "--no-global-tags",
-              "--no-subtitles",
               "--no-video",
 
               ...(
@@ -82,9 +107,12 @@ export const replaceTracksMkvToolNix = ({
 
               ...(
                 (
-                  getIsVideoFile(
-                    sourceFilePath
+                  (
+                    getIsVideoFile(
+                      sourceFilePath
+                    )
                   )
+                  && hasAudioLanguages
                 )
                 ? [
                   "--audio-tracks",
@@ -93,7 +121,26 @@ export const replaceTracksMkvToolNix = ({
                     .join(",")
                   ),
                 ]
-                : []
+                : ["--no-audio"]
+              ),
+
+              ...(
+                (
+                  (
+                    getIsVideoFile(
+                      sourceFilePath
+                    )
+                  )
+                  && hasSubtitlesLanguages
+                )
+                ? [
+                  "--subtitle-tracks",
+                  (
+                    subtitlesLanguages
+                    .join(",")
+                  ),
+                ]
+                : ["--no-subtitles"]
               ),
 
               sourceFilePath,
@@ -113,7 +160,7 @@ export const replaceTracksMkvToolNix = ({
                         destinationFilePath
                       )
                     ),
-                    betterAudioFolderName,
+                    replacedTracksFolderName,
                   )
                 ),
               )
@@ -128,4 +175,4 @@ export const replaceTracksMkvToolNix = ({
       )
     )
   )
-)
+}

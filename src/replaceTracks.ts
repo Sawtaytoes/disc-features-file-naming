@@ -229,7 +229,7 @@ export const replaceTracks = ({
                 (
                   chalk
                   .green(
-                    "[CREATED BETTER AUDIO FILE]"
+                    "[CREATED BETTER FILE]"
                   )
                 ),
                 (
