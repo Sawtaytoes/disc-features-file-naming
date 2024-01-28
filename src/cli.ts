@@ -20,11 +20,7 @@ import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
 import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
-import {
-  reorderTracks,
-  type TrackAlias,
-  type TrackReorder,
-} from "./reorderTracks.js"
+import { reorderTracks } from "./reorderTracks.js"
 import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
@@ -783,30 +779,49 @@ yargs(
       },
     )
     .option(
-      "trackReorders",
+      "audioTrackIndexes",
       {
-        alias: "o",
+        alias: "a",
         array: true,
-        default: [] as string[],
-        demandOption: true,
-        describe: "A special reorder string of track type alias (v, a, s) and the two track indexes being swapped.",
+        describe: "The order of all audio tracks that will appear in the resulting file by their index. Indexes start at `0`. If you leave out any track indexes, they will not appear in the resulting file.",
+        default: [] as number[],
+        type: "string",
+      },
+    )
+    .option(
+      "subtitlesTrackIndexes",
+      {
+        alias: "s",
+        array: true,
+        describe: "The order of all subtitles tracks that will appear in the resulting file by their index. Indexes start at `0`. If you leave out any track indexes, they will not appear in the resulting file.",
+        default: [] as number[],
+        type: "string",
+      },
+    )
+    .option(
+      "videoTrackIndexes",
+      {
+        alias: "v",
+        array: true,
+        describe: "The order of all video tracks that will appear in the resulting file by their index. Indexes start at `0`. If you leave out any track indexes, they will not appear in the resulting file.",
+        default: [] as number[],
         type: "string",
       },
     )
   ),
   (argv) => {
-    const trackAliasToTrackName: (
-      Record<
-        TrackAlias,
-        TrackReorder["trackType"]
-      >
-    ) = {
-      a: "audio",
-      s: "subtitles",
-      v: "video",
-    } as const
-
     reorderTracks({
+      audioTrackIndexes: (
+        argv
+        .audioTrackIndexes
+        .map((
+          value,
+        ) => (
+          Number(
+            value
+          )
+        ))
+      ),
       isRecursive: (
         argv
         .isRecursive
@@ -815,57 +830,27 @@ yargs(
         argv
         .sourcePath
       ),
-      trackReorders: (
+      subtitlesTrackIndexes: (
         argv
-        .trackReorders
+        .subtitlesTrackIndexes
         .map((
-          trackReorder,
-        ) => ({
-          originalTrackIndex: (
-            Number(
-              trackReorder
-              .replace(
-                /[asv]:(\d):\d/,
-                "$1",
-              )
-            )
-          ),
-          swappedTrackIndex: (
-            Number(
-              trackReorder
-              .replace(
-                /[asv]:\d:(\d)/,
-                "$1",
-              )
-            )
-          ),
-          trackAlias: (
-            trackReorder
-            .replace(
-              /([asv]):\d:\d/,
-              "$1",
-            )
-          ) as (
-            TrackAlias
-          )
-        }))
-        .filter(({
-          trackAlias,
-        }) => (
-          Boolean(
-            trackAlias
+          value,
+        ) => (
+          Number(
+            value
           )
         ))
-        .map(({
-          trackAlias,
-          ...otherProps
-        }) => ({
-          ...otherProps,
-          trackType: (
-            trackAliasToTrackName
-            [trackAlias]
+      ),
+      videoTrackIndexes: (
+        argv
+        .videoTrackIndexes
+        .map((
+          value,
+        ) => (
+          Number(
+            value
           )
-        }))
+        ))
       ),
     })
     .subscribe()
