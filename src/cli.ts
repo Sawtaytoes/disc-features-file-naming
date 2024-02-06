@@ -61,15 +61,15 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"G:\\Anime\\dot.hack--SIGN\" -subs-lang eng",
+      "$0 \"G:\\Anime\\dot.hack--SIGN\" --subs-lang eng",
       "This changes the subtitles language to English where it was incorrectly set to Japanese. This is best used after removing subtitle languages you don't want as it sets all subtitles tracks to English."
     )
     .example(
-      "$0 \"G:\\Anime\\Code Geass\" -audio-lang jpn",
+      "$0 \"G:\\Anime\\Code Geass\" --audio-lang jpn",
       "Changes the audio language to Japanese where it may have been missing (set as undefined). This can be powerful when used with the keepLanguages command."
     )
     .example(
-      "$0 \"G:\\Movies\\Osmosis Jones\" -video-lang eng",
+      "$0 \"G:\\Movies\\Osmosis Jones\" --video-lang eng",
       "Pretty much every media file will have the video language set to English even if it's a foreign media file. In some cases this language is undefined, so you may want to change it back to English. It's also possible you want to set the video language based on the content for better searching and sorting."
     )
     .positional(
@@ -513,12 +513,26 @@ yargs(
         type: "boolean",
       },
     )
+    .option(
+      "includeChapters",
+      {
+        alias: "c",
+        default: false,
+        describe: "Adds chapters along with audio tracks.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
   ),
   (argv) => {
     mergeTracks({
       hasAutomaticOffset: (
         argv
         .automaticOffset
+      ),
+      hasChapters: (
+        argv
+        .includeChapters
       ),
       mediaFilesPath: (
         argv
