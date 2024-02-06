@@ -1,4 +1,4 @@
-import {
+import path, {
   dirname,
   join,
 } from "node:path"
@@ -28,6 +28,7 @@ export const mergeSubtitlesMkvToolNix = ({
   attachmentFilePaths,
   audioLanguage,
   destinationFilePath,
+  chaptersFilePath,
   offsetInMilliseconds,
   subtitlesFilePath,
   subtitlesLanguage,
@@ -35,6 +36,7 @@ export const mergeSubtitlesMkvToolNix = ({
   attachmentFilePaths: string[],
   audioLanguage: Iso6392LanguageCode,
   destinationFilePath: string,
+  chaptersFilePath: string,
   offsetInMilliseconds?: number,
   subtitlesFilePath: string,
   subtitlesLanguage: Iso6392LanguageCode,
@@ -44,15 +46,16 @@ export const mergeSubtitlesMkvToolNix = ({
       "--audio-tracks",
       audioLanguage,
 
-      "--subtitle-tracks",
-      subtitlesLanguage,
+      // "--subtitle-tracks",
+      // subtitlesLanguage,
+      "--no-subtitles",
 
       destinationFilePath,
 
       "--no-video",
       "--no-audio",
-      "--no-buttons",
       "--no-chapters",
+      "--no-buttons",
       "--no-global-tags",
 
       ...(
@@ -65,6 +68,15 @@ export const mergeSubtitlesMkvToolNix = ({
       ),
 
       subtitlesFilePath,
+
+      ...(
+        chaptersFilePath
+        ? [
+          "--chapters",
+          chaptersFilePath,
+        ]
+        : []
+      ),
 
       ...(
         (

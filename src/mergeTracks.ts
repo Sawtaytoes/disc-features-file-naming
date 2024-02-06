@@ -5,6 +5,7 @@ import {
   readFile,
 } from "node:fs/promises"
 import {
+  dirname,
   extname,
   join,
 } from "node:path"
@@ -45,10 +46,12 @@ const xmlParser = (
 
 export const mergeTracks = ({
   hasAutomaticOffset = false,
+  hasChapters = false,
   mediaFilesPath,
   subtitlesPath,
 }: {
   hasAutomaticOffset?: boolean,
+  hasChapters?: boolean,
   mediaFilesPath: string
   subtitlesPath: string
 }) => (
@@ -348,6 +351,16 @@ export const mergeTracks = ({
                     destinationFilePath: (
                       mediaFileInfo
                       .fullPath
+                    ),
+                    chaptersFilePath: (
+                      join(
+                        (
+                          dirname(
+                            subtitlesFilePath
+                          )
+                        ),
+                        "chapters.xml",
+                      )
                     ),
                     offsetInMilliseconds,
                     subtitlesFilePath,
