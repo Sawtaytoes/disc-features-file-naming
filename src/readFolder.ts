@@ -9,11 +9,11 @@ import path, { join } from "node:path"
 import {
   bindNodeCallback,
   catchError,
+  concatAll,
+  concatMap,
   filter,
   from,
   map,
-  mergeAll,
-  mergeMap,
   of,
   toArray,
   type Observable,
@@ -52,7 +52,7 @@ export const readFolder = ({
     )
   )
   .pipe(
-    mergeAll(),
+    concatAll(),
     // filter((
     //   folderName,
     // ) => (
@@ -103,7 +103,7 @@ export const readFolder = ({
             newFolderName
             !== oldFolderName
           )),
-          mergeMap(({
+          concatMap(({
             newFolderName,
             oldFolderName,
           }) => (
@@ -147,7 +147,7 @@ export const readFolder = ({
     ) as (
       FolderInfo
     ))),
-    mergeMap((
+    concatMap((
       folder,
     ) => (
       from(

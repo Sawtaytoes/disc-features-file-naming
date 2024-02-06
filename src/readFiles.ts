@@ -9,16 +9,16 @@ import {
 import path, { join } from "node:path"
 import {
   bindNodeCallback,
+  catchError,
+  concatAll,
+  concatMap,
   filter,
   from,
   map,
-  mergeAll,
-  mergeMap,
+  of,
+  tap,
   toArray,
   type Observable,
-  of,
-  catchError,
-  tap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
@@ -54,7 +54,7 @@ export const readFiles = ({
     )
   )
   .pipe(
-    mergeAll(),
+    concatAll(),
     // filter((
     //   filename,
     // ) => (
@@ -139,7 +139,7 @@ export const readFiles = ({
             )
           }),
           // ignoreElements(), // UNCOMMENT TO PREVENT WRITING FILES
-          mergeMap(({
+          concatMap(({
             newFilename,
             oldFilename,
           }) => (
@@ -183,7 +183,7 @@ export const readFiles = ({
     ) as (
       FileInfo
     ))),
-    mergeMap((
+    concatMap((
       file,
     ) => (
       from(
