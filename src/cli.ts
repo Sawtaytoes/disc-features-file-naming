@@ -21,6 +21,7 @@ import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
 import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
 import { reorderTracks } from "./reorderTracks.js"
+import { replaceAttachments } from "./replaceAttachments.js"
 import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
@@ -920,6 +921,48 @@ yargs(
   }
 )
 .command(
+  "replaceAttachments <sourceFilesPath> <destinationFilesPath>",
+  "Copy tracks from one media file and replace them in another making sure to only keep the chosen languages.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 replaceAttachments \"G:\\Anime\\Code Geass HAS ATTACHMENTS\" \"G:\\Anime\\Code Geass MISSING ATTACHMENTS\"",
+      "For all media files that have matching names (minus the extension), it replaces the attachments (fonts, etc) which typically affect subtitles."
+    )
+    .positional(
+      "sourceFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with containing media files with attachments you want to copy.",
+        type: "string",
+      },
+    )
+    .positional(
+      "destinationFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files with attachments you want replaced.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    replaceAttachments({
+      destinationFilesPath: (
+        argv
+        .destinationFilesPath
+      ),
+      sourceFilesPath: (
+        argv
+        .sourceFilesPath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
   "replaceTracks <sourceFilesPath> <destinationFilesPath> [offsets...]",
   "Copy tracks from one media file and replace them in another making sure to only keep the chosen languages.",
   (
@@ -927,15 +970,15 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 replaceTracks \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" --audio-lang jpn",
       "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file."
     )
     .example(
-      "$0 replaceTracks \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn 0.3 0.8 0.8 0.8 0.75",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" --audio-lang jpn 0.3 0.8 0.8 0.8 0.75",
       "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file and time-aligns them by the following values in file alphabetical order: 0.3, 0.8, 0.8, 0.8, 0.75."
     )
     .example(
-      "$0 replaceTracks \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\" -subs-lang eng",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\" --subs-lang eng",
       "For all media files that have matching names (minus the extension), it replaces the unsubbed media file's subtitles with English subtitles from the subbed media file."
     )
     .example(
@@ -954,7 +997,7 @@ yargs(
       "destinationFilesPath",
       {
         demandOption: true,
-        describe: "Directory containing media files with tracks you want to replace.",
+        describe: "Directory containing media files with tracks you want replaced.",
         type: "string",
       },
     )
