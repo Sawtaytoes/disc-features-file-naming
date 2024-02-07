@@ -36,7 +36,7 @@ export const mergeSubtitlesMkvMerge = ({
   attachmentFilePaths: string[],
   audioLanguage: Iso6392LanguageCode,
   destinationFilePath: string,
-  chaptersFilePath: string,
+  chaptersFilePath?: string,
   offsetInMilliseconds?: number,
   subtitlesFilePath: string,
   subtitlesLanguage: Iso6392LanguageCode,

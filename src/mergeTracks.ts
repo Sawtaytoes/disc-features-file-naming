@@ -353,14 +353,18 @@ export const mergeTracks = ({
                       .fullPath
                     ),
                     chaptersFilePath: (
-                      join(
-                        (
-                          dirname(
-                            subtitlesFilePath
-                          )
-                        ),
-                        "chapters.xml",
+                      hasChapters
+                      ? (
+                        join(
+                          (
+                            dirname(
+                              subtitlesFilePath
+                            )
+                          ),
+                          "chapters.xml",
+                        )
                       )
+                      : undefined
                     ),
                     offsetInMilliseconds,
                     subtitlesFilePath,
