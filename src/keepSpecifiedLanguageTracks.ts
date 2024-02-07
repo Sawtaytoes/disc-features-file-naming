@@ -21,47 +21,77 @@ export const keepSpecifiedLanguageTracks = ({
   Observable<
     string
   >
-) => (
-  runMkvMerge({
-    args: [
-      "--audio-tracks",
-      (
-        audioLanguages
-        .join(",")
-      ),
-
-      "--subtitle-tracks",
-      (
-        subtitlesLanguages
-        .join(",")
-      ),
-
-      filePath,
-    ],
-    outputFilePath: (
-      filePath
-      .replace(
-        (
-          dirname(
-            filePath
-          )
-        ),
-        (
-          join(
-            (
-              dirname(
-                filePath
-              )
-            ),
-            languageTrimmedFolderName,
-          )
-        ),
-      )
+) => {
+  const hasAudioLanguages = (
+    (
+      audioLanguages
+      .length
     )
-  })
-  .pipe(
-    catchNamedError(
-      keepSpecifiedLanguageTracks
-    ),
+    > 0
   )
-)
+
+  const hasSubtitlesLanguages = (
+    (
+      subtitlesLanguages
+      .length
+    )
+    > 0
+  )
+
+  return (
+    runMkvMerge({
+      args: [
+        ...(
+          hasAudioLanguages
+          ? [
+            "--audio-tracks",
+            (
+              audioLanguages
+              .join(",")
+            ),
+          ]
+          : []
+        ),
+
+        ...(
+          hasSubtitlesLanguages
+          ? [
+            "--subtitle-tracks",
+            (
+              subtitlesLanguages
+              .join(",")
+            ),
+          ]
+          : []
+        ),
+
+        filePath,
+      ],
+      outputFilePath: (
+        filePath
+        .replace(
+          (
+            dirname(
+              filePath
+            )
+          ),
+          (
+            join(
+              (
+                dirname(
+                  filePath
+                )
+              ),
+              languageTrimmedFolderName,
+            )
+          ),
+        )
+      )
+    })
+    .pipe(
+      catchNamedError(
+        keepSpecifiedLanguageTracks
+      ),
+    )
+  )
+}
