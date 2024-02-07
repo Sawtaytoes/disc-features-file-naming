@@ -61,15 +61,15 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"G:\\Anime\\dot.hack--SIGN\" --subs-lang eng",
+      "$0 changeTrackLanguages \"G:\\Anime\\dot.hack--SIGN\" --subs-lang eng",
       "This changes the subtitles language to English where it was incorrectly set to Japanese. This is best used after removing subtitle languages you don't want as it sets all subtitles tracks to English."
     )
     .example(
-      "$0 \"G:\\Anime\\Code Geass\" --audio-lang jpn",
+      "$0 changeTrackLanguages \"G:\\Anime\\Code Geass\" --audio-lang jpn",
       "Changes the audio language to Japanese where it may have been missing (set as undefined). This can be powerful when used with the keepLanguages command."
     )
     .example(
-      "$0 \"G:\\Movies\\Osmosis Jones\" --video-lang eng",
+      "$0 changeTrackLanguages \"G:\\Movies\\Osmosis Jones\" --video-lang eng",
       "Pretty much every media file will have the video language set to English even if it's a foreign media file. In some cases this language is undefined, so you may want to change it back to English. It's also possible you want to set the video language based on the content for better searching and sorting."
     )
     .positional(
@@ -153,7 +153,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/movies\" -r",
+      "$0 hasBetterAudio \"~/movies\" -r",
       "Recursively looks through all folders in '~/movies' where higher channel count audio tracks aren't the default."
     )
     .positional(
@@ -198,7 +198,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/movies\" -r",
+      "$0 hasBetterVersion \"~/movies\" -r",
       "Recursively looks through all folders in '~/movies' where a better version is available noted on a criterionforum.org thread."
     )
     .positional(
@@ -243,11 +243,11 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/demos\"",
+      "$0 hasImaxEnhancedAudio \"~/demos\"",
       "Lists any media files in '~/demos' with at least one IMAX Enhanced audio track."
     )
     .example(
-      "$0 \"~/movies\" -r",
+      "$0 hasImaxEnhancedAudio \"~/movies\" -r",
       "Recursively goes through '~/movies', and lists any media files with at least one IMAX Enhanced audio track."
     )
     .positional(
@@ -292,7 +292,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/demos\"",
+      "$0 hasManyAudioTracks \"~/demos\"",
       "Lists any media files in '~/demos' with more than 1 audio track."
     )
     .positional(
@@ -322,11 +322,11 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/code geass\"",
+      "$0 isMissingSubtitles \"~/code geass\"",
       "Looks through all media files in '~/code geass' and notes any that are missing subtitles."
     )
     .example(
-      "$0 \"~/anime\" -r",
+      "$0 isMissingSubtitles \"~/anime\" -r",
       "Recursively Looks through all media files in '~/anime' and notes any that are missing subtitles."
     )
     .positional(
@@ -371,15 +371,15 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/movies\" -r --firstAudio --firstSubtitles",
+      "$0 keepLanguages \"~/movies\" -r --firstAudio --firstSubtitles",
       "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language and only subtitles tracks matching the first subtitles track's language."
     )
     .example(
-      "$0 \"~/movies\" -r --firstAudio --audio-lang eng --firstSubtitles",
+      "$0 keepLanguages \"~/movies\" -r --firstAudio --audio-lang eng --firstSubtitles",
       "Recursively looks through media files and only keeps the audio tracks matching the first audio track's language as well as the specified audio language and only subtitles tracks matching the first subtitles track's language. This is useful when movies are in another language, but have english commentary."
     )
     .example(
-      "$0 \"~/anime\" -r --audio-lang jpn --audio-lang eng --subs-lang eng",
+      "$0 keepLanguages \"~/anime\" -r --audio-lang jpn --audio-lang eng --subs-lang eng",
       "Recursively looks through media files and only keeps Japanese and English audio and English subtitles tracks."
     )
     .positional(
@@ -484,7 +484,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"G:\\Anime\\Code Geass Subs\" \"G:\\Anime\\Code Geass\"",
+      "$0 mergeTracks \"G:\\Anime\\Code Geass Subs\" \"G:\\Anime\\Code Geass\"",
       "Adds subtitles to all media files with a corresponding folder in the subs folder that shares the exact same name (minus the extension)."
     )
     .positional(
@@ -554,7 +554,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/anime\" \"psycho-pass\"",
+      "$0 nameAnimeEpisodes \"~/anime\" \"psycho-pass\"",
       "Names all video files in '~/anime' based on the episode names on MyAnimeList."
     )
     .option(
@@ -611,7 +611,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
+      "$0 nameSpecialFeatures \"~/disc-rips/movieName\" \"https://dvdcompare.net/comparisons/film.php?fid=55539#1\"",
       "Names all special features in the movie folder using the DVDCompare.net release at `#1`."
     )
     .positional(
@@ -653,7 +653,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/shows\" \"beast wars\"",
+      "$0 nameTvShowEpisodes \"~/shows\" \"beast wars\"",
       "Names all video files in '~/shows' based on the episode names on TVDB."
     )
     .option(
@@ -710,7 +710,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/movie-demos\"",
+      "$0 renameMovieDemoDownloads \"~/movie-demos\"",
       "Renames all video files in '~/movie-demos' based the demo format for renaming with other commands."
     )
     .positional(
@@ -740,7 +740,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/demos\"",
+      "$0 renameDemos \"~/demos\"",
       "Renames all video files in '~/demos' with the correct media information. This will also replace incorrect information."
     )
     .positional(
@@ -770,7 +770,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"G:\\Anime\\dot.hack--SIGN\" -o s:2:1",
+      "$0 reorderTracks \"G:\\Anime\\dot.hack--SIGN\" -s 1 0",
       "This reorders subtitles track 2 to position 1."
     )
     .positional(
@@ -878,11 +878,11 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/anime\"",
+      "$0 replaceFlacWithPcmAudio \"~/anime\"",
       "Replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
     )
     .example(
-      "$0 \"~/anime\" -r",
+      "$0 replaceFlacWithPcmAudio \"~/anime\" -r",
       "Recursively replaces FLAC audio tracks in media files with a PCM conversion in '~/anime'."
     )
     .positional(
@@ -927,19 +927,19 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn",
       "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file."
     )
     .example(
-      "$0 \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn 0.3 0.8 0.8 0.8 0.75",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\" -audio-lang jpn 0.3 0.8 0.8 0.8 0.75",
       "For all media files that have matching names (minus the extension), it replaces the bad audio media file's audio tracks with Japanese audio tracks from the good audio media file and time-aligns them by the following values in file alphabetical order: 0.3, 0.8, 0.8, 0.8, 0.75."
     )
     .example(
-      "$0 \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\" -subs-lang eng",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass Subbed\" \"G:\\Anime\\Code Geass Unsubbed\" -subs-lang eng",
       "For all media files that have matching names (minus the extension), it replaces the unsubbed media file's subtitles with English subtitles from the subbed media file."
     )
     .example(
-      "$0 \"G:\\Anime\\Code Geass with Chapters\" \"G:\\Anime\\Code Geass missing Chapters\" -c",
+      "$0 replaceTracks \"G:\\Anime\\Code Geass with Chapters\" \"G:\\Anime\\Code Geass missing Chapters\" -c",
       "For all media files that have matching names (minus the extension), it adds chapters to the media files missing them."
     )
     .positional(
@@ -1075,7 +1075,7 @@ yargs(
   ) => (
     yargs
     .example(
-      "$0 \"~/disc-rips/gintama\" 7,18,26,33 6,17,25 6",
+      "$0 splitChapters \"~/disc-rips/gintama\" 7,18,26,33 6,17,25 6",
       "Breaks apart video files in '~/disc-rips/gintama' using the comma-separated chapter splits in filename order. Splits occur at the beginning of the given chapters."
     )
     .positional(
