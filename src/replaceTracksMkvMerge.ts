@@ -15,7 +15,7 @@ import { runMkvMerge } from "./runMkvMerge.js";
 
 export const replacedTracksFolderName = "REPLACED-TRACKS"
 
-export const replaceTracksMkvToolNix = ({
+export const replaceTracksMkvMerge = ({
   audioLanguages,
   destinationFilePath,
   hasChapters,

@@ -14,7 +14,7 @@ import { catchNamedError } from "./catchNamedError.js"
 import { getIsVideoFile } from "./getIsVideoFile.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
-import { splitChaptersMkvToolNix } from "./splitChaptersMkvToolNix.js"
+import { splitChaptersMkvMerge } from "./splitChaptersMkvMerge.js"
 
 export const splitChapters = ({
   chapterSplitsList,
@@ -60,7 +60,7 @@ export const splitChapters = ({
           fileInfo,
           index,
         ) => (
-          splitChaptersMkvToolNix({
+          splitChaptersMkvMerge({
             chapterSplits: (
               chapterSplitsList
               [index]

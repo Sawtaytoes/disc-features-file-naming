@@ -19,7 +19,7 @@ import { getMediaInfo } from "./getMediaInfo.js"
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { parseMediaFileChapterTimestamp } from "./parseTimestamps.js"
 import { readFiles } from "./readFiles.js"
-import { replaceTracksMkvToolNix } from "./replaceTracksMkvToolNix.js"
+import { replaceTracksMkvMerge } from "./replaceTracksMkvMerge.js"
 
 export const replaceTracks = ({
   audioLanguages,
@@ -206,7 +206,7 @@ export const replaceTracks = ({
             concatMap((
               offsetInMilliseconds,
             ) => (
-              replaceTracksMkvToolNix({
+              replaceTracksMkvMerge({
                 audioLanguages,
                 destinationFilePath,
                 hasChapters,

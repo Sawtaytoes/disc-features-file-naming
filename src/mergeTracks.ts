@@ -31,8 +31,8 @@ import { ChaptersXml } from "./ChaptersXml.js"
 import { getMediaInfo } from "./getMediaInfo.js"
 import {
   fileExtensionsWithSubtitles,
-  mergeSubtitlesMkvToolNix,
-} from "./mergeSubtitlesMkvToolNix.js"
+  mergeSubtitlesMkvMerge,
+} from "./mergeSubtitlesMkvMerge.js"
 import {
   parseMediaFileChapterTimestamp,
   parseSubtitlesChapterTimestamp,
@@ -345,7 +345,7 @@ export const mergeTracks = ({
                   attachmentFilePaths,
                   offsetInMilliseconds,
                 ]) => (
-                  mergeSubtitlesMkvToolNix({
+                  mergeSubtitlesMkvMerge({
                     attachmentFilePaths,
                     audioLanguage: "jpn",
                     destinationFilePath: (

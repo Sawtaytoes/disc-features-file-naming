@@ -24,7 +24,7 @@ export const fileExtensionsWithSubtitles = (
   ])
 )
 
-export const mergeSubtitlesMkvToolNix = ({
+export const mergeSubtitlesMkvMerge = ({
   attachmentFilePaths,
   audioLanguage,
   destinationFilePath,
