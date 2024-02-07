@@ -47,7 +47,7 @@ export const replaceTracks = ({
   })
   .pipe(
     concatMap((
-      audioFiles,
+      mediaFiles,
     ) => (
       readFiles({
         sourcePath: (
@@ -59,9 +59,14 @@ export const replaceTracks = ({
         map((
           mediaFileInfo,
         ) => ({
-          audioFilePath: (
+          destinationFilePath: (
+            mediaFileInfo
+            .fullPath
+          ),
+          mediaFileInfo,
+          mediaFilePath: (
             (
-              audioFiles
+              mediaFiles
               .find((
                 subtitlesFileInfo,
               ) => (
@@ -78,24 +83,19 @@ export const replaceTracks = ({
             )
             || ""
           ),
-          destinationFilePath: (
-            mediaFileInfo
-            .fullPath
-          ),
-          mediaFileInfo,
         })),
         filter(({
-          audioFilePath,
+          mediaFilePath,
         }) => (
           Boolean(
-            audioFilePath
+            mediaFilePath
           )
         )),
         map((
           {
             destinationFilePath,
             mediaFileInfo,
-            audioFilePath,
+            mediaFilePath,
           },
           index,
         ) => (
@@ -105,7 +105,7 @@ export const replaceTracks = ({
               combineLatest([
                 (
                   getMediaInfo(
-                    audioFilePath
+                    mediaFilePath
                   )
                 ),
                 (
@@ -219,7 +219,7 @@ export const replaceTracks = ({
                     offsetInMilliseconds
                   )
                 ),
-                sourceFilePath: audioFilePath,
+                sourceFilePath: mediaFilePath,
                 subtitlesLanguages,
               })
             )),
