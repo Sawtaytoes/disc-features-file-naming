@@ -22,6 +22,7 @@ export const replaceTracksMkvMerge = ({
   offsetInMilliseconds,
   sourceFilePath,
   subtitlesLanguages,
+  videoLanguages,
 }: {
   audioLanguages: Iso6392LanguageCode[]
   destinationFilePath: string
@@ -29,6 +30,7 @@ export const replaceTracksMkvMerge = ({
   offsetInMilliseconds?: number
   sourceFilePath: string
   subtitlesLanguages: Iso6392LanguageCode[]
+  videoLanguages: Iso6392LanguageCode[]
 }) => {
   const hasAudioLanguages = (
     (
@@ -41,6 +43,14 @@ export const replaceTracksMkvMerge = ({
   const hasSubtitlesLanguages = (
     (
       subtitlesLanguages
+      .length
+    )
+    > 0
+  )
+
+  const hasVideoLanguages = (
+    (
+      videoLanguages
       .length
     )
     > 0
@@ -84,11 +94,16 @@ export const replaceTracksMkvMerge = ({
                 : []
               ),
 
+              ...(
+                hasVideoLanguages
+                ? ["--no-video"]
+                : []
+              ),
+
               destinationFilePath,
 
               "--no-buttons",
               "--no-global-tags",
-              "--no-video",
 
               ...(
                 hasChapters
@@ -141,6 +156,25 @@ export const replaceTracksMkvMerge = ({
                   ),
                 ]
                 : ["--no-subtitles"]
+              ),
+
+              ...(
+                (
+                  (
+                    getIsVideoFile(
+                      sourceFilePath
+                    )
+                  )
+                  && hasVideoLanguages
+                )
+                ? [
+                  "--video-tracks",
+                  (
+                    videoLanguages
+                    .join(",")
+                  ),
+                ]
+                : ["--no-video"]
               ),
 
               sourceFilePath,

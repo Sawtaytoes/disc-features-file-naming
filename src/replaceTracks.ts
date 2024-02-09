@@ -30,6 +30,7 @@ export const replaceTracks = ({
   offsets,
   sourceFilesPath,
   subtitlesLanguages,
+  videoLanguages,
 }: {
   audioLanguages: Iso6392LanguageCode[]
   destinationFilesPath: string
@@ -39,6 +40,7 @@ export const replaceTracks = ({
   offsets: number[]
   sourceFilesPath: string
   subtitlesLanguages: Iso6392LanguageCode[]
+  videoLanguages: Iso6392LanguageCode[]
 }) => (
   readFiles({
     sourcePath: (
@@ -221,6 +223,7 @@ export const replaceTracks = ({
                 ),
                 sourceFilePath: mediaFilePath,
                 subtitlesLanguages,
+                videoLanguages,
               })
             )),
             tap(() => {

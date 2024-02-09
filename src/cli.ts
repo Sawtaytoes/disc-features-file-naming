@@ -1064,6 +1064,17 @@ yargs(
         type: "array",
       },
     )
+    .option(
+      "videoLanguages",
+      {
+        alias: "video-lang",
+        array: true,
+        choices: iso6392LanguageCodes,
+        default: [] satisfies Iso6392LanguageCode[],
+        describe: "A 3-letter ISO-6392 language code for video tracks to keep. All others will be removed",
+        type: "array",
+      },
+    )
   ),
   (argv) => {
     replaceTracks({
@@ -1105,6 +1116,10 @@ yargs(
       subtitlesLanguages: (
         argv
         .subtitlesLanguages
+      ),
+      videoLanguages: (
+        argv
+        .videoLanguages
       ),
     })
     .subscribe()
