@@ -34,4 +34,8 @@ export const cleanupFilename = (
     "*",
     "@",
   )
+  .replaceAll(
+    "\n",
+    " ",
+  )
 )
