@@ -168,7 +168,6 @@ export const nameTvShowEpisodes = ({
             )),
           )
         )),
-        tap(t => { console.log(t) }),
         concatMap(({
           data,
         }) => (
