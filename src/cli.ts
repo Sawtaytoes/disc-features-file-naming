@@ -524,12 +524,27 @@ yargs(
         type: "boolean",
       },
     )
+    .option(
+      "globalOffset",
+      {
+        alias: "o",
+        default: 0,
+        describe: "The offset in milliseconds to apply to all audio being transferred.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
   ),
   (argv) => {
     mergeTracks({
       hasAutomaticOffset: (
         argv
         .automaticOffset
+      ),
+      globalOffsetInMilliseconds: (
+        argv
+        .globalOffset
       ),
       hasChapters: (
         argv

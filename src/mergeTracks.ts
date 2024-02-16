@@ -45,11 +45,13 @@ const xmlParser = (
 )
 
 export const mergeTracks = ({
+  globalOffsetInMilliseconds = 0,
   hasAutomaticOffset = false,
   hasChapters = false,
   mediaFilesPath,
   subtitlesPath,
 }: {
+  globalOffsetInMilliseconds?: number
   hasAutomaticOffset?: boolean,
   hasChapters?: boolean,
   mediaFilesPath: string
@@ -335,7 +337,9 @@ export const mergeTracks = ({
                     )
                   )
                   : (
-                    of(0)
+                    of(
+                      globalOffsetInMilliseconds
+                    )
                   )
                 ),
               ])
