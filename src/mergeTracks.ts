@@ -49,12 +49,14 @@ export const mergeTracks = ({
   hasAutomaticOffset = false,
   hasChapters = false,
   mediaFilesPath,
+  offsetsInMilliseconds,
   subtitlesPath,
 }: {
   globalOffsetInMilliseconds?: number
   hasAutomaticOffset?: boolean,
   hasChapters?: boolean,
   mediaFilesPath: string
+  offsetsInMilliseconds: number[],
   subtitlesPath: string
 }) => (
   combineLatest([
@@ -344,11 +346,14 @@ export const mergeTracks = ({
                 ),
               ])
               .pipe(
-                concatMap(([
-                  subtitlesFilePath,
-                  attachmentFilePaths,
-                  offsetInMilliseconds,
-                ]) => (
+                concatMap((
+                  [
+                    subtitlesFilePath,
+                    attachmentFilePaths,
+                    offsetInMilliseconds,
+                  ],
+                  index,
+                ) => (
                   mergeSubtitlesMkvMerge({
                     attachmentFilePaths,
                     audioLanguage: "jpn",
@@ -370,7 +375,17 @@ export const mergeTracks = ({
                       )
                       : undefined
                     ),
-                    offsetInMilliseconds,
+                    offsetInMilliseconds: (
+                      (
+                        offsetsInMilliseconds
+                        .length > 0
+                      )
+                      ? (
+                        offsetsInMilliseconds
+                        [index]
+                      )
+                      : offsetInMilliseconds
+                    ),
                     subtitlesFilePath,
                     subtitlesLanguage: "eng",
                   })

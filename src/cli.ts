@@ -478,7 +478,7 @@ yargs(
   }
 )
 .command(
-  "mergeTracks <subtitlesPath> <mediaFilesPath>",
+  "mergeTracks <subtitlesPath> <mediaFilesPath> [offsets...]",
   "Merge subtitles files with media files and only keep specified languages.",
   (
     yargs,
@@ -502,6 +502,16 @@ yargs(
         demandOption: true,
         describe: "Directory with media files that need subtitles.",
         type: "string",
+      },
+    )
+    .positional(
+      "offsets",
+      {
+        array: true,
+        demandOption: false,
+        describe: "Space-separated list of time-alignment offsets to set for each individual file in milliseconds.",
+        default: [] satisfies number[],
+        type: "number",
       },
     )
     .option(
@@ -553,6 +563,10 @@ yargs(
       mediaFilesPath: (
         argv
         .mediaFilesPath
+      ),
+      offsetsInMilliseconds: (
+        argv
+        .offsets
       ),
       subtitlesPath: (
         argv
