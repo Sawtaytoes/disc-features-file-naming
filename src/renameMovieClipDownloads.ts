@@ -20,7 +20,7 @@ import { readFiles } from './readFiles.js';
 import { catchNamedError } from './catchNamedError.js';
 
 
-export const renameMovieDemoDownloads = ({
+export const renameMovieClipDownloads = ({
   sourcePath,
 }: {
   sourcePath: string
@@ -69,7 +69,7 @@ export const renameMovieDemoDownloads = ({
       renameFile()
     )),
     catchNamedError(
-      renameMovieDemoDownloads
+      renameMovieClipDownloads
     ),
   )
 )

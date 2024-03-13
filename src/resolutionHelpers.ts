@@ -6,6 +6,34 @@ export const formatResolutionName = ({
   width: string,
 }) => {
   if (
+    Number(width) >= 7400
+    && Number(width) <= 8000
+  ) {
+    if (
+      Number(height) >= 4300
+      && Number(height) <= 4320
+    ) {
+      return '8K'
+    }
+
+    return '8K'.concat(' ', (Number(width)/Number(height)).toFixed(2))
+  }
+
+  if (
+    Number(width) >= 5000
+    && Number(width) <= 5200
+  ) {
+    if (
+      Number(height) >= 2800
+      && Number(height) <= 2900
+    ) {
+      return '5K'
+    }
+
+    return '5K'.concat(' ', (Number(width)/Number(height)).toFixed(2))
+  }
+
+  if (
     Number(width) >= 3800
     && Number(width) <= 4100
   ) {
@@ -72,7 +100,7 @@ export const formatResolutionName = ({
     return 'nHD'.concat(' ', (Number(width)/Number(height)).toFixed(2))
   }
 
-  console.log({height, width, dar: Number(width)/Number(height)})
+  console.log("Unknown Resolution:", {height, width, dar: Number(width)/Number(height)})
 
   return width.concat('x', height)
 }

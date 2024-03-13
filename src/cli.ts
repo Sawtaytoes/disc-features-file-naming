@@ -19,7 +19,7 @@ import { nameAnimeEpisodes } from "./nameAnimeEpisodes.js"
 import { nameSpecialFeatures } from "./nameSpecialFeatures.js"
 import { nameTvShowEpisodes } from "./nameTvShowEpisodes.js"
 import { renameDemos } from "./renameDemos.js"
-import { renameMovieDemoDownloads } from "./renameMovieDemoDownloads.js"
+import { renameMovieClipDownloads } from "./renameMovieClipDownloads.js"
 import { reorderTracks } from "./reorderTracks.js"
 import { replaceAttachments } from "./replaceAttachments.js"
 import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
@@ -733,7 +733,7 @@ yargs(
   }
 )
 .command(
-  "renameMovieDemoDownloads <sourcePath>",
+  "renameMovieClipDownloads <sourcePath>",
   "Rename TomSawyer's movie rips from the AVSForums to follow the demo format.",
   (
     yargs,
@@ -753,7 +753,7 @@ yargs(
     )
   ),
   (argv) => {
-    renameMovieDemoDownloads({
+    renameMovieClipDownloads({
       sourcePath: (
         argv
         .sourcePath
