@@ -97,7 +97,7 @@ export const formatResolutionName = ({
     Number(height) >= 360
     && Number(height) <= 420
   ) {
-    return 'nHD'.concat(' ', (Number(width)/Number(height)).toFixed(2))
+    return 'SD'.concat(' ', (Number(width)/Number(height)).toFixed(2))
   }
 
   console.log("Unknown Resolution:", {height, width, dar: Number(width)/Number(height)})
