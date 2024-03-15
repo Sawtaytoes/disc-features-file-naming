@@ -142,6 +142,7 @@ export const replaceAudioFormatByChannelCount = ({
   formatAdditionalFeatures,
   formatCommercial,
   formatSettingsMode,
+  sampingRate,
 }: {
   channelLayout: string,
   channels: string,
@@ -149,14 +150,20 @@ export const replaceAudioFormatByChannelCount = ({
   formatAdditionalFeatures?: string,
   formatCommercial: string,
   formatSettingsMode?: string,
+  sampingRate: string,
 }) => {
   const codec96Suffix = (
-    (
-      formatAdditionalFeatures
-      ?.includes("96")
-    )
-    ? "96-24"
-    : ""
+    // (
+    //   formatAdditionalFeatures
+    //   ?.includes("96")
+    // )
+    // || (
+    //   sampingRate
+    //   === "96000"
+    // )
+    // ? "96kHz"
+    // : ""
+    ""
   )
 
   if (

@@ -106,6 +106,7 @@ export const getDemoName = ({
               "Format_Commercial": formatCommercial,
               "Format_Commercial_IfAny": formatCommercialIfAny,
               "Format_Settings_Mode": formatSettingsMode,
+              "SamplingRate": sampingRate,
             }) => (
               (
                 filename: string,
@@ -124,6 +125,7 @@ export const getDemoName = ({
                     || format
                   ),
                   formatSettingsMode,
+                  sampingRate,
                 })
               )
             )),
