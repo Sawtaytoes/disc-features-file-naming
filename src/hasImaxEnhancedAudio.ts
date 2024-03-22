@@ -71,9 +71,9 @@ export const hasImaxEnhancedAudio = ({
           : EMPTY
         )),
         filter(({
-          "Format_AdditionalFeatures": formatAdditionalFeatures,
+          "Format_AdditionalFeatures": additionalFeatures,
         }) => (
-          formatAdditionalFeatures
+          additionalFeatures
           === "XLL X IMAX"
         )),
         tap(() => {
