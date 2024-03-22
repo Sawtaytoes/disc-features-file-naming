@@ -48,6 +48,19 @@ export const formatResolutionName = ({
   }
 
   if (
+    width === '2048'
+  ) {
+    if (
+      Number(height) >= 1076
+      && Number(height) <= 1086
+    ) {
+      return '2K'
+    }
+
+    return '2K'.concat(' ', (Number(width)/Number(height)).toFixed(2))
+  }
+
+  if (
     width === '1920'
   ) {
     if (
