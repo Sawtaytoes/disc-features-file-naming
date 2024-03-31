@@ -1,5 +1,9 @@
 import {
+  join,
+} from "node:path"
+import {
   concatAll,
+  concatMap,
   filter,
   map,
   mergeAll,
@@ -10,8 +14,12 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { getIsVideoFile } from "./getIsVideoFile.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
-import { reorderTracksFfmpeg } from "./reorderTracksFfmpeg.js"
+import {
+  reorderTracksFfmpeg,
+  reorderedTracksPath,
+} from "./reorderTracksFfmpeg.js"
 import { reorderTracksMkvMerge } from "./reorderTracksMkvMerge.js"
+import { setOnlyFirstTracksAsDefault } from "./setOnlyFirstTracksAsDefault.js"
 
 export const reorderTracks = ({
   audioTrackIndexes,
@@ -47,29 +55,45 @@ export const reorderTracks = ({
     map((
       fileInfo,
     ) => (
-      reorderTracksFfmpeg({
-        audioTrackIndexes,
-        filePath: (
-          fileInfo
-          .fullPath
-        ),
-        subtitlesTrackIndexes,
-        videoTrackIndexes,
-      })
+      (
+        reorderTracksFfmpeg({
+          audioTrackIndexes,
+          filePath: (
+            fileInfo
+            .fullPath
+          ),
+          subtitlesTrackIndexes,
+          videoTrackIndexes,
+        })
 
-      // To do this with `mkvmerge`, tracks need to be numbered sequentially from video to audio to subtitles. It's more complicated and not as easy to replicate.
-      // Only use this if something is botched with `ffmpeg`.
-      // reorderTracksMkvMerge({
-      //   audioTrackIndexes,
-      //   filePath: (
-      //     fileInfo
-      //     .fullPath
-      //   ),
-      //   subtitlesTrackIndexes,
-      //   videoTrackIndexes,
-      // })
+        // To do this with `mkvmerge`, tracks need to be numbered sequentially from video to audio to subtitles. It's more complicated and not as easy to replicate.
+        // Only use this if something is botched with `ffmpeg`.
+        // reorderTracksMkvMerge({
+        //   audioTrackIndexes,
+        //   filePath: (
+        //     fileInfo
+        //     .fullPath
+        //   ),
+        //   subtitlesTrackIndexes,
+        //   videoTrackIndexes,
+        // })
+      )
+      .pipe(
+        concatMap(() => (
+          setOnlyFirstTracksAsDefault({
+            filePath: (
+              join(
+                reorderedTracksPath,
+                (
+                  fileInfo
+                  .fullPath
+                ),
+              )
+            )
+          })
+        )),
+      )
     )),
-    // ffmpeg -i input.mp4 -map 0 -c copy -map 0:a:1 -map 0:a:0 output.mp4
     concatAll(),
     toArray(),
     tap(() => {
