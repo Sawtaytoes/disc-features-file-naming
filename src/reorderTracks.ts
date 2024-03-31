@@ -14,10 +14,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { getIsVideoFile } from "./getIsVideoFile.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
-import {
-  reorderTracksFfmpeg,
-  reorderedTracksPath,
-} from "./reorderTracksFfmpeg.js"
+import { reorderTracksFfmpeg } from "./reorderTracksFfmpeg.js"
 import { reorderTracksMkvMerge } from "./reorderTracksMkvMerge.js"
 import { setOnlyFirstTracksAsDefault } from "./setOnlyFirstTracksAsDefault.js"
 
@@ -79,17 +76,11 @@ export const reorderTracks = ({
         // })
       )
       .pipe(
-        concatMap(() => (
+        concatMap((
+          filePath
+        ) => (
           setOnlyFirstTracksAsDefault({
-            filePath: (
-              join(
-                reorderedTracksPath,
-                (
-                  fileInfo
-                  .fullPath
-                ),
-              )
-            )
+            filePath,
           })
         )),
       )
