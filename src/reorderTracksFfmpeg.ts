@@ -14,7 +14,7 @@ import {
 import { addFolderNameBeforeFilename } from "./addFolderNameBeforeFilename.js";
 import { runFfmpeg } from "./runFfmpeg.js";
 
-export const reorderedPath = "REORDERED"
+export const reorderedTracksPath = "REORDERED-TRACKS"
 
 export type AudioTrackInfo = {
   audioTrackIndex: number
