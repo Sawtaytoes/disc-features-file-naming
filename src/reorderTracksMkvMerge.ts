@@ -1,7 +1,8 @@
-import { mkdir } from "node:fs/promises";
+import {
+  mkdir,
+} from "node:fs/promises";
 import {
   dirname,
-  join,
 } from "node:path"
 import {
   concatMap,
