@@ -1,7 +1,5 @@
 import {
-  cpus,
-} from "node:os"
-import {
+  concatAll,
   concatMap,
   filter,
   map,
@@ -254,10 +252,7 @@ export const hasBetterAudio = ({
         }),
       )
     )),
-    mergeAll(
-      cpus()
-      .length
-    ),
+    concatAll(),
     catchNamedError(
       hasBetterAudio
     ),
