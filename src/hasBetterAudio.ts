@@ -110,11 +110,6 @@ export const hasBetterAudio = ({
             .Format_AdditionalFeatures
           )
 
-          const formatSettingsMode = (
-            track
-            .Format_Settings_Mode
-          )
-
           const numberOfChannels = (
             Number(
               (
@@ -150,6 +145,11 @@ export const hasBetterAudio = ({
           }
 
           // This doesn't work correctly.
+
+          // const formatSettingsMode = (
+          //   track
+          //   .Format_Settings_Mode
+          // )
 
           // if (
           //   formatSettingsMode
