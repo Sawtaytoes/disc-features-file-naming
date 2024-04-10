@@ -14,7 +14,7 @@ import {
 import { addFolderNameBeforeFilename } from "./addFolderNameBeforeFilename.js";
 import { runFfmpeg } from "./runFfmpeg.js";
 
-export const reorderedPath = "REORDERED"
+export const reorderedTracksPath = "REORDERED-TRACKS"
 
 export type AudioTrackInfo = {
   audioTrackIndex: number
@@ -56,112 +56,114 @@ export const reorderTracksFfmpeg = ({
     > 0
   )
 
-  return of(
-    addFolderNameBeforeFilename({
-      filePath,
-      folderName: reorderedPath,
-    })
-  )
-  .pipe(
-    concatMap((
-      outputFilePath,
-    ) => (
-      from(
-        mkdir(
-          (
-            dirname(
-              outputFilePath
-            )
-          ),
-          { recursive: true },
-        )
-      )
-      .pipe(
-        map(() => (
-          outputFilePath
-        )),
-      )
-    )),
-    concatMap((
-      outputFilePath,
-    ) => (
-      runFfmpeg({
-        args: [
-          "-c",
-          "copy",
-
-          "-map",
-          "0",
-
-          ...(
-            hasAudioTrackIndexes
-            ? [
-              "-map",
-              "-0:a",
-            ]
-            : []
-          ),
-
-          ...(
-            hasSubtitlesTrackIndexes
-            ? [
-              "-map",
-              "-0:s",
-            ]
-            : []
-          ),
-
-          ...(
-            hasVideoTrackIndexes
-            ? [
-              "-map",
-              "-0:v",
-            ]
-            : []
-          ),
-
-          ...(
-            audioTrackIndexes
-            .flatMap((
-              audioTrackIndex,
-            ) => [
-              "-map",
-              `0:a:${audioTrackIndex}`,
-            ])
-          ),
-
-          ...(
-            subtitlesTrackIndexes
-            .flatMap((
-              subtitlesTrackIndex,
-            ) => [
-              "-map",
-              `0:s:${subtitlesTrackIndex}`,
-            ])
-          ),
-
-          ...(
-            videoTrackIndexes
-            .flatMap((
-              videoTrackIndex,
-            ) => [
-              "-map",
-              `0:v:${videoTrackIndex}`,
-            ])
-          ),
-
-          `-y`,
-        ],
-        inputFilePaths: [
-          filePath
-        ],
-        outputFilePath,
+  return (
+    of(
+      addFolderNameBeforeFilename({
+        filePath,
+        folderName: reorderedTracksPath,
       })
-      .pipe(
-        map(() => (
-          outputFilePath
-        )),
-      )
-    )),
+    )
+    .pipe(
+      concatMap((
+        outputFilePath,
+      ) => (
+        from(
+          mkdir(
+            (
+              dirname(
+                outputFilePath
+              )
+            ),
+            { recursive: true },
+          )
+        )
+        .pipe(
+          map(() => (
+            outputFilePath
+          )),
+        )
+      )),
+      concatMap((
+        outputFilePath,
+      ) => (
+        runFfmpeg({
+          args: [
+            "-c",
+            "copy",
+
+            "-map",
+            "0",
+
+            ...(
+              hasAudioTrackIndexes
+              ? [
+                "-map",
+                "-0:a",
+              ]
+              : []
+            ),
+
+            ...(
+              hasSubtitlesTrackIndexes
+              ? [
+                "-map",
+                "-0:s",
+              ]
+              : []
+            ),
+
+            ...(
+              hasVideoTrackIndexes
+              ? [
+                "-map",
+                "-0:v",
+              ]
+              : []
+            ),
+
+            ...(
+              audioTrackIndexes
+              .flatMap((
+                audioTrackIndex,
+              ) => [
+                "-map",
+                `0:a:${audioTrackIndex}`,
+              ])
+            ),
+
+            ...(
+              subtitlesTrackIndexes
+              .flatMap((
+                subtitlesTrackIndex,
+              ) => [
+                "-map",
+                `0:s:${subtitlesTrackIndex}`,
+              ])
+            ),
+
+            ...(
+              videoTrackIndexes
+              .flatMap((
+                videoTrackIndex,
+              ) => [
+                "-map",
+                `0:v:${videoTrackIndex}`,
+              ])
+            ),
+
+            `-y`,
+          ],
+          inputFilePaths: [
+            filePath
+          ],
+          outputFilePath,
+        })
+        .pipe(
+          map(() => (
+            outputFilePath
+          )),
+        )
+      )),
+    )
   )
 }

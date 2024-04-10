@@ -1,7 +1,5 @@
 import {
-  cpus,
-} from "node:os"
-import {
+  concatAll,
   concatMap,
   filter,
   map,
@@ -110,11 +108,6 @@ export const hasBetterAudio = ({
             .Format_AdditionalFeatures
           )
 
-          const formatSettingsMode = (
-            track
-            .Format_Settings_Mode
-          )
-
           const numberOfChannels = (
             Number(
               (
@@ -150,6 +143,11 @@ export const hasBetterAudio = ({
           }
 
           // This doesn't work correctly.
+
+          // const formatSettingsMode = (
+          //   track
+          //   .Format_Settings_Mode
+          // )
 
           // if (
           //   formatSettingsMode
@@ -254,10 +252,7 @@ export const hasBetterAudio = ({
         }),
       )
     )),
-    mergeAll(
-      cpus()
-      .length
-    ),
+    concatAll(),
     catchNamedError(
       hasBetterAudio
     ),
