@@ -888,9 +888,24 @@ yargs(
         type: "string",
       },
     )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
   ),
   (argv) => {
     renameDemos({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
       sourcePath: (
         argv
         .sourcePath
