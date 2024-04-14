@@ -22,7 +22,7 @@ export const videoAiEnhancement = {
     filter: "tvai_up=model=gcg-5:scale=0:w=1620:h=1080:device=0:vram=1:instances=1,scale=w=1620:h=1080:flags=lanczos:threads=0:out_color_matrix=bt709",
     metadata: "videoai=Enhanced using gcg-5. Changed resolution to 1620x1080",
   },
-  "sharpening": {
+  "sharpen": {
     filter: "tvai_up=model=prob-4:scale=0:w=1620:h=1080:preblur=0.1:noise=0:details=0.04:halo=0.2:blur=0.04:compression=0.08:device=0:vram=1:instances=1,scale=w=1620:h=1080:flags=lanczos:threads=0:out_color_matrix=bt709",
     metadata: "videoai=Enhanced using prob-4; mode: manual; revert compression at 8; recover details at 4; sharpen at 4; reduce noise at 0; dehalo at 10; anti-alias/deblur at 10; and focus fix Off. Changed resolution to 1620x1080",
   },

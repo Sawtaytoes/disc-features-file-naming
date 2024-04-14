@@ -21,16 +21,4 @@
   "include": [
     "src",
   ],
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "files": true,
-    "compilerOptions": {
-      "noEmit": false,
-      "module": "NodeNext",
-      "moduleResolution": "NodeNext",
-      // "outDir": "src",
-      "outFile": "src/index.js",
-    },
-  },
 }

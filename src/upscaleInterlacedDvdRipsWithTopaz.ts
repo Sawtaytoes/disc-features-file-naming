@@ -59,7 +59,7 @@ export const upscaleInterlacedDvdRipsWithTopaz = ({
             fileInfo
             .fullPath
           ),
-          framesPerSecond: "24",
+          framesPerSecond: "24000/1001",
         })
       )
       .pipe(
