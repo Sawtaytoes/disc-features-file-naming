@@ -515,12 +515,12 @@ yargs(
       },
     )
     .option(
-      "isVariableBitrate",
+      "isConstantBitrate",
       {
-        alias: "vb",
+        alias: "cb",
         boolean: true,
         default: false,
-        describe: "Variable bitrate is common with DVD media. If the bitrate is variable, you need to first convert it to constant bitrate or ffmpeg won't properly inverse telecine it.",
+        describe: "If the bitrate is constant, you can inverse telecine the footage. If it's variable, you need to first convert it to constant bitrate or ffmpeg won't properly inverse telecine.",
         nargs: 0,
         type: "boolean",
       },
@@ -574,13 +574,13 @@ yargs(
   ),
   (argv) => {
     inverseTelecineDiscRips({
+      isConstantBitrate: (
+        argv
+        .isConstantBitrate
+      ),
       isRecursive: (
         argv
         .isRecursive
-      ),
-      isVariableBitrate: (
-        argv
-        .isVariableBitrate
       ),
       sourcePath: (
         argv
@@ -1504,6 +1504,17 @@ yargs(
       },
     )
     .option(
+      "isConstantBitrate",
+      {
+        alias: "cb",
+        boolean: true,
+        default: false,
+        describe: "If the bitrate is constant, you can inverse telecine the footage. If it's variable, you need to first convert it to constant bitrate or ffmpeg won't properly inverse telecine.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
       "pulldown",
       {
         alias: "pd",
@@ -1529,6 +1540,10 @@ yargs(
   ),
   (argv) => {
     upscaleInterlacedDvdRipsWithTopaz({
+      isConstantBitrate: (
+        argv
+        .isConstantBitrate
+      ),
       isRecursive: (
         argv
         .isRecursive

@@ -17,8 +17,21 @@ import { runFfmpeg } from "./runFfmpeg.js";
 export const inverseTelecinedPath = "INVERSE-TELECINED"
 
 export const videoFilterPulldown = {
-  "2:3": "fieldmatch,decimate",
-  "2:2": "fieldmatch",
+  "2:3": "dejudder,fps=30000/1001,pullup",
+  // "2:3": "dejudder,fps=30000/1001,fieldmatch=combmatch=full,yadif=deint=interlaced,decimate",
+  // "2:3": "fps=30000/1001,fieldmatch,yadif=deint=interlaced,decimate",
+  // "2:3": "fps=30000/1001,fieldmatch,yadif=deint=interlaced,decimate",
+  // "2:3": "dejudder,fps=30000/1001,fieldmatch=combmatch=full,yadif=deint=interlaced,decimate",
+  // "2:3": "dejudder,fps=30000/1001,fieldmatch=mode=pcn_ub:order=bff,yadif=deint=interlaced,decimate",
+  // "2:3": "dejudder,fps=30000/1001,fieldmatch=mode=pcn_ub:order=tff,yadif=deint=interlaced,decimate",
+  // "2:3": "fps=30000/1001,fieldmatch=mode=pcn_ub:order=tff,yadif=deint=interlaced,decimate",
+  // "2:3": "fps=30000/1001,fieldmatch=mode=pc,yadif=deint=interlaced,decimate",
+  // "2:3": "fieldmatch:combmatch=full,yadif=deint=interlaced,decimate",
+  // "2:3": "fieldmatch=mode=pc:combmatch=none,decimate",
+  // "2:3": "fieldmatch,decimate",
+  // "2:3": "pullup",
+
+  // "2:2": "fps=30000/1001,fieldmatch,yadif=deint=interlaced",
 } as const
 
 export type Pulldown = keyof typeof videoFilterPulldown

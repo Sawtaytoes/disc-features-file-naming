@@ -19,14 +19,14 @@ import {
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const inverseTelecineDiscRips = ({
+  isConstantBitrate,
   isRecursive,
-  isVariableBitrate,
   sourcePath,
   pulldown,
   videoEncoder,
 }: {
+  isConstantBitrate: boolean
   isRecursive: boolean
-  isVariableBitrate: boolean
   sourcePath: string
   pulldown: Pulldown,
   videoEncoder: VideoEncoder,
@@ -53,8 +53,14 @@ export const inverseTelecineDiscRips = ({
       fileInfo,
     ) => (
       (
-        isVariableBitrate
+        isConstantBitrate
         ? (
+          of(
+            fileInfo
+            .fullPath
+          )
+        )
+        : (
           // DVDs have variable framerate, so you first need to set it to Constant in the video track before performing an inverse telecine.
           convertVariableToConstantBitrate({
             filePath: (
@@ -63,12 +69,6 @@ export const inverseTelecineDiscRips = ({
             ),
             framesPerSecond: "24000/1001",
           })
-        )
-        : (
-          of(
-            fileInfo
-            .fullPath
-          )
         )
       )
       .pipe(

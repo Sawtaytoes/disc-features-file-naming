@@ -53,7 +53,6 @@ const cliProgressBar = (
 // frame=  478 fps= 52 q=16.0 size=   38656kB time=00:00:19.93 bitrate=15883.9kbits/s speed=2.18x
 const progressRegex = (
   /.*time=(.+) bitrate=.*\r?/
-  // /.*size=[\s\t]*(\d+)kB.*/
 )
 
 export type ExtensionMimeType = (
@@ -70,6 +69,23 @@ export const extensionMimeType: (
   ".otf": "mimetype=application/x-opentype-font",
   ".ttf": "mimetype=application/x-truetype-font",
 }
+
+export const convertNaNToTimecode = (
+  timecode: string,
+) => (
+  (
+    (
+      timecode
+      .replace(
+        /\d{2}:\d{2}:\d{2}\.\d+/,
+        "",
+      )
+    )
+    === ""
+  )
+  ? timecode
+  : "00:00:00.00"
+)
 
 export const runFfmpeg = ({
   args,
@@ -269,15 +285,13 @@ export const runFfmpeg = ({
                 cliProgressBar
                 .update(
                   convertTimecodeToMilliseconds(
-                    data
-                    .toString()
-                    .replace(
-                      progressRegex,
-                      "$1",
-                    )
-                    .replace(
-                      "N/A",
-                      "00:00:00.00",
+                    convertNaNToTimecode(
+                      data
+                      .toString()
+                      .replace(
+                        progressRegex,
+                        "$1",
+                      )
                     )
                   )
                 )
@@ -295,15 +309,13 @@ export const runFfmpeg = ({
                   ),
                   (
                     convertTimecodeToMilliseconds(
-                      data
-                      .toString()
-                      .replace(
-                        progressRegex,
-                        "$1",
-                      )
-                      .replace(
-                        "N/A",
-                        "00:00:00.00",
+                      convertNaNToTimecode(
+                        data
+                        .toString()
+                        .replace(
+                          progressRegex,
+                          "$1",
+                        )
                       )
                     )
                   ),
