@@ -34,6 +34,8 @@ import { replaceAttachments } from "./replaceAttachments.js"
 import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
+import { upscaleInterlacedDvdRipsWithTopaz } from "./upscaleInterlacedDvdRipsWithTopaz.js"
+import { VideoAiEnhancement, videoAiEnhancement } from "./upscaleInterlacedDvdWithTopaz.js"
 
 process
 .on(
@@ -490,7 +492,7 @@ yargs(
       "Converts all media files in '~/anime/Gintama' from 60i to 24p."
     )
     .example(
-      "$0 inverseTelecineDiscRips \"~/anime/Heavy Metal L-Gaim\" -pd 2:2 -enc cpu",
+      "$0 inverseTelecineDiscRips \"~/anime/Heavy Metal L-Gaim\" --pd 2:2 --enc cpu",
       "Converts all media files in '~/anime/Heavy Metal L-Gaim' from 60i with a pulldown of 2:2 to 24p using the CPU rather than the GPU."
     )
     .positional(
@@ -515,10 +517,10 @@ yargs(
     .option(
       "isVariableBitrate",
       {
-        alias: "r",
+        alias: "vb",
         boolean: true,
         default: false,
-        describe: "This is common with DVD media. If the bitrate is variable, you need to first convert it to constant bitrate or ffmpeg won't properly inverse telecine it.",
+        describe: "Variable bitrate is common with DVD media. If the bitrate is variable, you need to first convert it to constant bitrate or ffmpeg won't properly inverse telecine it.",
         nargs: 0,
         type: "boolean",
       },
@@ -1439,6 +1441,109 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "upscaleInterlacedDvdRipsWithTopaz <sourcePath>",
+  "Performs an inverse telecine (IVTC) operation on all files. It will re-encode the video track (and only the video track), so try to do this operation only once as it's a lossy operation. This expects these files to be SDR, 8-bit color, and native 24fps converted to 60i for a Blu-ray or DVD release.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 upscaleInterlacedDvdRipsWithTopaz \"~/anime/Dougram\"",
+      "Converts all media files in '~/anime/Gintama' from 60i to 24p."
+    )
+    .example(
+      "$0 upscaleInterlacedDvdRipsWithTopaz \"~/anime/Heavy Metal L-Gaim\" --pd 2:2",
+      "Converts all media files in '~/anime/Heavy Metal L-Gaim' from 60i with a pulldown of 2:2 to 24p."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "aiEnhancment",
+      {
+        alias: "ae",
+        choices: (
+          Object
+          .keys(
+            videoAiEnhancement
+          ) as (
+            VideoAiEnhancement[]
+          )
+        ),
+        default: (
+          "minimal" satisfies (
+            VideoAiEnhancement
+          ) as (
+            VideoAiEnhancement
+          )
+        ),
+        describe: "Defaults to minimal AI enhancement, but you may want to add some sharpening if working from a poor transfer.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "pulldown",
+      {
+        alias: "pd",
+        choices: (
+          Object
+          .keys(
+            videoFilterPulldown
+          ) as (
+            Pulldown[]
+          )
+        ),
+        default: (
+          "2:3" satisfies (
+            Pulldown
+          ) as (
+            Pulldown
+          )
+        ),
+        describe: "Defaults to 2:3 pulldown, but sometimes, you'll see 2:2. You can tell when flipping through frames if they don't line up.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    upscaleInterlacedDvdRipsWithTopaz({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      pulldown: (
+        argv
+        .pulldown
+      ),
+      videoAiEnhancementType: (
+        argv
+        .aiEnhancment
       ),
     })
     .subscribe()

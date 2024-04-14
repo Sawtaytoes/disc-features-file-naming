@@ -35,7 +35,7 @@ import {
 } from "./mergeSubtitlesMkvMerge.js"
 import {
   parseMediaFileChapterTimestamp,
-  parseSubtitlesChapterTimestamp,
+  convertTimecodeToMilliseconds,
 } from "./parseTimestamps.js"
 import { readFiles } from "./readFiles.js"
 import { readFolder } from "./readFolder.js"
@@ -244,7 +244,7 @@ export const mergeTracks = ({
                               map((
                                 subtitlesChapterTimestamp
                               ) => (
-                                parseSubtitlesChapterTimestamp(
+                                convertTimecodeToMilliseconds(
                                   subtitlesChapterTimestamp
                                 )
                               )),

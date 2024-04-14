@@ -3,7 +3,6 @@ import {
   concatMap,
   filter,
   map,
-  of,
   tap,
   toArray,
 } from "rxjs"
@@ -14,22 +13,23 @@ import { getIsVideoFile } from "./getIsVideoFile.js"
 import {
   inverseTelecineVideo,
   type Pulldown,
-  type VideoEncoder,
 } from "./inverseTelecineVideo.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
+import {
+  upscaleInterlacedDvdWithTopaz,
+  type VideoAiEnhancement,
+} from "./upscaleInterlacedDvdWithTopaz.js"
 
-export const inverseTelecineDiscRips = ({
+export const upscaleInterlacedDvdRipsWithTopaz = ({
   isRecursive,
-  isVariableBitrate,
   sourcePath,
   pulldown,
-  videoEncoder,
+  videoAiEnhancementType,
 }: {
   isRecursive: boolean
-  isVariableBitrate: boolean
   sourcePath: string
   pulldown: Pulldown,
-  videoEncoder: VideoEncoder,
+  videoAiEnhancementType: VideoAiEnhancement
 }) => (
   readFilesAtDepth({
     depth: (
@@ -53,23 +53,14 @@ export const inverseTelecineDiscRips = ({
       fileInfo,
     ) => (
       (
-        isVariableBitrate
-        ? (
-          // DVDs have variable framerate, so you first need to set it to Constant in the video track before performing an inverse telecine.
-          convertVariableToConstantBitrate({
-            filePath: (
-              fileInfo
-              .fullPath
-            ),
-            framesPerSecond: "24",
-          })
-        )
-        : (
-          of(
+        // DVDs have variable framerate, so you first need to set it to Constant in the video track before performing an inverse telecine.
+        convertVariableToConstantBitrate({
+          filePath: (
             fileInfo
             .fullPath
-          )
-        )
+          ),
+          framesPerSecond: "24",
+        })
       )
       .pipe(
         concatMap((
@@ -78,7 +69,15 @@ export const inverseTelecineDiscRips = ({
           inverseTelecineVideo({
             filePath,
             pulldown,
-            videoEncoder,
+            videoEncoder: "gpu-nvidia",
+          })
+        )),
+        concatMap((
+          filePath,
+        ) => (
+          upscaleInterlacedDvdWithTopaz({
+            filePath,
+            videoAiEnhancementType,
           })
         )),
       )
@@ -90,7 +89,7 @@ export const inverseTelecineDiscRips = ({
       .exit()
     }),
     catchNamedError(
-      inverseTelecineDiscRips
+      upscaleInterlacedDvdRipsWithTopaz
     ),
   )
 )

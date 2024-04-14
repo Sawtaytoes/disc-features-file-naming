@@ -10,7 +10,10 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { combineMediaWithData } from "./combineMediaWithData.js"
-import { getFileDurationTimecode } from "./getFileDurationTimecode.js"
+import {
+  convertDurationToTimecode,
+  getFileDuration,
+} from "./getFileDuration.js"
 import { parseSpecialFeatures } from "./parseSpecialFeatures.js"
 import { readFiles } from "./readFiles.js"
 import { searchDvdCompare } from "./searchDvdCompare.js"
@@ -63,19 +66,19 @@ export const nameSpecialFeatures = ({
             mergeMap((
               mediaInfo,
             ) => (
-              getFileDurationTimecode({
-                filePath: (
-                  fileInfo
-                  .fullPath
-                ),
+              getFileDuration({
                 mediaInfo,
               })
             )),
             map((
-              timecode,
+              duration,
             ) => ({
               fileInfo,
-              timecode,
+              timecode: (
+                convertDurationToTimecode(
+                  duration
+                )
+              ),
             })),
           )
         )),

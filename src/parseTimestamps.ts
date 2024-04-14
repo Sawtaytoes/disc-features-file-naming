@@ -29,15 +29,31 @@ export const parseMediaFileChapterTimestamp = (
   )
 }
 
-/** Example Timestamp: "00:22:52.037000000" */
-export const parseSubtitlesChapterTimestamp = (
-  chapterTimestamp: string,
+export const convertToMilliseconds = (
+  subSeconds: number,
+): number => (
+  (
+    subSeconds
+    < 1000
+  )
+  ? subSeconds
+  : (
+    convertToMilliseconds(
+      subSeconds
+      / 1000
+    )
+  )
+)
+
+/** Example Timestamps: "00:22:52.037000000" and "00:00:19.93" */
+export const convertTimecodeToMilliseconds = (
+  timecode: string,
 ) => {
   const [
-    timeCode,
-    microseconds,
+    timecodeWithoutMilliseconds,
+    subSeconds,
   ] = (
-    chapterTimestamp
+    timecode
     .split(".")
   )
 
@@ -46,7 +62,7 @@ export const parseSubtitlesChapterTimestamp = (
     minutes,
     seconds,
   ] = (
-    timeCode
+    timecodeWithoutMilliseconds
     .split(":")
     .map((
       timeValue,
@@ -59,11 +75,11 @@ export const parseSubtitlesChapterTimestamp = (
   )
 
   const milliseconds = (
-    Number(
-      microseconds
+    convertToMilliseconds(
+      Number(
+        subSeconds
+      )
     )
-    / 1000
-    / 1000
   )
 
   return (

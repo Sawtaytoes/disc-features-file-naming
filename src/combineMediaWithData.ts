@@ -9,7 +9,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { convertNumberToTimeString } from "./getFileDurationTimecode.js";
+import { convertNumberToTimeString } from "./getFileDuration.js";
 import { getUserSearchInput } from "./getUserSearchInput.js";
 import {
   specialFeatureTypes,

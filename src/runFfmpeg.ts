@@ -7,14 +7,27 @@ import {
 import {
   unlink,
 } from "node:fs/promises"
+import { extname } from "node:path";
 import {
-  Observable, concatMap, from, mergeMap, reduce,
+  concatMap,
+  from,
+  mergeMap,
+  reduce,
+  Observable,
+  map,
+  filter,
+  mergeAll,
+  take,
+  ignoreElements,
+  tap,
 } from "rxjs"
 
-import { ffmpegPath } from "./appPaths.js";
+import { ffmpegPath as defaultFfmpegPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
-import { extname } from "node:path";
+import { getFileDuration } from "./getFileDuration.js";
+import { getMediaInfo } from "./getMediaInfo.js";
 import { stat } from "node:fs/promises";
+import { convertTimecodeToMilliseconds } from "./parseTimestamps.js";
 
 const cliProgressBar = (
   new cliProgress
@@ -37,8 +50,10 @@ const cliProgressBar = (
   })
 )
 
+// frame=  478 fps= 52 q=16.0 size=   38656kB time=00:00:19.93 bitrate=15883.9kbits/s speed=2.18x
 const progressRegex = (
-  /.*size=[\s\t]*(\d+)kB.*/
+  /.*time=(.+) bitrate=.*\r?/
+  // /.*size=[\s\t]*(\d+)kB.*/
 )
 
 export type ExtensionMimeType = (
@@ -58,10 +73,19 @@ export const extensionMimeType: (
 
 export const runFfmpeg = ({
   args,
+  envVars,
+  ffmpegPath = defaultFfmpegPath,
   inputFilePaths,
   outputFilePath,
 }: {
   args: string[]
+  envVars?: (
+    Record<
+      string,
+      string
+    >
+  ),
+  ffmpegPath?: string
   inputFilePaths: string[]
   outputFilePath: string
 }): (
@@ -76,28 +100,35 @@ export const runFfmpeg = ({
     mergeMap((
       inputFilePath,
     ) => (
-      stat(
+      getMediaInfo(
         inputFilePath
+      )
+      .pipe(
+        mergeMap((
+          mediaInfo,
+        ) => (
+          getFileDuration({
+            mediaInfo,
+          })
+        )),
       )
     )),
     reduce(
       (
-        fileSizeInKilobytes,
-        fileStats,
+        longestDuration,
+        duration,
       ) => (
-        fileSizeInKilobytes
-        + (
-          (
-            fileStats
-            .size
-          )
-          / 1024
+        (
+          duration
+          > longestDuration
         )
+        ? duration
+        : longestDuration
       ),
       0,
     ),
     concatMap((
-      fileSizeInKilobytes,
+      duration,
     ) => (
       new Observable<
         string
@@ -106,6 +137,8 @@ export const runFfmpeg = ({
       ) => {
         const commandArgs = (
           [
+            "-hide_banner",
+
             "-loglevel",
             "info",
 
@@ -192,6 +225,12 @@ export const runFfmpeg = ({
           spawn(
             ffmpegPath,
             commandArgs,
+            {
+              env: {
+              ...process.env,
+              ...envVars,
+              },
+            },
           )
         )
 
@@ -223,18 +262,22 @@ export const runFfmpeg = ({
               data
               .toString()
               .includes(
-                "size="
+                "time="
               )
             ) {
               if (hasStarted) {
                 cliProgressBar
                 .update(
-                  Number(
+                  convertTimecodeToMilliseconds(
                     data
                     .toString()
                     .replace(
                       progressRegex,
                       "$1",
+                    )
+                    .replace(
+                      "N/A",
+                      "00:00:00.00",
                     )
                   )
                 )
@@ -244,13 +287,24 @@ export const runFfmpeg = ({
 
                 cliProgressBar
                 .start(
-                  fileSizeInKilobytes,
-                  Number(
-                    data
-                    .toString()
-                    .replace(
-                      progressRegex,
-                      "$1",
+                  (
+                    duration
+                    * 1000
+                    // fileSizeInKilobytes
+                    // * fileSizeMultiplier
+                  ),
+                  (
+                    convertTimecodeToMilliseconds(
+                      data
+                      .toString()
+                      .replace(
+                        progressRegex,
+                        "$1",
+                      )
+                      .replace(
+                        "N/A",
+                        "00:00:00.00",
+                      )
                     )
                   ),
                   {},

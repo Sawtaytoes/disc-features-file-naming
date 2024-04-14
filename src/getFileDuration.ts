@@ -1,15 +1,17 @@
 import {
-  EMPTY,
-  from,
+  filter,
   map,
-  mergeMap,
+  mergeAll,
   of,
   take,
   type Observable,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { type MediaInfo } from './getMediaInfo.js';
+import {
+  type GeneralTrack,
+  type MediaInfo,
+} from './getMediaInfo.js';
 
 export const convertNumberToTimeString = (
   number: number,
@@ -88,57 +90,49 @@ export const convertDurationToTimecode = (
   )
 }
 
-export const getFileDurationTimecode = ({
-  filePath,
+export const getFileDuration = ({
   mediaInfo,
 }: {
-  filePath: string,
   mediaInfo: MediaInfo,
 }): (
   Observable<
-    string
+    number
   >
 ) => (
-  from(
-    (
-      mediaInfo
-      ?.media
-      ?.track
-    )
-    || []
+  of(
+    mediaInfo
   )
   .pipe(
-    mergeMap((
-      track
-    ) => {
-      if (
-        (
-          track
-          ["@type"]
-        )
-        === "General"
-      ) {
-        return (
-          of(track)
-          .pipe(
-            map(({
-              Duration,
-            }) => (
-              convertDurationToTimecode(
-                Number(
-                  Duration
-                )
-              )
-            )),
-          )
-        )
-      }
-
-      return EMPTY
-    }),
+    map(({
+      media,
+    }) => (
+      media
+      ?.track
+    )),
+    filter(
+      Boolean
+    ),
+    mergeAll(),
+    filter((
+      track,
+    ): track is GeneralTrack => (
+      (
+        track
+        ["@type"]
+      )
+      === "General"
+    )),
     take(1),
+    map((
+      generalTrack,
+    ) => (
+      Number(
+        generalTrack
+        .Duration
+      )
+    )),
     catchNamedError(
-      getFileDurationTimecode
+      getFileDuration
     ),
   )
 )
