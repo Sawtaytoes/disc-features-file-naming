@@ -210,7 +210,10 @@ export const replaceAudioFormatByChannelCount = ({
     return (
       replaceAudioFormat({
         channelCount: "6.1",
-        codecName: "Dolby Digital Surround EX",
+        codecName: (
+          formatCommercial
+          .concat(" Surround EX")
+        ),
         filename,
       })
     )
