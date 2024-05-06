@@ -1,44 +1,77 @@
+export const isDolbyVision = ({
+  hdrFormat,
+  hdrFormatString,
+}: {
+  hdrFormat?: string
+  hdrFormatString?: string
+}) => (
+  (
+    (
+      hdrFormatString
+      || hdrFormat
+    )
+    ?.includes(
+      'Dolby Vision'
+    )
+  )
+)
+
+export const isHdr10Plus = ({
+  hdrFormatCompatibility,
+  hdrFormat,
+  hdrFormatString,
+}: {
+  hdrFormat?: string
+  hdrFormatCompatibility?: string
+  hdrFormatString?: string
+}) => (
+  (
+    (
+      (
+        hdrFormatString
+        || hdrFormat
+      )
+      ?.includes(
+        'SMPTE ST 2094'
+      )
+    )
+    || (
+      hdrFormatCompatibility
+      ?.includes(
+        'HDR10+'
+      )
+    )
+  )
+)
+
 export const formatHdrName = ({
   hdrFormatCompatibility,
   hdrFormat,
   hdrFormatString,
   transferCharacteristics,
 }: {
-  hdrFormatCompatibility?: string,
-  hdrFormat?: string,
-  hdrFormatString?: string,
-  transferCharacteristics?: string,
+  hdrFormatCompatibility?: string
+  hdrFormat?: string
+  hdrFormatString?: string
+  transferCharacteristics?: string
 }) => (
   [
     (
       (
-        (
-          hdrFormatString
-          || hdrFormat
-        )
-        ?.includes(
-          'Dolby Vision'
-        )
+        isDolbyVision({
+          hdrFormatString,
+          hdrFormat,
+        })
       )
       && 'DoVi'
     ),
     (
       (
-        (
-          (
-            hdrFormatString
-            || hdrFormat
-          )
-          ?.includes(
-            'SMPTE ST 2094'
-          )
-        )
-        || (
-          hdrFormatCompatibility
-          ?.includes(
-            'HDR10+'
-          )
-        )
+        isHdr10Plus({
+          hdrFormatCompatibility,
+          hdrFormat,
+          hdrFormatString,
+        })
       )
       && 'HDR10+'
     ),
@@ -67,6 +100,27 @@ export const formatHdrName = ({
         || (
           hdrFormatCompatibility
           ?.endsWith('HDR10')
+        )
+        || (
+          (
+            isDolbyVision({
+              hdrFormatString,
+              hdrFormat,
+            })
+          )
+          && (
+            !(
+              isHdr10Plus({
+                hdrFormatCompatibility,
+                hdrFormat,
+                hdrFormatString,
+              })
+            )
+          )
+          && (
+            transferCharacteristics
+            ?.includes('PQ')
+          )
         )
       )
       && 'HDR10'
