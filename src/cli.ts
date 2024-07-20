@@ -36,6 +36,7 @@ import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
 import { upscaleInterlacedDvdRipsWithTopaz } from "./upscaleInterlacedDvdRipsWithTopaz.js"
 import { VideoAiEnhancement, videoAiEnhancement } from "./upscaleInterlacedDvdWithTopaz.js"
+import { DepthValue } from "./readFilesAtDepth.js"
 
 process
 .on(
@@ -213,6 +214,10 @@ yargs(
       "$0 hasBetterAudio \"~/movies\" -r",
       "Recursively looks through all folders in '~/movies' where higher channel count audio tracks aren't the default."
     )
+    .example(
+      "$0 hasBetterAudio \"~/movies\" -r -d 2",
+      "Recursively looks through all folders in '~/movies' and child folders where higher channel count audio tracks aren't the default."
+    )
     .positional(
       "sourcePath",
       {
@@ -232,12 +237,27 @@ yargs(
         type: "boolean",
       },
     )
+    .option(
+      "recursiveDepth",
+      {
+        alias: "d",
+        default: 0,
+        describe: "How many deep of child directories to follow (2 or 3) when using `isRecursive`.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
   ),
   (argv) => {
     hasBetterAudio({
       isRecursive: (
         argv
         .isRecursive
+      ),
+      recursiveDepth: (
+        argv
+        .recursiveDepth
       ),
       sourcePath: (
         argv

@@ -18,15 +18,20 @@ import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const hasBetterAudio = ({
   isRecursive,
+  recursiveDepth,
   sourcePath,
 }: {
   isRecursive: boolean
+  recursiveDepth: number
   sourcePath: string
 }) => (
   readFilesAtDepth({
     depth: (
       isRecursive
-      ? 1
+      ? (
+        recursiveDepth
+        || 1
+      )
       : 0
     ),
     sourcePath,

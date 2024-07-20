@@ -1,6 +1,9 @@
 import {
+  EMPTY,
+  merge,
   mergeAll,
   mergeMap,
+  tap,
 } from "rxjs"
 
 import { readFiles } from "./readFiles.js"
@@ -10,16 +13,11 @@ export const readFilesAtDepth = ({
   depth,
   sourcePath,
 }: {
-  depth: 0 | 1,
+  depth: number,
   sourcePath: string
-}) => (
-  depth === 0
+}): ReturnType<typeof readFiles> => (
+  depth > 0
   ? (
-    readFiles({
-      sourcePath,
-    })
-  )
-  : (
     readFolder({
       sourcePath,
     })
@@ -28,13 +26,35 @@ export const readFilesAtDepth = ({
       mergeMap((
         folderInfo,
       ) => (
-        readFiles({
-          sourcePath: (
-            folderInfo
-            .fullPath
-          )
-        })
+        merge(
+          (
+            readFiles({
+              sourcePath: (
+                folderInfo
+                .fullPath
+              )
+            })
+          ),
+          (
+            (depth - 1) > 0
+            ? (
+              readFilesAtDepth({
+                depth: (depth - 1),
+                sourcePath: (
+                  folderInfo
+                  .fullPath
+                ),
+              })
+            )
+            : EMPTY
+          ),
+        )
       )),
     )
+  )
+  : (
+    readFiles({
+      sourcePath,
+    })
   )
 )
