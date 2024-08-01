@@ -1,3 +1,4 @@
+import { sep } from "node:path";
 import {
   concatMap,
   map,
@@ -5,21 +6,20 @@ import {
 } from "rxjs";
 
 import { addFolderNameBeforeFilename } from "./addFolderNameBeforeFilename.js";
-import { convertIso6391ToIso6392 } from "./convertIso6391ToIso6392.js";
-import { type Iso6391LanguageCode } from "./iso6391LanguageCodes.js";
+import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js";
 import { replaceFileExtension } from "./replaceFileExtension.js";
 import { runMkvExtract } from "./runMkvExtract.js";
 
-export const extractedPath = "EXTRACTED-FLAC-AUDIO"
+export const extractedPath = "EXTRACTED-SUBTITLES"
 
-export const extractFlacAudio = ({
+export const extractSubtitles = ({
   filePath,
   languageCode,
   trackId,
 }: {
   filePath: string
-  languageCode: Iso6391LanguageCode,
-  trackId: string,
+  languageCode: Iso6392LanguageCode,
+  trackId: number,
 }) => (
   of(
     addFolderNameBeforeFilename({
@@ -34,11 +34,13 @@ export const extractFlacAudio = ({
       replaceFileExtension({
         filePath: outputFilePath,
         fileExtension: (
-          convertIso6391ToIso6392(
-            languageCode
-          )
+          sep
           .concat(
-            ".flac"
+            `track${trackId}`,
+            ".",
+            languageCode,
+            ".",
+            "ass",
           )
         ),
       })

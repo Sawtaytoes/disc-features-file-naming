@@ -4,6 +4,7 @@ import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
 import { changeTrackLanguages } from "./changeTrackLanguages.js"
+import { copyOutSubtitles } from "./copyOutSubtitles.js"
 import { fixIncorrectDefaultTracks } from "./fixIncorrectDefaultTracks.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
@@ -35,8 +36,10 @@ import { replaceFlacWithPcmAudio } from "./replaceFlacWithPcmAudio.js"
 import { replaceTracks } from "./replaceTracks.js"
 import { splitChapters } from "./splitChapters.js"
 import { upscaleInterlacedDvdRipsWithTopaz } from "./upscaleInterlacedDvdRipsWithTopaz.js"
-import { VideoAiEnhancement, videoAiEnhancement } from "./upscaleInterlacedDvdWithTopaz.js"
-import { DepthValue } from "./readFilesAtDepth.js"
+import {
+  videoAiEnhancement,
+  VideoAiEnhancement,
+} from "./upscaleInterlacedDvdWithTopaz.js"
 
 process
 .on(
@@ -153,6 +156,64 @@ yargs(
       videoLanguage: (
         argv
         .videoLanguage
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "copyOutSubtitles <sourcePath>",
+  "Copies out subtitles into a separate file for each video file.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 copySubtitles \"~/anime/Zegapain\" -r",
+      "Recursively looks through all folders in '~/anime/Zegapain' and copies out subtitles tracks into a separate folder."
+    )
+    .positional(
+      "sourcePath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files or containing other directories of media files.",
+        type: "string",
+      },
+    )
+    .option(
+      "isRecursive",
+      {
+        alias: "r",
+        boolean: true,
+        default: false,
+        describe: "Recursively looks in folders for media files.",
+        nargs: 0,
+        type: "boolean",
+      },
+    )
+    .option(
+      "subtitlesLanguage",
+      {
+        alias: "subs-lang",
+        choices: iso6392LanguageCodes,
+        describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    copyOutSubtitles({
+      isRecursive: (
+        argv
+        .isRecursive
+      ),
+      sourcePath: (
+        argv
+        .sourcePath
+      ),
+      subtitlesLanguage: (
+        argv
+        .subtitlesLanguage
       ),
     })
     .subscribe()
