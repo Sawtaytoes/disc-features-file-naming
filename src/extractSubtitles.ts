@@ -12,11 +12,18 @@ import { runMkvExtract } from "./runMkvExtract.js";
 
 export const extractedPath = "EXTRACTED-SUBTITLES"
 
+export const subtitleCodecExtension = {
+  "S_TEXT/ASS": "ass",
+  "S_TEXT/UTF8": "srt",
+}
+
 export const extractSubtitles = ({
+  codec_id,
   filePath,
   languageCode,
   trackId,
 }: {
+  codec_id: keyof typeof subtitleCodecExtension
   filePath: string
   languageCode: Iso6392LanguageCode,
   trackId: number,
@@ -40,7 +47,10 @@ export const extractSubtitles = ({
             ".",
             languageCode,
             ".",
-            "ass",
+            (
+              subtitleCodecExtension
+              [codec_id]
+            ),
           )
         ),
       })

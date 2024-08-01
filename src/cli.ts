@@ -196,6 +196,7 @@ yargs(
       {
         alias: "subs-lang",
         choices: iso6392LanguageCodes,
+        default: "eng" satisfies Iso6392LanguageCode as Iso6392LanguageCode,
         describe: "A 3-letter ISO-6392 language code for subtitles tracks to keep. All others will be removed",
         type: "string",
       },

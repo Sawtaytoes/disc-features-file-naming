@@ -95,6 +95,17 @@ export const copyOutSubtitles = ({
                 track,
               ) => (
                 extractSubtitles({
+                  codec_id: (
+                    (
+                      track
+                      .properties
+                      .codec_id
+                    ) as (
+                      Parameters<
+                        typeof extractSubtitles
+                      >[0]["codec_id"]
+                    )
+                  ),
                   filePath: (
                     fileInfo
                     .fullPath
