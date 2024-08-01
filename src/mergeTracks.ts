@@ -109,6 +109,10 @@ export const mergeTracks = ({
             ) => (
               combineLatest([
                 (
+                  subtitlesFolderInfo
+                  .fullPath
+                ),
+                (
                   readFiles({
                     sourcePath: (
                       subtitlesFolderInfo
@@ -128,13 +132,13 @@ export const mergeTracks = ({
                         )
                       )
                     )),
-                    take(1),
                     map((
                       subtitlesFileInfo,
                     ) => (
                       subtitlesFileInfo
                       .fullPath
                     )),
+                    toArray(),
                   )
                 ),
                 (
@@ -348,7 +352,8 @@ export const mergeTracks = ({
               .pipe(
                 concatMap((
                   [
-                    subtitlesFilePath,
+                    subtitlesFolderPath,
+                    subtitlesFilesPaths,
                     attachmentFilePaths,
                     offsetInMilliseconds,
                   ],
@@ -365,11 +370,7 @@ export const mergeTracks = ({
                       hasChapters
                       ? (
                         join(
-                          (
-                            dirname(
-                              subtitlesFilePath
-                            )
-                          ),
+                          subtitlesFolderPath,
                           "chapters.xml",
                         )
                       )
@@ -386,7 +387,7 @@ export const mergeTracks = ({
                       )
                       : offsetInMilliseconds
                     ),
-                    subtitlesFilePath,
+                    subtitlesFilesPaths,
                     subtitlesLanguage: "eng",
                   })
                 )),

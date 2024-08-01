@@ -30,7 +30,7 @@ export const mergeSubtitlesMkvMerge = ({
   destinationFilePath,
   chaptersFilePath,
   offsetInMilliseconds,
-  subtitlesFilePath,
+  subtitlesFilesPaths,
   subtitlesLanguage,
 }: {
   attachmentFilePaths: string[],
@@ -38,7 +38,7 @@ export const mergeSubtitlesMkvMerge = ({
   destinationFilePath: string,
   chaptersFilePath?: string,
   offsetInMilliseconds?: number,
-  subtitlesFilePath: string,
+  subtitlesFilesPaths: string[],
   subtitlesLanguage: Iso6392LanguageCode,
 }) => (
   runMkvMerge({
@@ -67,7 +67,7 @@ export const mergeSubtitlesMkvMerge = ({
         : []
       ),
 
-      subtitlesFilePath,
+      ...subtitlesFilesPaths,
 
       ...(
         chaptersFilePath
