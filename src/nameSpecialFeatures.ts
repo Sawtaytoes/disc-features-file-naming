@@ -14,10 +14,10 @@ import {
   convertDurationToTimecode,
   getFileDuration,
 } from "./getFileDuration.js"
-import { parseSpecialFeatures } from "./parseSpecialFeatures.js"
-import { readFiles } from "./readFiles.js"
-import { searchDvdCompare } from "./searchDvdCompare.js"
 import { getMediaInfo } from "./getMediaInfo.js"
+import { parseSpecialFeatures } from "./parseSpecialFeatures.js"
+import { readFilesAtDepth } from "./readFilesAtDepth.js"
+import { searchDvdCompare } from "./searchDvdCompare.js"
 
 const getNextFilenameCount = (
   previousCount?: number,
@@ -50,7 +50,8 @@ export const nameSpecialFeatures = ({
     mergeMap((
       specialFeatures,
     ) => (
-      readFiles({
+      readFilesAtDepth({
+        depth: 0,
         sourcePath,
       })
       .pipe(

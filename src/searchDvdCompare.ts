@@ -20,7 +20,7 @@ export const searchDvdCompare = ({
   from(
     puppeteer
     .launch({
-      headless: "new",
+      headless: true,
       // headless: false,
     })
   )
@@ -133,22 +133,11 @@ export const searchDvdCompare = ({
               )
             }),
             mergeMap(async () => {
-              const urlHash = (
-                new URL(
-                  url
-                )
-                .hash
-                .replace(
-                  /#(.+)/,
-                  "$1",
-                )
-              )
-
               const extrasElementHandler = (
                 await (
                   page
-                  .$x(
-                    '//div[contains(@class, "label") and contains(text(), "Extras")]'
+                  .$$(
+                    'xpath/.//div[contains(@class, "label") and contains(text(), "Extras")]'
                   )
                 )
               )

@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { writeFile } from 'node:fs/promises'
 import generateTypescriptFromOpenapiSchema from 'openapi-typescript'
 
