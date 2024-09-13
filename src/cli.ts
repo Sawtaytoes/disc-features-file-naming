@@ -843,7 +843,7 @@ yargs(
       {
         alias: "c",
         default: false,
-        describe: "Adds chapters along with audio tracks.",
+        describe: "Adds chapters along with other tracks.",
         nargs: 0,
         type: "boolean",
       },
@@ -1406,7 +1406,7 @@ yargs(
       {
         alias: "c",
         default: false,
-        describe: "Adds chapters along with audio tracks.",
+        describe: "Adds chapters along with other tracks.",
         nargs: 0,
         type: "boolean",
       },
