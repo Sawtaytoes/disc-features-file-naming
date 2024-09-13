@@ -1,6 +1,6 @@
 {
   "name": "media-file-naming",
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.4.0",
   "scripts": {
     "media": "tsx --env-file ./.env src/cli.ts"
   },
@@ -29,7 +29,7 @@
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.4.1",
     "@types/yargs": "^17.0.33",
-    "@yarnpkg/sdks": "^3.1.0",
+    "@yarnpkg/sdks": "^3.2.0",
     "openapi-typescript": "^7.3.0",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
