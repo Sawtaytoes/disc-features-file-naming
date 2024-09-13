@@ -70,7 +70,7 @@ export const specialFeatureMatchTypes: (
   "behind the scenes": "behindthescenes",
   "clip": "featurette",
   "deleted scene": "deleted",
-  "documentary": "behindthescenes",
+  "documentary": "featurette",
   "essay": "featurette",
   "featurette": "featurette",
   "interview": "interview",
