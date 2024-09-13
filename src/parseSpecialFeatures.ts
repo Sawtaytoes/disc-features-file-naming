@@ -54,6 +54,7 @@ export const specialFeatureMatchKeys = [
   "song",
   "story",
   "trailer",
+  "teaser",
 ] as const
 
 export type SpecialFeatureMatchKey = (
@@ -83,6 +84,7 @@ export const specialFeatureMatchTypes: (
   "sing": "short",
   "song": "short",
   "story": "short",
+  "teaser": "trailer",
   "trailer": "trailer",
 }
 
@@ -277,6 +279,10 @@ export const parseSpecialFeatures = (
         .replaceAll(
           /:/g,
           "-",
+        )
+        .replaceAll(
+          /^- /g,
+          "",
         )
         .replaceAll(
           / \/ /g,
