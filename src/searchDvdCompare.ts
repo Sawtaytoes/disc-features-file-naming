@@ -86,14 +86,17 @@ export const searchDvdCompare = ({
               }
 
               const urlHash = (
-                new URL(
-                  url
+                (
+                  new URL(
+                    url
+                  )
+                  .hash
+                  .replace(
+                    /#(.+)/,
+                    "$1",
+                  )
                 )
-                .hash
-                .replace(
-                  /#(.+)/,
-                  "$1",
-                )
+                || "1"
               )
 
               const releasePackageCheckboxElementHandler = (
