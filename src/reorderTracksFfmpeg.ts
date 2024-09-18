@@ -13,6 +13,7 @@ import {
 
 import { addFolderNameBeforeFilename } from "./addFolderNameBeforeFilename.js";
 import { runFfmpeg } from "./runFfmpeg.js";
+import { makeDirectory } from "./makeDirectory.js";
 
 export const reorderedTracksPath = "REORDERED-TRACKS"
 
@@ -67,15 +68,8 @@ export const reorderTracksFfmpeg = ({
       concatMap((
         outputFilePath,
       ) => (
-        from(
-          mkdir(
-            (
-              dirname(
-                outputFilePath
-              )
-            ),
-            { recursive: true },
-          )
+        makeDirectory(
+          outputFilePath
         )
         .pipe(
           map(() => (
@@ -150,8 +144,6 @@ export const reorderTracksFfmpeg = ({
                 `0:v:${videoTrackIndex}`,
               ])
             ),
-
-            `-y`,
           ],
           inputFilePaths: [
             filePath

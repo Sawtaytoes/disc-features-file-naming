@@ -75,8 +75,6 @@ export const convertFlacToPcmAudio = ({
               `pcm_s${bitDepth}le`,
             ]))
           ),
-
-          `-y`,
         ],
         inputFilePaths: [
           filePath

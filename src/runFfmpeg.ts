@@ -14,12 +14,6 @@ import {
   mergeMap,
   reduce,
   Observable,
-  map,
-  filter,
-  mergeAll,
-  take,
-  ignoreElements,
-  tap,
 } from "rxjs"
 
 import { ffmpegPath as defaultFfmpegPath } from "./appPaths.js";

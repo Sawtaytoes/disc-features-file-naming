@@ -1,23 +1,17 @@
 import chalk from "chalk"
 import {
-  EMPTY,
-  combineLatest,
   concatAll,
   concatMap,
   filter,
-  from,
   map,
   of,
-  take,
   tap,
   toArray,
-  zip,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getMediaInfo } from "./getMediaInfo.js"
+import { getAudioOffset } from "./getAudioOffset.js"
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
-import { parseMediaFileChapterTimestamp } from "./parseTimestamps.js"
 import { readFiles } from "./readFiles.js"
 import { replaceTracksMkvMerge } from "./replaceTracksMkvMerge.js"
 
@@ -49,7 +43,7 @@ export const replaceTracks = ({
   })
   .pipe(
     concatMap((
-      mediaFiles,
+      sourceFileInfos,
     ) => (
       readFiles({
         sourcePath: (
@@ -59,25 +53,25 @@ export const replaceTracks = ({
       .pipe(
         concatAll(),
         map((
-          mediaFileInfo,
+          destinationFileInfo,
         ) => ({
           destinationFilePath: (
-            mediaFileInfo
+            destinationFileInfo
             .fullPath
           ),
-          mediaFileInfo,
-          mediaFilePath: (
+          destinationFileInfo,
+          sourceFilePath: (
             (
-              mediaFiles
+              sourceFileInfos
               .find((
-                subtitlesFileInfo,
+                sourceFileInfo,
               ) => (
                 (
-                  subtitlesFileInfo
+                  sourceFileInfo
                   .filename
                 )
                 === (
-                  mediaFileInfo
+                  destinationFileInfo
                   .filename
                 )
               ))
@@ -87,116 +81,27 @@ export const replaceTracks = ({
           ),
         })),
         filter(({
-          mediaFilePath,
+          sourceFilePath,
         }) => (
           Boolean(
-            mediaFilePath
+            sourceFilePath
           )
         )),
-        map((
+        concatMap((
           {
             destinationFilePath,
-            mediaFileInfo,
-            mediaFilePath,
+            destinationFileInfo,
+            sourceFilePath,
           },
           index,
         ) => (
           (
             hasAutomaticOffset
             ? (
-              combineLatest([
-                (
-                  getMediaInfo(
-                    mediaFilePath
-                  )
-                ),
-                (
-                  getMediaInfo(
-                    destinationFilePath
-                  )
-                ),
-              ])
-              .pipe(
-                concatAll(),
-                map((
-                  mediaInfo,
-                ) => (
-                  mediaInfo
-                  ?.media
-                  ?.track
-                  .flatMap((
-                    track,
-                  ) => (
-                    (
-                      track
-                      ["@type"]
-                    )
-                    === "Menu"
-                  )
-                  ? track
-                  : []
-                  )
-                  .find(
-                    Boolean
-                  )
-                  ?.extra
-                )),
-                filter(
-                  Boolean
-                ),
-                map((
-                  chapters,
-                ) => (
-                  Object
-                  .keys(
-                    chapters
-                  )
-                  .map((
-                    chapterTimestamp,
-                  ) => (
-                    parseMediaFileChapterTimestamp(
-                      chapterTimestamp
-                    )
-                  ))
-                )),
-                toArray(),
-                concatMap(([
-                  sourceFileChapterTimestamps,
-                  destinationFileChapterTimestamps,
-                ]) => (
-                  zip([
-                    from(
-                      sourceFileChapterTimestamps,
-                    ),
-                    from(
-                      destinationFileChapterTimestamps
-                    ),
-                  ])
-                )),
-                concatMap(([
-                  sourceFileChapterTimestamp,
-                  destinationFileChapterTimestamp,
-                ]) => {
-                  const offsetInMilliseconds = (
-                    destinationFileChapterTimestamp
-                    - sourceFileChapterTimestamp
-                  )
-
-                  return (
-                    (
-                      offsetInMilliseconds
-                      === 0
-                    )
-                    ? EMPTY
-                    : (
-                      of(
-                        offsetInMilliseconds
-                      )
-                    )
-                  )
-                }),
-                take(1),
-              )
+              getAudioOffset({
+                destinationFilePath,
+                sourceFilePath,
+              })
             )
             : (
               of(
@@ -221,7 +126,7 @@ export const replaceTracks = ({
                     offsetInMilliseconds
                   )
                 ),
-                sourceFilePath: mediaFilePath,
+                sourceFilePath,
                 subtitlesLanguages,
                 videoLanguages,
               })
@@ -236,7 +141,7 @@ export const replaceTracks = ({
                   )
                 ),
                 (
-                  mediaFileInfo
+                  destinationFileInfo
                   .fullPath
                 ),
                 "\n",
@@ -248,7 +153,6 @@ export const replaceTracks = ({
             ),
           )
         )),
-        concatAll(),
         toArray(),
         tap(() => {
           process
