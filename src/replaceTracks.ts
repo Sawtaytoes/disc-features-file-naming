@@ -131,7 +131,9 @@ export const replaceTracks = ({
                 videoLanguages,
               })
             )),
-            tap(() => {
+            tap((
+              outputFilePath,
+            ) => {
               console
               .info(
                 (
@@ -140,10 +142,7 @@ export const replaceTracks = ({
                     "[CREATED BETTER FILE]"
                   )
                 ),
-                (
-                  destinationFileInfo
-                  .fullPath
-                ),
+                outputFilePath,
                 "\n",
                 "\n",
               )
