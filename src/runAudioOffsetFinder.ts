@@ -9,6 +9,19 @@ import {
 import { audioOffsetFinderPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
 
+export const getOffsetFromAudioOffsetOutput = (
+  audioOffsetOutputData: string
+) => (
+  Number(
+    audioOffsetOutputData
+    .replace(
+      /Offset: ([-\d\.]+) \(seconds\)/,
+      "$1",
+    )
+  )
+  * 1000
+)
+
 export const runAudioOffsetFinder = ({
   destinationFilePath,
   sourceFilePath,
@@ -21,7 +34,7 @@ export const runAudioOffsetFinder = ({
   >
 ) => (
   new Observable<
-    string
+    number
   >((
     observer,
   ) => {
@@ -161,14 +174,9 @@ export const runAudioOffsetFinder = ({
         ) {
           observer
           .next(
-            Number(
+            getOffsetFromAudioOffsetOutput(
               outputData
-              .replace(
-                /Offset: ([-\d\.]+) (seconds)/,
-                "$1",
-              )
             )
-            * 1000
           )
         }
 
