@@ -4,6 +4,7 @@ import { hideBin } from "yargs/helpers"
 import { changeTrackLanguages } from "./changeTrackLanguages.js"
 import { copyOutSubtitles } from "./copyOutSubtitles.js"
 import { fixIncorrectDefaultTracks } from "./fixIncorrectDefaultTracks.js"
+import { getAudioOffsets } from "./getAudioOffsets.js"
 import { hasBetterAudio } from "./hasBetterAudio.js"
 import { hasBetterVersion } from "./hasBetterVersion.js"
 import { hasImaxEnhancedAudio } from "./hasImaxEnhancedAudio.js"
@@ -258,6 +259,48 @@ yargs(
       sourcePath: (
         argv
         .sourcePath
+      ),
+    })
+    .subscribe()
+  }
+)
+.command(
+  "getAudioOffsets <sourceFilesPath> <destinationFilesPath>",
+  "Get the audio offset of media files in two directories where files share the same name.",
+  (
+    yargs,
+  ) => (
+    yargs
+    .example(
+      "$0 getAudioOffsets \"G:\\Anime\\Code Geass Good Audio\" \"G:\\Anime\\Code Geass Bad Audio\"",
+      "For all media files that have matching names (minus the extension), it calculates and prints the audio offset."
+    )
+    .positional(
+      "sourceFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory with containing media files with tracks you want to copy.",
+        type: "string",
+      },
+    )
+    .positional(
+      "destinationFilesPath",
+      {
+        demandOption: true,
+        describe: "Directory containing media files with tracks you want replaced.",
+        type: "string",
+      },
+    )
+  ),
+  (argv) => {
+    getAudioOffsets({
+      destinationFilesPath: (
+        argv
+        .destinationFilesPath
+      ),
+      sourceFilesPath: (
+        argv
+        .sourceFilesPath
       ),
     })
     .subscribe()

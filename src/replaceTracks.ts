@@ -59,7 +59,6 @@ export const replaceTracks = ({
             destinationFileInfo
             .fullPath
           ),
-          destinationFileInfo,
           sourceFilePath: (
             (
               sourceFileInfos
@@ -90,7 +89,6 @@ export const replaceTracks = ({
         concatMap((
           {
             destinationFilePath,
-            destinationFileInfo,
             sourceFilePath,
           },
           index,
@@ -110,6 +108,22 @@ export const replaceTracks = ({
             )
           )
           .pipe(
+            tap((
+              offsetInMilliseconds,
+            ) => {
+              console
+              .info(
+                (
+                  chalk
+                  .green(
+                    "[OFFSET IN MILLISECONDS]"
+                  )
+                ),
+                offsetInMilliseconds,
+                "\n",
+                "\n",
+              )
+            }),
             concatMap((
               offsetInMilliseconds,
             ) => (
