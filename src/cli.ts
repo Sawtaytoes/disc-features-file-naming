@@ -1562,13 +1562,13 @@ yargs(
           )
         ),
         default: (
-          "minimal" satisfies (
+          "gaia-4:3" satisfies (
             VideoAiEnhancement
           ) as (
             VideoAiEnhancement
           )
         ),
-        describe: "Defaults to minimal AI enhancement, but you may want to add some sharpening if working from a poor transfer.",
+        describe: "Defaults to gaia 4:3 AI enhancement, but you may want to add some sharpening if working from a poor transfer.",
         type: "string",
       },
     )

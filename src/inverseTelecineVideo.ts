@@ -17,7 +17,12 @@ import { runFfmpeg } from "./runFfmpeg.js";
 export const inverseTelecinedPath = "INVERSE-TELECINED"
 
 export const videoFilterPulldown = {
-  "2:3": "dejudder,fps=30000/1001,pullup",
+  // "2:3": "dejudder,fps=30000/1001,pullup", // This is what worked in the past, but it doesn't work always.
+  "2:3": "pullup,dejudder,fps=24000/1001",
+  // "2:3": "dejudder,fps=30000/1001,fieldmatch,bwdif=mode=0:parity=-1:deint=0,decimate",
+  // "2:3": "pullup",
+  // "2:3": "fieldmatch,bwdif=mode=0:parity=-1:deint=0,decimate", // This is from Topaz
+  // "2:3": "fieldmatch,bwdif=mode=0:parity=-1:deint=0,decimate,scale=w=854:h=480,setsar=1", // This is from Topaz
   // "2:3": "dejudder,fps=30000/1001,fieldmatch=combmatch=full,yadif=deint=interlaced,decimate",
   // "2:3": "fps=30000/1001,fieldmatch,yadif=deint=interlaced,decimate",
   // "2:3": "fps=30000/1001,fieldmatch,yadif=deint=interlaced,decimate",
@@ -28,6 +33,7 @@ export const videoFilterPulldown = {
   // "2:3": "fps=30000/1001,fieldmatch=mode=pc,yadif=deint=interlaced,decimate",
   // "2:3": "fieldmatch:combmatch=full,yadif=deint=interlaced,decimate",
   // "2:3": "fieldmatch=mode=pc:combmatch=none,decimate",
+  // "2:3": "fieldmatch,fieldmatch,decimate",
   // "2:3": "fieldmatch,decimate",
   // "2:3": "pullup",
 
