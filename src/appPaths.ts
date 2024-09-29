@@ -1,9 +1,10 @@
 import pathToFfmpeg from "ffmpeg-static"
 
 export const ffmpegPath = (
-  String(
-    pathToFfmpeg
-  )
+  "ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe"
+  // String(
+  //   pathToFfmpeg
+  // )
 )
 
 export const topazFfmpeg = {
