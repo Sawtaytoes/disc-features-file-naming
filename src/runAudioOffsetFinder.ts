@@ -1,7 +1,6 @@
 import chalk from "chalk"
-import {
-  spawn,
-} from "node:child_process";
+import { spawn } from "node:child_process";
+import { EOL } from "node:os";
 import {
   Observable,
 } from "rxjs"
@@ -12,14 +11,20 @@ import { catchNamedError } from "./catchNamedError.js"
 export const getOffsetFromAudioOffsetOutput = (
   audioOffsetOutputData: string
 ) => (
-  Number(
-    audioOffsetOutputData
-    .replace(
-      /Offset: ([-\d\.]+) \(seconds\)/,
-      "$1",
+  Math
+  .floor(
+    Number(
+      audioOffsetOutputData
+      .replace(
+        /Offset: ([-\d\.]+) \(seconds\)/,
+        "$1",
+      )
+      .split(EOL)
+      .at(0)!
+      .trim()
     )
+    * 1000
   )
-  * 1000
 )
 
 export const runAudioOffsetFinder = ({
