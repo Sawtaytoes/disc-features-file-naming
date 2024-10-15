@@ -7,7 +7,8 @@ export const topazFfmpeg = {
 }
 
 /** @see https://github.com/bbc/audio-offset-finder */
-export const audioOffsetFinderPath = ".venv/bin/audio-offset-finder"
+// export const audioOffsetFinderPath = ".venv/bin/audio-offset-finder" .// This local version doesn't run for whatever reason.
+export const audioOffsetFinderPath = "audio-offset-finder"
 
 export const ffmpegPath = "ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe"
 
