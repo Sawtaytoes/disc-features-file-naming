@@ -6,7 +6,10 @@ This package renames a folder of ripped disc special features using timecodes fr
 
 ### Installation
 
+You'll need Python 3, Node.js, and Yarn.
+
 ```sh
+pip install -r installed_packages.txt --target .venv
 yarn install
 yarn dlx @yarnpkg/sdks vscode
 ```
