@@ -1,12 +1,3 @@
-import pathToFfmpeg from "ffmpeg-static"
-
-export const ffmpegPath = (
-  "ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe"
-  // String(
-  //   pathToFfmpeg
-  // )
-)
-
 export const topazFfmpeg = {
   envVars: {
     TVAI_MODEL_DATA_DIR: "C:\\ProgramData\\Topaz Labs LLC\\Topaz Video AI\\models\\",
@@ -16,7 +7,9 @@ export const topazFfmpeg = {
 }
 
 /** @see https://github.com/bbc/audio-offset-finder */
-export const audioOffsetFinderPath = "audio-offset-finder"
+export const audioOffsetFinderPath = ".venv/bin/audio-offset-finder"
+
+export const ffmpegPath = "ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe"
 
 export const mediaInfoPath = "MediaInfo_CLI_24.05_Windows_x64/MediaInfo.exe"
 
