@@ -26,7 +26,7 @@ export const fileExtensionsWithSubtitles = (
 
 export const mergeSubtitlesMkvMerge = ({
   attachmentFilePaths,
-  audioLanguage,
+  // audioLanguage,
   destinationFilePath,
   chaptersFilePath,
   offsetInMilliseconds,
@@ -34,7 +34,6 @@ export const mergeSubtitlesMkvMerge = ({
   subtitlesLanguage,
 }: {
   attachmentFilePaths: string[],
-  audioLanguage: Iso6392LanguageCode,
   destinationFilePath: string,
   chaptersFilePath?: string,
   offsetInMilliseconds?: number,
@@ -43,11 +42,6 @@ export const mergeSubtitlesMkvMerge = ({
 }) => (
   runMkvMerge({
     args: [
-      "--audio-tracks",
-      audioLanguage,
-
-      // "--subtitle-tracks",
-      // subtitlesLanguage,
       "--no-subtitles",
 
       destinationFilePath,

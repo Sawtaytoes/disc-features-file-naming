@@ -361,7 +361,6 @@ export const mergeTracks = ({
                 ) => (
                   mergeSubtitlesMkvMerge({
                     attachmentFilePaths,
-                    audioLanguage: "jpn",
                     destinationFilePath: (
                       mediaFileInfo
                       .fullPath
