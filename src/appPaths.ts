@@ -10,10 +10,10 @@ export const topazFfmpeg = {
 // export const audioOffsetFinderPath = ".venv/bin/audio-offset-finder" .// This local version doesn't run for whatever reason.
 export const audioOffsetFinderPath = "audio-offset-finder"
 
-export const ffmpegPath = "ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe"
+export const ffmpegPath = "apps.generated/ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe"
 
-export const mediaInfoPath = "MediaInfo_CLI_24.05_Windows_x64/MediaInfo.exe"
+export const mediaInfoPath = "apps.generated/MediaInfo_CLI_24.05_Windows_x64/MediaInfo.exe"
 
-export const mkvExtractPath = "mkvtoolnix-64-bit-84.0/mkvextract.exe"
-export const mkvMergePath = "mkvtoolnix-64-bit-84.0/mkvmerge.exe"
-export const mkvPropEditPath = "mkvtoolnix-64-bit-84.0/mkvpropedit.exe"
+export const mkvExtractPath = "apps.generated/mkvtoolnix-64-bit-84.0/mkvextract.exe"
+export const mkvMergePath = "apps.generated/mkvtoolnix-64-bit-84.0/mkvmerge.exe"
+export const mkvPropEditPath = "apps.generated/mkvtoolnix-64-bit-84.0/mkvpropedit.exe"
