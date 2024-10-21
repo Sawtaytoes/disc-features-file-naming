@@ -31,7 +31,7 @@ export const setOnlyFirstTracksAsDefault = ({
     concatMap(({
       tracks
     }) => (
-      combineLatest(
+      combineLatest([
         (
           // Does this file have subtitles?
           // We're assuming it has video and audio.
@@ -122,7 +122,7 @@ export const setOnlyFirstTracksAsDefault = ({
             toArray(),
           )
         ),
-      )
+      ])
       .pipe(
         take(1),
         map(([
