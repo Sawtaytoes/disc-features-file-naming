@@ -56,7 +56,7 @@ export const changeTrackLanguages = ({
       sourcePath,
     })
     .pipe(
-      mergeAll(),
+      concatAll(),
       filter((
         fileInfo
       ) => (

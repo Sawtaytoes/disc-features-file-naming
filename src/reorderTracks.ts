@@ -37,7 +37,7 @@ export const reorderTracks = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
+    concatAll(),
     filter((
       fileInfo
     ) => (

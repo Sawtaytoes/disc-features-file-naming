@@ -1,4 +1,5 @@
 import {
+  concatAll,
   concatMap,
   map,
   mergeAll,
@@ -40,14 +41,14 @@ export const nameSpecialFeatures = ({
     url,
   })
   .pipe(
-    mergeMap((
+    concatMap((
       specialFeatureText,
     ) => (
       parseSpecialFeatures(
         specialFeatureText
       )
     )),
-    mergeMap((
+    concatMap((
       specialFeatures,
     ) => (
       readFilesAtDepth({
@@ -55,7 +56,7 @@ export const nameSpecialFeatures = ({
         sourcePath,
       })
       .pipe(
-        mergeAll(),
+        concatAll(),
         mergeMap((
           fileInfo,
         ) => (
