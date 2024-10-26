@@ -4,7 +4,6 @@ import {
   concatMap,
   filter,
   map,
-  mergeAll,
   tap,
   toArray,
 } from "rxjs"
@@ -40,7 +39,7 @@ export const keepLanguages = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
+    concatAll(),
     filter((
       fileInfo
     ) => (
