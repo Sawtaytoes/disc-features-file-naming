@@ -14,7 +14,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { getMkvInfo } from "./getMkvInfo.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
@@ -35,14 +35,7 @@ export const hasWrongDefaultTrack = ({
   })
   .pipe(
     mergeAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

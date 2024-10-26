@@ -9,10 +9,9 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 import { reorderTracksFfmpeg } from "./reorderTracksFfmpeg.js"
-import { reorderTracksMkvMerge } from "./reorderTracksMkvMerge.js"
 import { setOnlyFirstTracksAsDefault } from "./setOnlyFirstTracksAsDefault.js"
 
 export const reorderTracks = ({
@@ -38,14 +37,7 @@ export const reorderTracks = ({
   })
   .pipe(
     concatAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

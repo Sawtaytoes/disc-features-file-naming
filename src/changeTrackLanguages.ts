@@ -10,7 +10,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import {
   getMkvInfo,
   type MkvTookNixTrackType,

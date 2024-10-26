@@ -9,7 +9,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { getTrackLanguages } from "./getTrackLanguages.js"
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { keepSpecifiedLanguageTracks } from "./keepSpecifiedLanguageTracks.js"
@@ -40,14 +40,7 @@ export const keepLanguages = ({
   })
   .pipe(
     concatAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

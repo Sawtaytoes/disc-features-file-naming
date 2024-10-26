@@ -1,15 +1,12 @@
 import {
   concatAll,
-  filter,
   map,
-  mergeAll,
-  take,
   tap,
   toArray,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 import { setOnlyFirstTracksAsDefault } from "./setOnlyFirstTracksAsDefault.js"
 
@@ -29,15 +26,8 @@ export const fixIncorrectDefaultTracks = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    concatAll(),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

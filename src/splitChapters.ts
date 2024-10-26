@@ -11,7 +11,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 import { splitChaptersMkvMerge } from "./splitChaptersMkvMerge.js"

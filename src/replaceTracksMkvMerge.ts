@@ -9,7 +9,7 @@ import {
 } from "rxjs";
 
 import { defineLanguageForUndefinedTracks } from "./defineLanguageForUndefinedTracks.js";
-import { getIsVideoFile } from "./getIsVideoFile.js";
+import { filterIsVideoFile } from "./filterIsVideoFile.js";
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { runMkvMerge } from "./runMkvMerge.js";
 

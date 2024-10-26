@@ -20,7 +20,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { cleanupFilename } from "./cleanupFilename.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 

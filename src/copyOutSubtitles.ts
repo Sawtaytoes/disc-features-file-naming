@@ -11,7 +11,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { extractSubtitles } from "./extractSubtitles.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import {
   getMkvInfo,
   type MkvTookNixTrackType,

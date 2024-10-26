@@ -10,7 +10,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { convertVariableToConstantBitrate } from "./convertVariableToConstantBitrate.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import {
   inverseTelecineVideo,
   type Pulldown,
@@ -41,14 +41,7 @@ export const inverseTelecineDiscRips = ({
   })
   .pipe(
     concatAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

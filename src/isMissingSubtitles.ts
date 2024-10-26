@@ -2,16 +2,16 @@ import {
   cpus,
 } from "node:os"
 import {
+  concatAll,
   concatMap,
   filter,
   map,
   mergeAll,
-  reduce,
   tap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import {
   getMediaInfo,
   type TextTrack,
@@ -34,15 +34,8 @@ export const isMissingSubtitles = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    concatAll(),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

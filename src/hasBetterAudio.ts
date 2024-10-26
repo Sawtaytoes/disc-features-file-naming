@@ -9,7 +9,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import {
   getMediaInfo,
   type AudioTrack,
@@ -38,14 +38,7 @@ export const hasBetterAudio = ({
   })
   .pipe(
     mergeAll(),
-    filter((
-      fileInfo
-    ) => (
-      getIsVideoFile(
-        fileInfo
-        .fullPath
-      )
-    )),
+    filterIsVideoFile(),
     map((
       fileInfo,
     ) => (

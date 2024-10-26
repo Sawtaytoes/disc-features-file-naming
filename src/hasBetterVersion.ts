@@ -8,7 +8,7 @@ import {
 
 import { catchNamedError } from "./catchNamedError.js"
 import { getDiscWorthIt } from "./getDiscWorthIt.js"
-import { getIsVideoFile } from "./getIsVideoFile.js"
+import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const hasBetterVersion = ({

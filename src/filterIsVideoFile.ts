@@ -1,4 +1,7 @@
 import { extname } from "node:path"
+import { filter } from "rxjs"
+
+import { type FileInfo } from "./readFiles.js"
 
 export const videoFileExtensions = (
   new Set([
@@ -20,4 +23,15 @@ export const getIsVideoFile = (
       sourceFilePath
     )
   )
+)
+
+export const filterIsVideoFile = () => (
+  filter((
+    fileInfo: FileInfo
+  ) => (
+    getIsVideoFile(
+      fileInfo
+      .fullPath
+    )
+  ))
 )
