@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import {
   concatAll,
   concatMap,
@@ -18,6 +17,7 @@ import {
   type AudioTrack,
 } from "./getMediaInfo.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
+import { logInfo } from "./logMessage.js"
 
 export const replaceFlacWithPcmAudio = ({
   isRecursive,
@@ -109,20 +109,12 @@ export const replaceFlacWithPcmAudio = ({
       )
       .pipe(
         tap(() => {
-          console
-          .info(
-            (
-              chalk
-              .green(
-                "[CREATED PCM AUDIO CONVERSION FILE]"
-              )
-            ),
+          logInfo(
+            "CREATED PCM AUDIO CONVERSION FILE",
             (
               fileInfo
               .fullPath
             ),
-            "\n",
-            "\n",
           )
         }),
         filter(

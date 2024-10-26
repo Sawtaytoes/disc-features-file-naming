@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import { spawn } from "node:child_process";
 import { EOL } from "node:os";
 import {
@@ -7,6 +6,7 @@ import {
 
 import { audioOffsetFinderPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
+import { logWarning } from "./logMessage.js";
 
 export const getOffsetFromAudioOffsetOutput = (
   audioOffsetOutputData: string
@@ -136,12 +136,9 @@ export const runAudioOffsetFinder = ({
             Promise
             .resolve()
             .then(() => {
-              console
-              .info(
-                chalk
-                .red(
-                  "Process canceled by user."
-                )
+              logWarning(
+                "audio-offset-finder",
+                "Process canceled by user.",
               )
 
               return (

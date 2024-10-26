@@ -34,7 +34,6 @@ export const hasWrongDefaultTrack = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

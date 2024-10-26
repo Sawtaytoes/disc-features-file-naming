@@ -56,15 +56,7 @@ export const changeTrackLanguages = ({
       sourcePath,
     })
     .pipe(
-      concatAll(),
-      filter((
-        fileInfo
-      ) => (
-        getIsVideoFile(
-          fileInfo
-          .fullPath
-        )
-      )),
+      filterIsVideoFile(),
       map((
         fileInfo,
       ) => (

@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import {
   concatAll,
   concatMap,
@@ -15,6 +14,7 @@ import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
 import { splitChaptersMkvMerge } from "./splitChaptersMkvMerge.js"
+import { logInfo } from "./logMessage.js"
 
 export const splitChapters = ({
   chapterSplitsList,
@@ -27,6 +27,7 @@ export const splitChapters = ({
     sourcePath,
   })
   .pipe(
+    toArray(),
     concatMap((
       fileInfos,
     ) => (
@@ -44,14 +45,7 @@ export const splitChapters = ({
         })
       )
       .pipe(
-        filter((
-          fileInfo,
-        ) => (
-          getIsVideoFile(
-            fileInfo
-            .fullPath
-          )
-        )),
+        filterIsVideoFile(),
         take(
           chapterSplitsList
           .length
@@ -74,20 +68,12 @@ export const splitChapters = ({
           })
           .pipe(
             tap(() => {
-              console
-              .info(
-                (
-                  chalk
-                  .green(
-                    "[CREATED SUBTITLED FILE]"
-                  )
-                ),
+              logInfo(
+                "CREATED SUBTITLED FILE",
                 (
                   fileInfo
                   .fullPath
                 ),
-                "\n",
-                "\n",
               )
             }),
             filter(

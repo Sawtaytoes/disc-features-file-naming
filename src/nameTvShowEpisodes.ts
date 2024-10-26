@@ -31,6 +31,7 @@ export const nameTvShowEpisodes = ({
     sourcePath,
   })
   .pipe(
+    toArray(),
     concatMap((
       fileInfos,
     ) => (

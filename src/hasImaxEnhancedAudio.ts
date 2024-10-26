@@ -28,7 +28,6 @@ export const hasImaxEnhancedAudio = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
     mergeMap((
       fileInfo,
     ) => (

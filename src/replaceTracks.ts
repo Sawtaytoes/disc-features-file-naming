@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import {
   concatAll,
   concatMap,
@@ -14,6 +13,7 @@ import { getAudioOffset } from "./getAudioOffset.js"
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { readFiles } from "./readFiles.js"
 import { replaceTracksMkvMerge } from "./replaceTracksMkvMerge.js"
+import { logInfo } from "./logMessage.js"
 
 export const replaceTracks = ({
   audioLanguages,
@@ -42,6 +42,7 @@ export const replaceTracks = ({
     ),
   })
   .pipe(
+    toArray(),
     concatMap((
       sourceFileInfos,
     ) => (
@@ -51,7 +52,6 @@ export const replaceTracks = ({
         ),
       })
       .pipe(
-        concatAll(),
         map((
           destinationFileInfo,
         ) => ({
@@ -111,17 +111,9 @@ export const replaceTracks = ({
             tap((
               offsetInMilliseconds,
             ) => {
-              console
-              .info(
-                (
-                  chalk
-                  .green(
-                    "[OFFSET IN MILLISECONDS]"
-                  )
-                ),
+              logInfo(
+                "OFFSET IN MILLISECONDS",
                 offsetInMilliseconds,
-                "\n",
-                "\n",
               )
             }),
             concatMap((
@@ -148,17 +140,9 @@ export const replaceTracks = ({
             tap((
               outputFilePath,
             ) => {
-              console
-              .info(
-                (
-                  chalk
-                  .green(
-                    "[CREATED BETTER FILE]"
-                  )
-                ),
+              logInfo(
+                "REPLACED TRACKS IN FILE",
                 outputFilePath,
-                "\n",
-                "\n",
               )
             }),
             filter(

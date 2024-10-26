@@ -101,8 +101,9 @@ export const readFolder = ({
         ))),
       )
     )),
-    toArray(),
-    concatAll(),
+    // TODO: Check if these are still required.
+    // toArray(),
+    // concatAll(),
     catchNamedError(
       readFolder
     ),

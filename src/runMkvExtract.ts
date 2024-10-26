@@ -1,5 +1,4 @@
 import colors from "ansi-colors"
-import chalk from "chalk"
 import cliProgress from "cli-progress"
 import {
   spawn,
@@ -11,6 +10,7 @@ import {
 import { mkvExtractPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
 import { unlink } from "node:fs/promises";
+import { logWarning } from "./logMessage.js";
 
 const cliProgressBar = (
   new cliProgress
@@ -170,12 +170,9 @@ export const runMkvExtract = ({
               outputFilePath
             )
             .then(() => {
-              console
-              .info(
-                chalk
-                .red(
-                  "Process canceled by user."
-                )
+              logWarning(
+                "mkvextract",
+                "Process canceled by user.",
               )
 
               setTimeout(

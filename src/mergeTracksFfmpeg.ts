@@ -39,8 +39,8 @@ export const mergeTracksFfmpeg = ({
       "-c:d",
       "copy",
     ],
-    attachmentFilePaths,
-    fileSizeInKilobytes,
+    // attachmentFilePaths,
+    // fileSizeInKilobytes,
     inputFilePaths,
     outputFilePath: (
       destinationFilePath

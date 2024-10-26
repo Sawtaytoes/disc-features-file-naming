@@ -1,5 +1,4 @@
 import colors from "ansi-colors"
-import chalk from "chalk"
 import cliProgress from "cli-progress"
 import {
   spawn,
@@ -13,6 +12,7 @@ import {
 
 import { mkvMergePath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
+import { logWarning } from "./logMessage.js";
 
 const cliProgressBar = (
   new cliProgress
@@ -175,12 +175,9 @@ export const runMkvMerge = ({
               outputFilePath
             )
             .then(() => {
-              console
-              .info(
-                chalk
-                .red(
-                  "Process canceled by user."
-                )
+              logWarning(
+                "mkvmerge",
+                "Process canceled by user.",
               )
 
               setTimeout(

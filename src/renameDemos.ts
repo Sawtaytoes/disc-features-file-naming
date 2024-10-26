@@ -24,7 +24,6 @@ export const renameDemos = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
     mergeMap((
       fileInfo,
     ) => (

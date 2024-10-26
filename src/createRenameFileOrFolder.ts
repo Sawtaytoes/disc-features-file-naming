@@ -1,8 +1,6 @@
-import chalk from "chalk"
 import { rename, stat } from "node:fs/promises"
 import { basename, extname, join } from "node:path"
 import {
-  bindNodeCallback,
   catchError,
   concatMap,
   filter,
@@ -12,6 +10,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { logInfo } from "./logMessage.js"
 
 export const getFilenameFromFilePath = (
   filePath: string,
@@ -54,15 +53,18 @@ export const renameFileOrFolder = ({
         stats
       ) {
         throw (
-          "File already exists for "
+          "File already exists for"
           .concat(
+            " ",
             "\"",
             (
               getFilenameFromFilePath(
                 newPath
               )
             ),
-            "\"",
+            "\".",
+            " ",
+            `Cannot rename ${oldPath}`
           )
         )
       }
@@ -103,26 +105,6 @@ export const createRenameFileOrFolder = ({
       newPath
       !== oldPath
     )),
-    tap(({
-      newPath,
-      oldPath,
-    }) => {
-      console
-      .info(
-        (
-          chalk
-          .green(
-            "[RENAMING]"
-          )
-        ),
-        "\n",
-        oldPath,
-        "\n",
-        newPath,
-        "\n",
-        "\n",
-      )
-    }),
     // ignoreElements(), // UNCOMMENT TO PREVENT WRITING FILES
     concatMap(({
       newPath,
@@ -132,6 +114,15 @@ export const createRenameFileOrFolder = ({
         newPath,
         oldPath,
       })
+      .pipe(
+        tap(() => {
+          logInfo(
+            "RENAMED",
+            oldPath,
+            newPath,
+          )
+        }),
+      )
     )),
     catchNamedError(
       createRenameFileOrFolder

@@ -105,8 +105,9 @@ export const readFiles = ({
         ))),
       )
     )),
-    toArray(),
-    concatAll(),
+    // TODO: Check if these are still required.
+    // toArray(),
+    // concatAll(),
     catchNamedError(
       readFiles
     ),

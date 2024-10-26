@@ -30,7 +30,6 @@ export const hasManyAudioTracks = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
     mergeMap((
       fileInfo,
     ) => (

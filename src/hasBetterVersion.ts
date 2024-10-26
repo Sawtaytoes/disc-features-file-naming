@@ -32,15 +32,7 @@ export const hasBetterVersion = ({
         sourcePath,
       })
       .pipe(
-        mergeAll(),
-        filter((
-          fileInfo
-        ) => (
-          getIsVideoFile(
-            fileInfo
-            .filename
-          )
-        )),
+        filterIsVideoFile(),
         filter((
           fileInfo
         ) => (

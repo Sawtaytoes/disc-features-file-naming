@@ -9,7 +9,7 @@ import {
   of,
 } from "rxjs";
 
-import { filterIsVideoFile } from "./filterIsVideoFile.js";
+import { getIsVideoFile } from "./filterIsVideoFile.js";
 import { runMkvMerge } from "./runMkvMerge.js";
 
 export const replacedAttachmentsFolderName = "REPLACED-ATTACHMENTS"

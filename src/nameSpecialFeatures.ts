@@ -56,7 +56,6 @@ export const nameSpecialFeatures = ({
         sourcePath,
       })
       .pipe(
-        concatAll(),
         mergeMap((
           fileInfo,
         ) => (

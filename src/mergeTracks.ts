@@ -1,11 +1,9 @@
-import chalk from "chalk"
 import { XMLParser } from "fast-xml-parser"
 import {
   access,
   readFile,
 } from "node:fs/promises"
 import {
-  dirname,
   extname,
   join,
 } from "node:path"
@@ -29,6 +27,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { ChaptersXml } from "./ChaptersXml.js"
 import { getMediaInfo } from "./getMediaInfo.js"
+import { logInfo } from "./logMessage.js"
 import {
   fileExtensionsWithSubtitles,
   mergeSubtitlesMkvMerge,
@@ -66,6 +65,9 @@ export const mergeTracks = ({
           subtitlesPath
         ),
       })
+      .pipe(
+        toArray(),
+      )
     ),
     (
       readFiles({
@@ -73,6 +75,9 @@ export const mergeTracks = ({
           mediaFilesPath
         ),
       })
+      .pipe(
+        toArray(),
+      )
     ),
   ])
   .pipe(
@@ -120,7 +125,6 @@ export const mergeTracks = ({
                     ),
                   })
                   .pipe(
-                    concatAll(),
                     filter((
                       subtitlesFileInfo,
                     ) => (
@@ -167,7 +171,6 @@ export const mergeTracks = ({
                         ),
                       })
                     )),
-                    concatAll(),
                     map((
                       attachmentsFileInfo,
                     ) => (
@@ -197,7 +200,6 @@ export const mergeTracks = ({
                       ),
                     })
                     .pipe(
-                      concatAll(),
                       filter((
                         subtitlesFileInfo,
                       ) => (
@@ -391,20 +393,12 @@ export const mergeTracks = ({
                   })
                 )),
                 tap(() => {
-                  console
-                  .info(
-                    (
-                      chalk
-                      .green(
-                        "[CREATED MERGED FILE]"
-                      )
-                    ),
+                  logInfo(
+                    "CREATED MERGED FILE",
                     (
                       mediaFileInfo
                       .fullPath
                     ),
-                    "\n",
-                    "\n",
                   )
                 }),
                 filter(

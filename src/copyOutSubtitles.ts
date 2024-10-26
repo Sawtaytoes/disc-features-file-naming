@@ -56,15 +56,7 @@ export const copyOutSubtitles = ({
       sourcePath,
     })
     .pipe(
-      mergeAll(),
-      filter((
-        fileInfo
-      ) => (
-        getIsVideoFile(
-          fileInfo
-          .fullPath
-        )
-      )),
+      filterIsVideoFile(),
       map((
         fileInfo,
       ) => (

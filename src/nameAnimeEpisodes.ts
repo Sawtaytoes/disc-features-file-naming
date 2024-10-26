@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import malScraper from "mal-scraper"
 import {
   basename,
@@ -23,6 +22,7 @@ import { cleanupFilename } from "./cleanupFilename.js"
 import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { naturalSort } from "./naturalSort.js"
 import { readFiles } from "./readFiles.js"
+import { logInfo } from "./logMessage.js"
 
 export const nameAnimeEpisodes = ({
   searchTerm,
@@ -37,6 +37,7 @@ export const nameAnimeEpisodes = ({
     sourcePath,
   })
   .pipe(
+    toArray(),
     map((
       fileInfos,
     ) => (
@@ -202,14 +203,7 @@ export const nameAnimeEpisodes = ({
             })
           )
           .pipe(
-            filter((
-              fileInfo,
-            ) => (
-              getIsVideoFile(
-                fileInfo
-                .fullPath
-              )
-            )),
+            filterIsVideoFile(),
             map((
               fileInfo,
               index,
@@ -272,21 +266,13 @@ export const nameAnimeEpisodes = ({
                 )
               }
               else {
-                console
-                .info(
-                  (
-                    chalk
-                    .green(
-                      "[NO EPISODE NAME]"
-                    )
-                  ),
+                logInfo(
+                  "NO EPISODE NAME",
                   (
                     item
                     .fileInfo
                     .filename
                   ),
-                  "\n",
-                  "\n",
                 )
 
                 return EMPTY

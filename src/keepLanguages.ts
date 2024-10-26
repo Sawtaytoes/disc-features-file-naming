@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import {
   concatAll,
   concatMap,
@@ -13,6 +12,7 @@ import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { getTrackLanguages } from "./getTrackLanguages.js"
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { keepSpecifiedLanguageTracks } from "./keepSpecifiedLanguageTracks.js"
+import { logInfo } from "./logMessage.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const keepLanguages = ({
@@ -118,52 +118,13 @@ export const keepLanguages = ({
             ),
           ],
         })),
-        // tap(({
-        //   audioLanguages,
-        //   audioLanguagesToKeep,
-        //   subtitlesLanguages,
-        //   subtitlesLanguagesToKeep,
-        // }) => {
-        //   console.log({
-        //     audioLanguages,
-        //     audioLanguagesToKeep,
-        //     subtitlesLanguages,
-        //     subtitlesLanguagesToKeep,
-        //   })
-        //   console.log(
-        //     audioLanguages
-        //     .some((
-        //       audioLanguage,
-        //     ) => (
-        //       !(
-        //         audioLanguagesToKeep
-        //         .includes(
-        //           audioLanguage
-        //         )
-        //       )
-        //     ))
-        //   )
-        //   console.log(
-        //     subtitlesLanguages
-        //     .some((
-        //       subtitlesLanguage,
-        //     ) => (
-        //       !(
-        //         subtitlesLanguagesToKeep
-        //         .includes(
-        //           subtitlesLanguage
-        //         )
-        //       )
-        //     ))
-        //   )
-        // }),
         filter(({
           audioLanguages,
           audioLanguagesToKeep,
           subtitlesLanguages,
           subtitlesLanguagesToKeep,
         }) => (
-          // Only continue if there's keeping languages results in a different file output.
+          // Only continue if keeping these languages results in a different file output.
           (
             audioLanguages
             .some((
@@ -215,20 +176,12 @@ export const keepLanguages = ({
           })
           .pipe(
             tap(() => {
-              console
-              .info(
-                (
-                  chalk
-                  .green(
-                    "[CREATED TRIMMED FILE]"
-                  )
-                ),
+              logInfo(
+                "CREATED TRIMMED FILE",
                 (
                   fileInfo
                   .fullPath
                 ),
-                "\n",
-                "\n",
               )
             }),
             filter(

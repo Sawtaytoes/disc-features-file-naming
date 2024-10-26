@@ -1,8 +1,8 @@
-import chalk from "chalk"
 import {
   catchError,
   EMPTY,
 } from "rxjs"
+import { logError } from "./logMessage.js"
 
 export const catchNamedError = (
   func: (
@@ -17,21 +17,17 @@ export const catchNamedError = (
   catchError((
     error,
   ) => {
-    console
-    .error(
+    logError(
       (
-        chalk
-        .red(
-          (
-            typeof func
-            === "function"
-          )
-          ? (
-            func
-            .name
-          )
-          : func
+        (
+          typeof func
+          === "function"
         )
+        ? (
+          func
+          .name
+        )
+        : func
       ),
       (
         (

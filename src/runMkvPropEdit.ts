@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import {
   spawn,
 } from "node:child_process";
@@ -8,6 +7,7 @@ import {
 
 import { mkvPropEditPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
+import { logWarning } from "./logMessage.js";
 
 export const runMkvPropEdit = ({
   args,
@@ -98,12 +98,9 @@ export const runMkvPropEdit = ({
             Promise
             .resolve()
             .then(() => {
-              console
-              .info(
-                chalk
-                .red(
-                  "Process canceled by user."
-                )
+              logWarning(
+                "mkvpropedit",
+                "Process canceled by user.",
               )
 
               return (

@@ -37,7 +37,6 @@ export const hasBetterAudio = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

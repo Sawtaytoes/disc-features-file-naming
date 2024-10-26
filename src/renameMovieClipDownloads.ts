@@ -17,7 +17,6 @@ export const renameMovieClipDownloads = ({
     sourcePath,
   })
   .pipe(
-    mergeAll(),
     map((
       fileInfo,
     ) => (

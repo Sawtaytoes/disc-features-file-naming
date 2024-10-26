@@ -9,7 +9,7 @@ import {
 } from "rxjs";
 
 import { defineLanguageForUndefinedTracks } from "./defineLanguageForUndefinedTracks.js";
-import { filterIsVideoFile } from "./filterIsVideoFile.js";
+import { getIsVideoFile } from "./filterIsVideoFile.js";
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
 import { runMkvMerge } from "./runMkvMerge.js";
 
@@ -56,12 +56,14 @@ export const replaceTracksMkvMerge = ({
     > 0
   )
 
-  return (
-    (
-      getIsVideoFile(
-        sourceFilePath,
-      )
+  const isVideoFile = (
+    getIsVideoFile(
+      sourceFilePath
     )
+  )
+
+  return (
+    isVideoFile
     ? (
       defineLanguageForUndefinedTracks({
         filePath: sourceFilePath,
@@ -122,11 +124,7 @@ export const replaceTracksMkvMerge = ({
 
               ...(
                 (
-                  (
-                    getIsVideoFile(
-                      sourceFilePath
-                    )
-                  )
+                  isVideoFile
                   && hasAudioLanguages
                 )
                 ? [
@@ -141,11 +139,7 @@ export const replaceTracksMkvMerge = ({
 
               ...(
                 (
-                  (
-                    getIsVideoFile(
-                      sourceFilePath
-                    )
-                  )
+                  isVideoFile
                   && hasSubtitlesLanguages
                 )
                 ? [
@@ -160,11 +154,7 @@ export const replaceTracksMkvMerge = ({
 
               ...(
                 (
-                  (
-                    getIsVideoFile(
-                      sourceFilePath
-                    )
-                  )
+                  isVideoFile
                   && hasVideoLanguages
                 )
                 ? [

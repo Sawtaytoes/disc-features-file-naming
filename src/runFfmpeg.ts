@@ -1,5 +1,4 @@
 import colors from "ansi-colors"
-import chalk from "chalk"
 import cliProgress from "cli-progress"
 import {
   spawn,
@@ -22,6 +21,7 @@ import { getFileDuration } from "./getFileDuration.js";
 import { getMediaInfo } from "./getMediaInfo.js";
 import { stat } from "node:fs/promises";
 import { convertTimecodeToMilliseconds } from "./parseTimestamps.js";
+import { logWarning } from "./logMessage.js";
 
 const cliProgressBar = (
   new cliProgress
@@ -341,12 +341,9 @@ export const runFfmpeg = ({
                 outputFilePath
               )
               .then(() => {
-                console
-                .info(
-                  chalk
-                  .red(
-                    "Process canceled by user."
-                  )
+                logWarning(
+                  "ffmpeg",
+                  "Process canceled by user.",
                 )
 
                 setTimeout(

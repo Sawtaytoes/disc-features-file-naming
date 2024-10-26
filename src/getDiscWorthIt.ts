@@ -64,7 +64,8 @@ export const getDiscWorthIt = (): (
   from(
     puppeteer
     .launch({
-      headless: "new",
+      headless: true,
+      // headless: "new",
       // headless: false,
     })
   )

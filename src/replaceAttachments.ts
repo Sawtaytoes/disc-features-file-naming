@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import {
   concatAll,
   concatMap,
@@ -11,6 +10,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { readFiles } from "./readFiles.js"
 import { replaceAttachmentsMkvMerge } from "./replaceAttachmentsMkvMerge.js"
+import { logInfo } from "./logMessage.js"
 
 export const replaceAttachments = ({
   destinationFilesPath,
@@ -25,6 +25,7 @@ export const replaceAttachments = ({
     ),
   })
   .pipe(
+    toArray(),
     concatMap((
       mediaFiles,
     ) => (
@@ -34,7 +35,6 @@ export const replaceAttachments = ({
         ),
       })
       .pipe(
-        concatAll(),
         map((
           mediaFileInfo,
         ) => ({
@@ -81,20 +81,12 @@ export const replaceAttachments = ({
           })
           .pipe(
             tap(() => {
-              console
-              .info(
-                (
-                  chalk
-                  .green(
-                    "[CREATED FILE WITH ATTACHMENTS]"
-                  )
-                ),
+              logInfo(
+                "CREATED FILE WITH ATTACHMENTS",
                 (
                   mediaFileInfo
                   .fullPath
                 ),
-                "\n",
-                "\n",
               )
             }),
             filter(
