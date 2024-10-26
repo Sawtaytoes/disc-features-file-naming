@@ -34,7 +34,6 @@ export const isMissingSubtitles = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

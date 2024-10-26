@@ -40,7 +40,6 @@ export const inverseTelecineDiscRips = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

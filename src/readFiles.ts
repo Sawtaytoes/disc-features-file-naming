@@ -56,7 +56,7 @@ export const readFiles = ({
   sourcePath: string,
 }): (
   Observable<
-    FileInfo[]
+    FileInfo
   >
 ) => (
   from(
@@ -106,6 +106,7 @@ export const readFiles = ({
       )
     )),
     toArray(),
+    concatAll(),
     catchNamedError(
       readFiles
     ),

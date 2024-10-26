@@ -36,7 +36,6 @@ export const reorderTracks = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

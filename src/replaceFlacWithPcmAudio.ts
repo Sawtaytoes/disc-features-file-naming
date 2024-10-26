@@ -35,7 +35,6 @@ export const replaceFlacWithPcmAudio = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

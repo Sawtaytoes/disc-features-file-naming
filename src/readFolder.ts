@@ -56,7 +56,7 @@ export const readFolder = ({
   sourcePath: string,
 }): (
   Observable<
-    FolderInfo[]
+    FolderInfo
   >
 ) => (
   from(
@@ -102,6 +102,7 @@ export const readFolder = ({
       )
     )),
     toArray(),
+    concatAll(),
     catchNamedError(
       readFolder
     ),

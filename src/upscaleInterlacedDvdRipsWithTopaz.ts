@@ -43,7 +43,6 @@ export const upscaleInterlacedDvdRipsWithTopaz = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

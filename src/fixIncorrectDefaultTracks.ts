@@ -26,7 +26,6 @@ export const fixIncorrectDefaultTracks = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,

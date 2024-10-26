@@ -4,9 +4,6 @@ import {
   concatMap,
   EMPTY,
   iif,
-  merge,
-  mergeAll,
-  mergeMap,
 } from "rxjs"
 
 import { readFiles } from "./readFiles.js"
@@ -36,7 +33,6 @@ export const readFilesAtDepth = ({
             sourcePath,
           })
           .pipe(
-            concatAll(),
             concatMap((
               folderInfo,
             ) => (

@@ -39,7 +39,6 @@ export const keepLanguages = ({
     sourcePath,
   })
   .pipe(
-    concatAll(),
     filterIsVideoFile(),
     map((
       fileInfo,
