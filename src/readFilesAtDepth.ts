@@ -1,9 +1,12 @@
 import {
+  concat,
+  concatAll,
+  concatMap,
   EMPTY,
+  iif,
   merge,
   mergeAll,
   mergeMap,
-  tap,
 } from "rxjs"
 
 import { readFiles } from "./readFiles.js"
@@ -16,28 +19,27 @@ export const readFilesAtDepth = ({
   depth: number,
   sourcePath: string
 }): ReturnType<typeof readFiles> => (
-  depth > 0
-  ? (
-    readFolder({
-      sourcePath,
-    })
-    .pipe(
-      mergeAll(),
-      mergeMap((
-        folderInfo,
-      ) => (
-        merge(
-          (
-            readFiles({
-              sourcePath: (
-                folderInfo
-                .fullPath
-              )
-            })
-          ),
-          (
-            (depth - 1) > 0
-            ? (
+  concat(
+    (
+      readFiles({
+        sourcePath,
+      })
+    ),
+    (
+      iif(
+        () => (
+          depth
+          > 0
+        ),
+        (
+          readFolder({
+            sourcePath,
+          })
+          .pipe(
+            concatAll(),
+            concatMap((
+              folderInfo,
+            ) => (
               readFilesAtDepth({
                 depth: (depth - 1),
                 sourcePath: (
@@ -45,16 +47,11 @@ export const readFilesAtDepth = ({
                   .fullPath
                 ),
               })
-            )
-            : EMPTY
-          ),
-        )
-      )),
-    )
-  )
-  : (
-    readFiles({
-      sourcePath,
-    })
+            )),
+          )
+        ),
+        EMPTY,
+      )
+    ),
   )
 )

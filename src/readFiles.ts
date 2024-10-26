@@ -1,27 +1,20 @@
-import chalk from "chalk"
-import {
-  rename,
-} from "node:fs"
 import {
   readdir,
   stat,
 } from "node:fs/promises"
-import path, { join } from "node:path"
+import { join } from "node:path"
 import {
-  bindNodeCallback,
-  catchError,
   concatAll,
   concatMap,
   filter,
   from,
   map,
-  of,
-  tap,
   toArray,
   type Observable,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { createRenameFileOrFolder, getFilenameFromFilePath } from "./createRenameFileOrFolder.js"
 
 export type FileInfo = {
   filename: (
@@ -39,6 +32,24 @@ export type FileInfo = {
   )
 }
 
+const getIsFile = (
+  fullPath: string
+) => (
+  from(
+    stat(
+      fullPath
+    )
+  )
+  .pipe(
+    filter((
+      stats
+    ) => (
+      stats
+      .isFile()
+    )),
+  )
+)
+
 export const readFiles = ({
   sourcePath,
 }: {
@@ -55,153 +66,43 @@ export const readFiles = ({
   )
   .pipe(
     concatAll(),
-    // filter((
-    //   filename,
-    // ) => (
-    //   filename
-    //   // -------------------------------------
-    //   // UNCOMMENT THIS TIME TO TEST A SINGLE FILE
-    //   // && filename.startsWith('The Rock')
-    //   // -------------------------------------
-    // )),
     map((
-      filename,
+      filePath,
     ) => ({
       filename: (
-        path
-        .basename(
-          filename,
-          (
-            path
-            .extname(
-              filename
-            )
-          ),
+        getFilenameFromFilePath(
+          filePath
         )
       ),
       fullPath: (
         join(
           sourcePath,
-          filename,
+          filePath,
         )
       ),
-      renameFile: (
-        renamedFilename,
-      ) => (
-        of({
-          oldFilename: (
-            join(
-              sourcePath,
-              filename,
-            )
-          ),
-          newFilename: (
-            join(
-              sourcePath,
-              renamedFilename,
-            )
-            .concat(
-              (
-                path
-                .extname(
-                  filename
-                )
-              ),
-            )
-          )
-        })
-        .pipe(
-          filter(({
-            newFilename,
-            oldFilename,
-          }) => (
-            newFilename
-            !== oldFilename
-          )),
-          tap(({
-            newFilename,
-            oldFilename,
-          }) => {
-            console
-            .info(
-              (
-                chalk
-                .green(
-                  "[RENAMING]"
-                )
-              ),
-              "\n",
-              oldFilename,
-              "\n",
-              newFilename,
-              "\n",
-              "\n",
-            )
-          }),
-          // ignoreElements(), // UNCOMMENT TO PREVENT WRITING FILES
-          concatMap(({
-            newFilename,
-            oldFilename,
-          }) => (
-            from(
-              stat(
-                newFilename,
-              )
-            )
-            .pipe(
-              catchError(() => (
-                bindNodeCallback(
-                  rename,
-                )(
-                  oldFilename,
-                  newFilename,
-                )
-              )),
-              map((
-                stats,
-              ) => {
-                if (
-                  stats
-                ) {
-                  throw (
-                    "File already exists for "
-                    .concat(
-                      `"${renamedFilename}"`
-                    )
-                  )
-                }
-              }),
-            )
-          )),
-          catchNamedError(
-            readFiles
-          ),
-        )
-      )
-    } satisfies (
-      FileInfo
-    ) as (
-      FileInfo
-    ))),
-    concatMap((
-      file,
-    ) => (
-      from(
-        stat(
-          file
-          .fullPath
-        )
+    })),
+    concatMap(({
+      filename,
+      fullPath,
+    }) => (
+      getIsFile(
+        fullPath
       )
       .pipe(
-        filter((
-          stats
-        ) => (
-          stats
-          .isFile()
-        )),
-        map(() => (
-          file
-        )),
+        map(() => ({
+          filename,
+          fullPath,
+          renameFile: (
+            createRenameFileOrFolder({
+              fullPath,
+              sourcePath,
+            })
+          ),
+        } satisfies (
+          FileInfo
+        ) as (
+          FileInfo
+        ))),
       )
     )),
     toArray(),
