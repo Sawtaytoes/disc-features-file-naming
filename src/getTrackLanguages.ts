@@ -2,12 +2,10 @@ import {
   concatMap,
   filter,
   map,
-  of,
   reduce,
 } from "rxjs"
 
 import { convertIso6391ToIso6392 } from "./convertIso6391ToIso6392.js"
-import { deduplicateWhileMaintainingOrder } from "./deduplicateWhileMaintainingOrder.js"
 import {
   getMediaInfo,
   type AudioTrack,
@@ -15,12 +13,40 @@ import {
 } from "./getMediaInfo.js"
 import { type Iso6391LanguageCode } from "./iso6391LanguageCodes.js"
 
+export const orderedDeduplication = <
+  Value
+>(
+  array: Value[]
+) => (
+  array
+  .reduce(
+    (
+      deduplicatedArray,
+      value,
+    ) => (
+      deduplicatedArray
+      .includes(
+        value
+      )
+      ? deduplicatedArray
+      : (
+        deduplicatedArray
+        .concat(
+          value
+        )
+      )
+    ),
+    [] as (
+      Value[]
+    ),
+  )
+)
+
 export type TrackTypeLanguages = (
   Record<
     (
       | AudioTrack["@type"]
       | TextTrack["@type"]
-      | string
     ),
     Iso6391LanguageCode[]
   >
@@ -51,9 +77,6 @@ export const getTrackLanguages = (
     )),
     filter((
       track,
-    ): track is (
-      | AudioTrack
-      | TextTrack
     ) => (
       (
         (
@@ -72,9 +95,6 @@ export const getTrackLanguages = (
     )),
     filter((
       track,
-    ): track is (
-      | AudioTrack
-      | TextTrack
     ) => (
       Boolean(
         track
@@ -83,22 +103,22 @@ export const getTrackLanguages = (
     )),
     reduce(
       (
-        trackInfos,
-        track
+        trackLanguages,
+        track,
       ) => ({
-        ...trackInfos,
+        ...trackLanguages,
         [
           track
           ["@type"]
         ]: [
           ...(
-            trackInfos[
+            trackLanguages[
               track
               ["@type"]
             ]
           ),
           ...(
-            trackInfos[
+            trackLanguages[
               track
               ["@type"]
             ]
@@ -124,12 +144,12 @@ export const getTrackLanguages = (
       ),
     ),
     map(({
-      Audio,
-      Text,
+      Audio: audioLanguages,
+      Text: textLanguages,
     }) => ({
       audioLanguages: (
-        deduplicateWhileMaintainingOrder(
-          Audio
+        orderedDeduplication(
+          audioLanguages
         )
         .map((
           iso6391LanguageCode,
@@ -140,8 +160,8 @@ export const getTrackLanguages = (
         ))
       ),
       subtitlesLanguages: (
-        deduplicateWhileMaintainingOrder(
-          Text
+        orderedDeduplication(
+          textLanguages
         )
         .map((
           iso6391LanguageCode,
