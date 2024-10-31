@@ -32,8 +32,12 @@ export type FileInfo = {
   )
 }
 
-const getIsFile = (
+export const getIsFile = (
   fullPath: string
+): (
+  Observable<
+    void
+  >
 ) => (
   from(
     stat(
@@ -46,6 +50,11 @@ const getIsFile = (
     ) => (
       stats
       .isFile()
+    )),
+    map(() => (
+      // @ts-ignore
+      console.log('3243yi')||
+      void(0)
     )),
   )
 )
