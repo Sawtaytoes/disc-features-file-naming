@@ -1,9 +1,11 @@
 import { vol } from "memfs"
-import { EmptyError } from "rxjs"
+import { EmptyError, firstValueFrom, toArray } from "rxjs"
 import { beforeEach, describe, expect, test } from "vitest"
 
-import { filterFileAtPath, readFiles } from "./readFiles.js"
-import { getOperatorValue, runPromiseScheduler } from "./test-runners.js"
+import { FileInfo, filterFileAtPath, readFiles } from "./readFiles.js"
+import { getOperatorValue } from "./test-runners.js"
+import { captureLogMessage } from "./logMessage.js"
+import { createRenameFileOrFolderObservable } from "./createRenameFileOrFolder.js"
 
 describe(filterFileAtPath.name, () => {
   beforeEach(() => {
@@ -51,35 +53,45 @@ describe(filterFileAtPath.name, () => {
 })
 
 describe(readFiles.name, () => {
-  test("reads files", () => {
-    // const spy1 = vi.spyOn(fs, 'readdir').mockImplementation((filePath) => {
-    //   filePath
-    //   return Promise.resolve(["file1.txt", "file2.md", "file3.txt"])
-    // });
+  test("completes if no files", async () => {
+    await captureLogMessage(
+      "error",
+      async (
+        consoleSpy
+      ) => {
+        await expect(
+          firstValueFrom(
+            readFiles({
+              sourcePath: "",
+            })
+          )
+        )
+        .rejects
+        .toBeInstanceOf(
+          EmptyError
+        )
 
-    // // const spy1 = vi.spyOn("node:fs/promises", "readdir", "get").mockResolvedValue(Promise.resolve(["file1.txt", "file2.md", "file3.txt"]))
-    // // const spy1 = vi.spyOn(fs, "constants", "get").mockResolvedValue(Promise.resolve(["file1.txt", "file2.md", "file3.txt"]))
-    // const spy2 = vi.spyOn("node:fs/promises", "stat", "get").mockResolvedValue(Promise.resolve({ isFile: () => true }))
-    // // mockImplementationOnce
-    // const filePath = "yo"
-
-    // readFiles({
-    //   sourcePath: filePath,
-    // })
-    // .subscribe((a) => {
-    //   expect(a).toBe({
-    //     filename: "file1.txt",
-    //     fullPath: "yo/file1.txt",
-    //     renameFile: () => (
-    //       of("null")
-    //     ),
-    //   })
-    // })
-
-    // spy1.mockRestore()
-    // spy2.mockRestore()
-
-    // expect(spy1).toHaveBeenCalledWith(filePath)
-    // expect(spy2).toHaveBeenCalledWith(filePath)
+        expect(
+          consoleSpy
+          .mock
+          .calls
+          [0]
+          .find((
+            error
+          ) => (
+            error instanceof Error
+            && (
+              error
+              .message
+            )
+          ))
+          .message
+        )
+        .toContain(
+          "no such file or directory"
+        )
+      }
+    )
+  })
   })
 })
