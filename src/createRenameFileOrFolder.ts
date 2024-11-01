@@ -5,6 +5,7 @@ import {
   concatMap,
   filter,
   from,
+  map,
   of,
   tap,
 } from "rxjs"
@@ -121,6 +122,9 @@ export const createRenameFileOrFolderObservable = ({
             newPath,
           )
         }),
+        map(() => (
+          void 0
+        )),
       )
     )),
     catchNamedError(
