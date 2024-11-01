@@ -14,7 +14,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { createRenameFileOrFolder } from "./createRenameFileOrFolder.js"
+import { createRenameFileOrFolderObservable } from "./createRenameFileOrFolder.js"
 
 export type FolderInfo = {
   folderName: (
@@ -89,7 +89,7 @@ export const readFolder = ({
           folderName,
           fullPath,
           renameFolder: (
-            createRenameFileOrFolder({
+            createRenameFileOrFolderObservable({
               fullPath,
               sourcePath,
             })

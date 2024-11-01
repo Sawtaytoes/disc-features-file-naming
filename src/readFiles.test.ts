@@ -1,91 +1,56 @@
 import { vol } from "memfs"
-import { of } from "rxjs"
-import { TestScheduler } from "rxjs/testing"
+import { EmptyError } from "rxjs"
 import { beforeEach, describe, expect, test } from "vitest"
 
-import { getIsFile, readFiles } from "./readFiles.js"
-import { runTestScheduler } from "./runTestScheduler.js"
+import { filterFileAtPath, readFiles } from "./readFiles.js"
+import { getOperatorValue, runPromiseScheduler } from "./test-runners.js"
 
-describe("getIsFile", () => {
+describe(filterFileAtPath.name, () => {
   beforeEach(() => {
     vol
     .fromJSON({
-      "G:\\Movies\\MovieName (1993)\\MovieName (1993).mkv": "",
+      "G:\\Movies\\Super Mario Bros (1993)\\Super Mario Bros (1993).mkv": "",
     })
   })
 
-  test("returns stats if path is a file", async () => {
-    runTestScheduler(({
-      expectObservable,
-    }) => {
-      expectObservable(
-        getIsFile(
-          "G:\\Movies\\MovieName (1993)\\MovieName (1993).mkv"
-        )
-      )
-      .toBe(
-        "4444s (a|)",
-        {
-          a: void(0),
-        },
-      )
-    })
+  test("emits if path is a file", async () => {
+    const inputValue = "G:\\Movies\\Super Mario Bros (1993)\\Super Mario Bros (1993).mkv"
 
-    // console.time()
-
-    // return (
-    //   new Promise<void>((resolve, reject) => {
-    //     getIsFile(
-    //       "G:\\Movies\\MovieName (1993)\\MovieName (1993).mkv"
-    //     )
-    //     .subscribe({
-    //       next: (value) => {
-    //         console.timeEnd()
-    //         expect(value).toBe(void(0))
-    //         resolve()
-    //       },
-    //       error: reject,
-    //       complete: reject,
-    //     })
-    //   })
-    // )
+    expect(
+      getOperatorValue(
+        filterFileAtPath((
+          filePath
+        ) => (
+          filePath
+        )),
+        inputValue,
+      )
+    )
+    .resolves
+    .toBe(
+      inputValue
+    )
   })
 
-  test("completes if path is a directory", () => {
-    vol
-    .fromJSON({
-      "G:\\Movies\\MovieName (1993)\\MovieName (1993).mkv": "",
-    })
+  test("completes if path is a directory", async () => {
+    const inputValue = "G:\\Movies\\Super Mario Bros (1993)"
 
-    runTestScheduler(({
-      expectObservable,
-    }) => {
-      expectObservable(
-        getIsFile(
-          "G:\\Movies\\MovieName (1993)"
-        )
+    expect(
+      getOperatorValue(
+        filterFileAtPath((
+          filePath
+        ) => (
+          filePath
+        )),
+        inputValue,
       )
-      .toBe(
-        " |",
-      )
-    })
-
-    // return (
-    //   new Promise<void>((resolve, reject) => {
-    //     getIsFile(
-    //       "G:\\Movies\\MovieName (1993)"
-    //     )
-    //     .subscribe({
-    //       next: reject,
-    //       error: reject,
-    //       complete: resolve,
-    //     })
-    //   })
-    // )
+    )
+    .rejects
+    .toThrow(EmptyError)
   })
 })
 
-describe("readFiles", () => {
+describe(readFiles.name, () => {
   test("reads files", () => {
     // const spy1 = vi.spyOn(fs, 'readdir').mockImplementation((filePath) => {
     //   filePath

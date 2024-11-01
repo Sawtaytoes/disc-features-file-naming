@@ -1,40 +1,89 @@
-import chalk, {
+import {
+  Chalk,
   type ColorName,
   type BackgroundColorName,
   type ForegroundColorName,
+  ChalkInstance,
 } from "chalk"
+import { MockInstance } from "vitest"
+import { captureConsoleMessage } from "./captureConsoleMessage.js"
 
 export const createAddColorToChalk = (
-  chalkColor: ColorName | undefined,
+  chalkColor?: ColorName,
 ) => (
-  chalkFunction: typeof chalk,
+  chalkInstance: ChalkInstance,
 ) => (
   (
     chalkColor
-    && chalkColor in chalkFunction
+    && chalkColor in chalkInstance
   )
   ? (
-    chalkFunction
+    chalkInstance
     [chalkColor]
   )
-  : chalkFunction
+  : chalkInstance
 )
 
-export const createLogMessage = ({
+export const messageTemplate = {
+  comparison: (
+    firstItem: string,
+    secondItem: string,
+  ) => (
+    [firstItem]
+    .concat(
+      "\n",
+      secondItem,
+    )
+  ),
+  descriptiveComparison: (
+    description: any,
+    firstItem: string,
+    secondItem: string,
+  ) => (
+    [description]
+    .concat(
+      "\n",
+      "\n",
+      firstItem,
+      "\n",
+      secondItem,
+    )
+  ),
+  noItems: () => (
+    []
+  ),
+  singleItem: (
+    item: any,
+  ) => (
+    [item]
+  ),
+} as const
+
+const numericalMessageTemplateFallback = {
+  0: messageTemplate.noItems,
+  1: messageTemplate.singleItem,
+  2: messageTemplate.comparison,
+  3: messageTemplate.descriptiveComparison,
+}
+
+export const createLogMessage = <TemplateName extends keyof typeof messageTemplate>({
   logType,
+  templateName,
   titleBackgroundColor,
   titleTextColor,
 }: {
   logType: (
     | "error"
     | "info"
+    | "log"
     | "warn"
   ),
+  templateName?: TemplateName,
   titleBackgroundColor?: BackgroundColorName
   titleTextColor?: ForegroundColorName
 }) => (
   title: string,
-  ...content: any[]
+  ...content: Parameters<(typeof messageTemplate)[TemplateName]>
 ) => {
   const optionallyColoredChalk = (
     createAddColorToChalk(
@@ -43,8 +92,30 @@ export const createLogMessage = ({
       createAddColorToChalk(
         titleTextColor
       )(
-        chalk
+        new Chalk()
       )
+    )
+  )
+
+  const message = (
+    templateName
+    ? (
+      messageTemplate
+      [templateName](
+        // @ts-expect-error A spread argument must either have a tuple type or be passed to a rest parameter.ts(2556)
+        ...content
+      )
+    )
+    : (
+      content.length in numericalMessageTemplateFallback
+      ? (
+        numericalMessageTemplateFallback
+        [content.length](
+          // @ts-expect-error A spread argument must either have a tuple type or be passed to a rest parameter.ts(2556)
+          ...content
+        )
+      )
+      : null
     )
   )
 
@@ -55,15 +126,36 @@ export const createLogMessage = ({
         `[${title}]`
       )
     ),
+    "\n",
     ...(
-      content
-      .slice(0, 2)
-      .join("\n")
+      message
+      || content
     ),
-    ...(
-      content
-      .slice(2)
-    ),
+    // (
+    //   (
+    //     content
+    //     .length
+    //   )
+    //   ? (
+    //     content
+    //     .slice(0, 2)
+    //     .join("\n\n")
+    //   )
+    // ),
+    // ...(
+    //   (
+    //     2 in content
+    //   )
+    //   ? (
+    //     ["\n"]
+    //     .concat(
+    //       content
+    //       .slice(2)
+    //       .join("\n")
+    //     )
+    //   )
+    //   : ""
+    // ),
     "\n",
     "\n",
   )
@@ -89,4 +181,14 @@ export const logWarning = (
     titleBackgroundColor: "bgYellowBright",
     titleTextColor: "black",
   })
+)
+
+export const captureLogMessage = <TaskResponse>(
+  logType: Parameters<typeof createLogMessage>[0]["logType"],
+  task: Parameters<typeof captureConsoleMessage<TaskResponse>>[1],
+) => (
+  captureConsoleMessage(
+    logType,
+    task,
+  )
 )

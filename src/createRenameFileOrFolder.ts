@@ -12,7 +12,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { logInfo } from "./logMessage.js"
 
-export const getFilenameFromFilePath = (
+export const getLastItemInFilePath = (
   filePath: string,
 ) => (
   basename(
@@ -53,18 +53,18 @@ export const renameFileOrFolder = ({
         stats
       ) {
         throw (
-          "File already exists for"
+          "File or folder already exists for"
           .concat(
             " ",
             "\"",
             (
-              getFilenameFromFilePath(
+              getLastItemInFilePath(
                 newPath
               )
             ),
             "\".",
             " ",
-            `Cannot rename ${oldPath}`
+            `Cannot rename "${oldPath}".`
           )
         )
       }
@@ -72,7 +72,7 @@ export const renameFileOrFolder = ({
   )
 )
 
-export const createRenameFileOrFolder = ({
+export const createRenameFileOrFolderObservable = ({
   fullPath: oldPath,
   sourcePath,
 }: {
@@ -105,7 +105,6 @@ export const createRenameFileOrFolder = ({
       newPath
       !== oldPath
     )),
-    // ignoreElements(), // UNCOMMENT TO PREVENT WRITING FILES
     concatMap(({
       newPath,
       oldPath,
@@ -125,7 +124,7 @@ export const createRenameFileOrFolder = ({
       )
     )),
     catchNamedError(
-      createRenameFileOrFolder
+      createRenameFileOrFolderObservable
     ),
   )
 )

@@ -1,17 +1,23 @@
 import {
   catchError,
   EMPTY,
+  OperatorFunction,
 } from "rxjs"
 import { logError } from "./logMessage.js"
 
-export const catchNamedError = (
+catchError
+
+export const catchNamedError = <
+  PipelineValue
+>(
   func: (
     | Function
     | string
   ),
 ): (
-  ReturnType<
-    typeof catchError
+  OperatorFunction<
+    PipelineValue,
+    PipelineValue
   >
 ) => (
   catchError((

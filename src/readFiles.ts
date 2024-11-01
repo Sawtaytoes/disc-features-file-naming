@@ -9,12 +9,12 @@ import {
   filter,
   from,
   map,
-  toArray,
+  OperatorFunction,
   type Observable,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { createRenameFileOrFolder, getFilenameFromFilePath } from "./createRenameFileOrFolder.js"
+import { createRenameFileOrFolderObservable, getLastItemInFilePath } from "./createRenameFileOrFolder.js"
 
 export type FileInfo = {
   filename: (
@@ -32,31 +32,40 @@ export type FileInfo = {
   )
 }
 
-export const getIsFile = (
-  fullPath: string
+export const filterFileAtPath = <
+  PipelineValue
+>(
+  getFullPath: (
+    pipelineValue: PipelineValue
+  ) => string
 ): (
-  Observable<
-    void
+  OperatorFunction<
+    PipelineValue,
+    PipelineValue
   >
 ) => (
-  from(
-    stat(
-      fullPath
+  concatMap((
+    pipelineValue,
+  ) => (
+    from(
+      stat(
+        getFullPath(
+          pipelineValue
+        )
+      )
     )
-  )
-  .pipe(
-    filter((
-      stats
-    ) => (
-      stats
-      .isFile()
-    )),
-    map(() => (
-      // @ts-ignore
-      console.log('3243yi')||
-      void(0)
-    )),
-  )
+    .pipe(
+      filter((
+        stats
+      ) => (
+        stats
+        .isFile()
+      )),
+      map(() => (
+        pipelineValue
+      )),
+    )
+  ))
 )
 
 export const readFiles = ({
@@ -79,7 +88,7 @@ export const readFiles = ({
       filePath,
     ) => ({
       filename: (
-        getFilenameFromFilePath(
+        getLastItemInFilePath(
           filePath
         )
       ),
@@ -90,33 +99,28 @@ export const readFiles = ({
         )
       ),
     })),
-    concatMap(({
+    filterFileAtPath(({
+      fullPath
+    }) => (
+      fullPath
+    )),
+    map(({
       filename,
       fullPath,
-    }) => (
-      getIsFile(
-        fullPath
-      )
-      .pipe(
-        map(() => ({
-          filename,
+    }) => ({
+      filename,
+      fullPath,
+      renameFile: (
+        createRenameFileOrFolderObservable({
           fullPath,
-          renameFile: (
-            createRenameFileOrFolder({
-              fullPath,
-              sourcePath,
-            })
-          ),
-        } satisfies (
-          FileInfo
-        ) as (
-          FileInfo
-        ))),
-      )
-    )),
-    // TODO: Check if these are still required.
-    // toArray(),
-    // concatAll(),
+          sourcePath,
+        })
+      ),
+    } satisfies (
+      FileInfo
+    ) as (
+      FileInfo
+    ))),
     catchNamedError(
       readFiles
     ),
