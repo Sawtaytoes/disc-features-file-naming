@@ -45,7 +45,7 @@ export const runPromiseScheduler = <ObservableValue>({
   ),
 }) => (
   new Promise<void>((resolve, reject) => {
-    getObservable()
+    observable
     .subscribe(
       getSubscriber(resolve, reject)
     )
