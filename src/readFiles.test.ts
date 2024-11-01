@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, test } from "vitest"
 import { FileInfo, filterFileAtPath, readFiles } from "./readFiles.js"
 import { getOperatorValue } from "./test-runners.js"
 import { captureLogMessage } from "./logMessage.js"
-import { createRenameFileOrFolderObservable } from "./createRenameFileOrFolder.js"
 
 describe(filterFileAtPath.name, () => {
   beforeEach(() => {
@@ -93,5 +92,39 @@ describe(readFiles.name, () => {
       }
     )
   })
+
+  test("emits files from source path", async () => {
+    vol
+    .fromJSON({
+      "G:\\Movies\\Star Wars (1977)\\Star Wars (1977).mkv": "",
+      "G:\\Movies\\Star Wars (1977)\\Star Wars (1977) {edition-4K77}.mkv": "",
+      "G:\\Movies\\Super Mario Bros (1993)\\Super Mario Bros (1993).mkv": "",
+    })
+
+    await expect(
+      firstValueFrom(
+        readFiles({
+          sourcePath: "G:\\Movies\\Star Wars (1977)",
+        })
+        .pipe(
+          toArray(),
+        )
+      )
+    )
+    .resolves
+    .toEqual([
+      {
+        filename: "Star Wars (1977)",
+        fullPath: "G:\\Movies\\Star Wars (1977)\\Star Wars (1977).mkv",
+        renameFile: expect.any(Function),
+      },
+      {
+        filename: "Star Wars (1977) {edition-4K77}",
+        fullPath: "G:\\Movies\\Star Wars (1977)\\Star Wars (1977) {edition-4K77}.mkv",
+        renameFile: expect.any(Function),
+      },
+    ] satisfies (
+      FileInfo[]
+    ))
   })
 })
