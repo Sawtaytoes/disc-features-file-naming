@@ -1,11 +1,11 @@
 import {
   catchError,
-  EMPTY,
   OperatorFunction,
+  throwError,
 } from "rxjs"
 import { logError } from "./logMessage.js"
 
-export const catchNamedError = <
+export const logPipelineError = <
   PipelineValue
 >(
   func: (
@@ -52,10 +52,10 @@ export const catchNamedError = <
       ),
     )
 
-    // TODO: See if this needs to be removed.
-    // process
-    // .exit()
-
-    return EMPTY
+    return (
+      throwError(() => (
+        error
+      ))
+    )
   })
 )

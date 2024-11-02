@@ -13,8 +13,8 @@ import {
   type Observable,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError.js"
 import { createRenameFileOrFolderObservable, getLastItemInFilePath } from "./createRenameFileOrFolder.js"
+import { logPipelineError } from "./logPipelineError.js"
 
 export type FileInfo = {
   filename: (
@@ -121,7 +121,7 @@ export const readFiles = ({
     ) as (
       FileInfo
     ))),
-    catchNamedError(
+    logPipelineError(
       readFiles
     ),
   )

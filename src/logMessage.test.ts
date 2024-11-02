@@ -5,7 +5,7 @@ import { captureConsoleMessage } from "./captureConsoleMessage.js"
 import { Chalk } from "chalk"
 
 describe(createAddColorToChalk.name, () => {
-  test("adds no colors when none passed", () => {
+  test("adds no colors when none passed", async () => {
     const chalk = new Chalk()
 
     const modifiedChalk = (
@@ -24,7 +24,7 @@ describe(createAddColorToChalk.name, () => {
     )
   })
 
-  test("adds text color", () => {
+  test("adds text color", async () => {
     const chalk = new Chalk()
 
     const modifiedChalk = (
@@ -48,7 +48,7 @@ describe(createAddColorToChalk.name, () => {
     )
   })
 
-  test("adds a background color", () => {
+  test("adds a background color", async () => {
     const chalk = new Chalk()
 
     const modifiedChalk = (
@@ -72,7 +72,7 @@ describe(createAddColorToChalk.name, () => {
     )
   })
 
-  test("adds both text and background colors", () => {
+  test("adds both text and background colors", async () => {
     const chalk = new Chalk()
 
     const modifiedChalk = (
@@ -159,7 +159,7 @@ describe("messageTemplate", () => {
 })
 
 describe(createLogMessage.name, () => {
-  test("logs only once", () => {
+  test("logs only once", async () => {
     captureConsoleMessage(
       "info",
       (
@@ -190,7 +190,7 @@ describe(createLogMessage.name, () => {
     )
   })
 
-  test("logs an informational message", () => {
+  test("logs an informational message", async () => {
     captureConsoleMessage(
       "info",
       (
@@ -222,7 +222,7 @@ describe(createLogMessage.name, () => {
     // TODO: TEST COLORS
   })
 
-  test("logs an informational message", () => {
+  test("logs an informational message", async () => {
     captureConsoleMessage(
       "info",
       (
@@ -256,7 +256,7 @@ describe(createLogMessage.name, () => {
 })
 
 describe(logError.name, () => {
-  test("logs an error message", () => {
+  test("logs an error message", async () => {
     captureConsoleMessage(
       "error",
       (
@@ -282,7 +282,7 @@ describe(logError.name, () => {
 })
 
 describe(logInfo.name, () => {
-  test("logs an info message", () => {
+  test("logs an info message", async () => {
     captureConsoleMessage(
       "info",
       (
@@ -308,7 +308,7 @@ describe(logInfo.name, () => {
 })
 
 describe(logWarning.name, () => {
-  test("logs a warning message", () => {
+  test("logs a warning message", async () => {
     captureConsoleMessage(
       "warn",
       (

@@ -33,7 +33,7 @@ describe(filterFileAtPath.name, () => {
     )
   })
 
-  test("completes if path is a directory", async () => {
+  test("emits nothing if path is a directory", async () => {
     const inputValue = "G:\\Movies\\Super Mario Bros (1993)"
 
     expect(
@@ -52,13 +52,11 @@ describe(filterFileAtPath.name, () => {
 })
 
 describe(readFiles.name, () => {
-  test("completes if no files", async () => {
-    await captureLogMessage(
+  test("errors if source path can't be found", async () => {
+    captureLogMessage(
       "error",
-      async (
-        consoleSpy
-      ) => {
-        await expect(
+      async () => {
+        expect(
           firstValueFrom(
             readFiles({
               sourcePath: "non-existent-path",
@@ -66,28 +64,8 @@ describe(readFiles.name, () => {
           )
         )
         .rejects
-        .toBeInstanceOf(
-          EmptyError
-        )
-
-        expect(
-          consoleSpy
-          .mock
-          .calls
-          [0]
-          .find((
-            error
-          ) => (
-            error instanceof Error
-            && (
-              error
-              .message
-            )
-          ))
-          .message
-        )
-        .toContain(
-          "no such file or directory"
+        .toThrow(
+          "ENOENT"
         )
       }
     )

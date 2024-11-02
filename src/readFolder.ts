@@ -13,8 +13,8 @@ import {
   type Observable,
 } from "rxjs"
 
-import { catchNamedError } from "./catchNamedError.js"
 import { createRenameFileOrFolderObservable } from "./createRenameFileOrFolder.js"
+import { logPipelineError } from "./logPipelineError.js"
 
 export type FolderInfo = {
   folderName: (
@@ -101,10 +101,7 @@ export const readFolder = ({
         ))),
       )
     )),
-    // TODO: Check if these are still required.
-    // toArray(),
-    // concatAll(),
-    catchNamedError(
+    logPipelineError(
       readFolder
     ),
   )

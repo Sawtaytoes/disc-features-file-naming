@@ -5,9 +5,9 @@ import {
   iif,
 } from "rxjs"
 
+import { logPipelineError } from "./logPipelineError.js"
 import { readFiles } from "./readFiles.js"
 import { readFolder } from "./readFolder.js"
-import { catchNamedError } from "./catchNamedError.js"
 
 export const readFilesAtDepth = ({
   depth,
@@ -55,7 +55,7 @@ export const readFilesAtDepth = ({
     ),
   )
   .pipe(
-    catchNamedError(
+    logPipelineError(
       readFilesAtDepth
     ),
   )

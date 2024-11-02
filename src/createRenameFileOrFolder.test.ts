@@ -6,7 +6,7 @@ import { createRenameFileOrFolderObservable, getLastItemInFilePath, renameFileOr
 import { captureLogMessage } from "./logMessage.js"
 
 describe(getLastItemInFilePath.name, () => {
-  test("gets filename when no path", () => {
+  test("gets filename when no path", async () => {
     expect(
       getLastItemInFilePath(
         "Star Wars (1977).mkv"
@@ -17,7 +17,7 @@ describe(getLastItemInFilePath.name, () => {
     )
   })
 
-  test("gets filename from shallow path", () => {
+  test("gets filename from shallow path", async () => {
     expect(
       getLastItemInFilePath(
         "~/movies/Star Wars (1977) {edition-4K77}.mkv"
@@ -28,7 +28,7 @@ describe(getLastItemInFilePath.name, () => {
     )
   })
 
-  test("gets filename from deep path", () => {
+  test("gets filename from deep path", async () => {
     expect(
       getLastItemInFilePath(
         "~/movies/Star Wars (1977)/Star Wars (1977) {edition-4K77}.mkv"
@@ -39,7 +39,7 @@ describe(getLastItemInFilePath.name, () => {
     )
   })
 
-  test("gets folder name from path if no file", () => {
+  test("gets folder name from path if no file", async () => {
     expect(
       getLastItemInFilePath(
         "~/movies/Star Wars (1977)"

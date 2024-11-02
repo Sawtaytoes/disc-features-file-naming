@@ -17,13 +17,11 @@ describe(readFilesAtDepth.name, () => {
     })
   })
 
-  test("completes if no files", async () => {
-    await captureLogMessage(
+  test("errors if source path can't be found", async () => {
+    captureLogMessage(
       "error",
-      async (
-        consoleSpy
-      ) => {
-        await expect(
+      async () => {
+        expect(
           firstValueFrom(
             readFilesAtDepth({
               depth: 0,
@@ -32,28 +30,8 @@ describe(readFilesAtDepth.name, () => {
           )
         )
         .rejects
-        .toBeInstanceOf(
-          EmptyError
-        )
-
-        expect(
-          consoleSpy
-          .mock
-          .calls
-          [0]
-          .find((
-            error
-          ) => (
-            error instanceof Error
-            && (
-              error
-              .message
-            )
-          ))
-          .message
-        )
-        .toContain(
-          "no such file or directory"
+        .toThrow(
+          "ENOENT"
         )
       }
     )

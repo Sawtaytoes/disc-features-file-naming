@@ -6,7 +6,7 @@ import { getOperatorValue, runTestScheduler } from "./test-runners.js"
 import { captureLogMessage } from "./logMessage.js"
 
 describe(catchNamedError.name, () => {
-  test("catches a pipeline error", () => {
+  test("catches a pipeline error", async () => {
     captureLogMessage(
       "error",
       (
@@ -74,7 +74,7 @@ describe(catchNamedError.name, () => {
     )
   })
 
-  test("logs an error buffer", () => {
+  test("logs an error buffer", async () => {
     captureLogMessage(
       "error",
       (

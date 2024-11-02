@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest"
 import { captureConsoleMessage } from "./captureConsoleMessage.js"
 
 describe(captureConsoleMessage.name, () => {
-  test("captures a console log message", () => {
+  test("captures a console log message", async () => {
     const testMessage = "test message"
 
     captureConsoleMessage(
@@ -67,7 +67,7 @@ describe(captureConsoleMessage.name, () => {
     )
   })
 
-  test("captures multiple console log messages", () => {
+  test("captures multiple console log messages", async () => {
     const testMessages = [
       "test message 1",
       "test message 2",
@@ -126,7 +126,7 @@ describe(captureConsoleMessage.name, () => {
     )
   })
 
-  test("clears mock after task complete", () => {
+  test("clears mock after task complete", async () => {
     const testMessage = "test message"
 
     const capturedConsoleSpy = (
@@ -220,7 +220,7 @@ describe(captureConsoleMessage.name, () => {
     .toHaveBeenCalled()
   })
 
-  test("doesn't capture a message when no message logged", () => {
+  test("doesn't capture a message when no message logged", async () => {
     captureConsoleMessage(
       "log",
       (
