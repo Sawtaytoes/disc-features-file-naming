@@ -61,7 +61,7 @@ describe(readFiles.name, () => {
         await expect(
           firstValueFrom(
             readFiles({
-              sourcePath: "",
+              sourcePath: "non-existent-path",
             })
           )
         )

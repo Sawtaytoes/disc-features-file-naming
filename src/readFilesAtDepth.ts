@@ -1,6 +1,5 @@
 import {
   concat,
-  concatAll,
   concatMap,
   EMPTY,
   iif,
@@ -8,6 +7,7 @@ import {
 
 import { readFiles } from "./readFiles.js"
 import { readFolder } from "./readFolder.js"
+import { catchNamedError } from "./catchNamedError.js"
 
 export const readFilesAtDepth = ({
   depth,
@@ -15,7 +15,11 @@ export const readFilesAtDepth = ({
 }: {
   depth: number,
   sourcePath: string
-}): ReturnType<typeof readFiles> => (
+}): (
+  ReturnType<
+    typeof readFiles
+  >
+) => (
   concat(
     (
       readFiles({
@@ -48,6 +52,11 @@ export const readFilesAtDepth = ({
         ),
         EMPTY,
       )
+    ),
+  )
+  .pipe(
+    catchNamedError(
+      readFilesAtDepth
     ),
   )
 )
