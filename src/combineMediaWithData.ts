@@ -109,6 +109,10 @@ export const specialFeatureMatchRenames = [
     searchTerm: /(clips?)$/i,
     replacement: "$1 -behindthescenes",
   },
+  {
+    searchTerm: /(stills?)$/i,
+    replacement: "$1 -other",
+  },
 ] as const
 
 export const getTimecodeAtOffset = (
