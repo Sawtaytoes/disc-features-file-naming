@@ -3,7 +3,7 @@ import { EmptyError, firstValueFrom } from "rxjs"
 import { beforeEach, describe, expect, test, vi } from "vitest"
 
 import { createRenameFileOrFolderObservable, getLastItemInFilePath, renameFileOrFolder } from "./createRenameFileOrFolder.js"
-import { captureLogMessage } from "./logMessage.js"
+import { captureLogMessage } from "./captureLogMessage.js"
 
 describe(getLastItemInFilePath.name, () => {
   test("gets filename when no path", async () => {

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, test } from "vitest"
 
 import { FileInfo, filterFileAtPath, readFiles } from "./readFiles.js"
 import { getOperatorValue } from "./test-runners.js"
-import { captureLogMessage } from "./logMessage.js"
+import { captureLogMessage } from "./captureLogMessage.js"
 
 describe(filterFileAtPath.name, () => {
   beforeEach(() => {
@@ -47,7 +47,9 @@ describe(filterFileAtPath.name, () => {
       )
     )
     .rejects
-    .toThrow(EmptyError)
+    .toThrow(
+      EmptyError
+    )
   })
 })
 
