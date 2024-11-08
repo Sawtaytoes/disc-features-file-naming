@@ -1,23 +1,14 @@
 import {
-  execFile as execFileCallback,
+  execFile,
 } from "node:child_process";
 import {
-  promisify,
-} from "node:util"
-import {
-  from,
+  defer,
   map,
-  type Observable,
+  Observable,
 } from "rxjs"
 
 import { mkvMergePath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
-
-const execFile = (
-  promisify(
-    execFileCallback
-  )
-)
 
 export type Chapter = {
   num_entries: number
@@ -91,6 +82,64 @@ export type MkvInfo = {
   warnings: any[]
 }
 
+type ExecFileParameters = Parameters<typeof execFile>
+
+export const createExecFileObservable = ({
+  appExecutablePath,
+  args,
+  options,
+}: {
+  appExecutablePath: ExecFileParameters[0]
+  args: ExecFileParameters[1]
+  options?: ExecFileParameters[2]
+}) => (
+  new Observable<
+    string
+  >((
+    subscriber,
+  ) => {
+    execFile(
+      appExecutablePath,
+      args,
+      options,
+      (
+        error,
+        stdout,
+        stderr,
+      ) => {
+      if (
+        error
+      ) {
+        subscriber
+        .error(
+          error
+        )
+      }
+      else if (
+        stderr
+      ) {
+        subscriber
+        .error(
+          new Error(
+            stderr
+            .toString()
+          )
+        )
+      }
+      else {
+        subscriber
+        .next(
+          stdout
+          .toString()
+        )
+
+        subscriber
+        .complete()
+      }
+    })
+  })
+)
+
 export const getMkvInfo = (
   filePath: string,
 ): (
@@ -98,31 +147,19 @@ export const getMkvInfo = (
     MkvInfo
   >
 ) => (
-  from(
-    execFile(
-      mkvMergePath,
-      [
+  defer(() => (
+    createExecFileObservable({
+      appExecutablePath: mkvMergePath,
+      args: [
         "--identification-format",
         "json",
 
         "--identify",
         `${filePath}`,
       ],
-    )
-  )
+    })
+  ))
   .pipe(
-    map(({
-      stderr,
-      stdout,
-    }) => {
-      if (
-        stderr
-      ) {
-        throw stderr
-      }
-
-      return stdout
-    }),
     map((
       mkvInfoJsonString,
     ) => (
