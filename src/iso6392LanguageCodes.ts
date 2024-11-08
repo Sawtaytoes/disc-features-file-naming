@@ -44,6 +44,7 @@ export const iso6392LanguageCodes = [
   "dzo",
   "ell",
   "eng",
+  "enm",
   "epo",
   "est",
   "eus",
