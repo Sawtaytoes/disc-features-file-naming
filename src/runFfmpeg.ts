@@ -19,7 +19,6 @@ import { ffmpegPath as defaultFfmpegPath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
 import { getFileDuration } from "./getFileDuration.js";
 import { getMediaInfo } from "./getMediaInfo.js";
-import { stat } from "node:fs/promises";
 import { convertTimecodeToMilliseconds } from "./parseTimestamps.js";
 import { logWarning } from "./logMessage.js";
 
