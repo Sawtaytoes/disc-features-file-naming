@@ -2,6 +2,7 @@ import {
   concat,
   concatMap,
   EMPTY,
+  filter,
   iif,
 } from "rxjs"
 
@@ -48,6 +49,7 @@ export const readFilesAtDepth = ({
                 ),
               })
             )),
+            filter(Boolean),
           )
         ),
         EMPTY,

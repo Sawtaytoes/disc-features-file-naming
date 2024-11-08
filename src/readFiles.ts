@@ -6,6 +6,7 @@ import { join } from "node:path"
 import {
   concatAll,
   concatMap,
+  defer,
   filter,
   from,
   map,
@@ -77,11 +78,11 @@ export const readFiles = ({
     FileInfo
   >
 ) => (
-  from(
+  defer(() => (
     readdir(
       sourcePath
     )
-  )
+  ))
   .pipe(
     concatAll(),
     map((

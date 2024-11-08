@@ -6,9 +6,11 @@ import { join } from "node:path"
 import {
   concatAll,
   concatMap,
+  defer,
   filter,
   from,
   map,
+  OperatorFunction,
   toArray,
   type Observable,
 } from "rxjs"
@@ -50,6 +52,42 @@ export const getIsFolder = (
   )
 )
 
+export const filterFolderAtPath = <
+  PipelineValue
+>(
+  getFullPath: (
+    pipelineValue: PipelineValue
+  ) => string
+): (
+  OperatorFunction<
+    PipelineValue,
+    PipelineValue
+  >
+) => (
+  concatMap((
+    pipelineValue,
+  ) => (
+    from(
+      stat(
+        getFullPath(
+          pipelineValue
+        )
+      )
+    )
+    .pipe(
+      filter((
+        stats
+      ) => (
+        stats
+        .isDirectory()
+      )),
+      map(() => (
+        pipelineValue
+      )),
+    )
+  ))
+)
+
 export const readFolder = ({
   sourcePath,
 }: {
@@ -59,11 +97,11 @@ export const readFolder = ({
     FolderInfo
   >
 ) => (
-  from(
+  defer(() => (
     readdir(
       sourcePath
     )
-  )
+  ))
   .pipe(
     concatAll(),
     map((
@@ -77,30 +115,28 @@ export const readFolder = ({
         )
       ),
     })),
-    concatMap(({
+    filterFolderAtPath(({
+      fullPath
+    }) => (
+      fullPath
+    )),
+    map(({
       folderName,
       fullPath,
-    }) => (
-      getIsFolder(
-        fullPath
-      )
-      .pipe(
-        map(() => ({
-          folderName,
+    }) => ({
+      folderName,
+      fullPath,
+      renameFolder: (
+        createRenameFileOrFolderObservable({
           fullPath,
-          renameFolder: (
-            createRenameFileOrFolderObservable({
-              fullPath,
-              sourcePath,
-            })
-          ),
-        } satisfies (
-          FolderInfo
-        ) as (
-          FolderInfo
-        ))),
-      )
-    )),
+          sourcePath,
+        })
+      ),
+    } satisfies (
+      FolderInfo
+    ) as (
+      FolderInfo
+    ))),
     logPipelineError(
       readFolder
     ),

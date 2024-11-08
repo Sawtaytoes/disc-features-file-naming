@@ -5,13 +5,13 @@ import {
   dirname,
 } from "node:path"
 import {
-  from,
+  defer,
 } from "rxjs";
 
 export const makeDirectory = (
   filePath: string,
 ) => (
-  from(
+  defer(() => (
     mkdir(
       (
         dirname(
@@ -20,5 +20,5 @@ export const makeDirectory = (
       ),
       { recursive: true },
     )
-  )
+  ))
 )
