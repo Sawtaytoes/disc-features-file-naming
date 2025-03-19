@@ -266,6 +266,7 @@ export const runMkvMerge = ({
           .stdout
           .write(
             key
+            .toString()
           )
         }
       }
