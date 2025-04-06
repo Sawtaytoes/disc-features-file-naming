@@ -7,7 +7,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getTimecodeAtOffset } from "./combineMediaWithData.js"
+import { getTimecodeAtOffset } from "./getSpecialFeatureFromTimecode.js"
 
 export const specialFeatureTypes = [
   "behindthescenes",

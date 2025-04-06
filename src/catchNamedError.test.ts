@@ -1,9 +1,9 @@
 import { throwError } from "rxjs"
 import { describe, expect, test } from "vitest"
 
-import { catchNamedError } from "./catchNamedError.js"
-import { getOperatorValue, runTestScheduler } from "./test-runners.js"
 import { captureLogMessage } from "./captureLogMessage.js"
+import { catchNamedError } from "./catchNamedError.js"
+import { runTestScheduler } from "./test-runners.js"
 
 describe(catchNamedError.name, () => {
   test("catches a pipeline error", async () => {

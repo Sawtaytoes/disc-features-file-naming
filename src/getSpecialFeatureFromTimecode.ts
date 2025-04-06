@@ -26,6 +26,14 @@ export const specialFeatureMatchRenames = [
     replacement: "$1 -deleted",
   },
   {
+    searchTerm: /(.*alternate version?.*)/i,
+    replacement: "$1 -deleted",
+  },
+  {
+    searchTerm: /(.*extended version?.*)/i,
+    replacement: "$1 -deleted",
+  },
+  {
     searchTerm: /(.*trailers?.*)/i,
     replacement: "$1 -trailer",
   },
@@ -232,43 +240,77 @@ export const getTimecodeAtOffset = (
   )
 }
 
-export const getIsSimilarTimecode = (
-  timecodeA: string,
-  timecodeB?: string,
-) => (
-  (
-    timecodeA
-    === timecodeB
-  )
-  || (
-    (
-      getTimecodeAtOffset(
-        timecodeA,
-        + 1,
-      )
-    )
-    === timecodeB
-  )
-  || (
-    (
-      getTimecodeAtOffset(
-        timecodeA,
-        - 1,
-      )
-    )
-    === timecodeB
-  )
+export const getOffsetsFromCenterPoint = ({
+  offset: fixedOffset,
+  paddingAmount,
+}: {
+  /** All numbers will be pushed positively or negatively by this amount. */
+  offset: number,
+  /** Number of items that will be both positively and negatively padded. */
+  paddingAmount: number,
+}) => (
+  Array((paddingAmount * 2) + 1)
+  .fill(null)
+  .map((
+    _,
+    index,
+  ) => (
+    index
+    - paddingAmount
+    + fixedOffset
+  ))
 )
 
-export const combineMediaWithData = ({
+export type TimecodeDeviation = {
+  /**
+   * Timecodes are pushed positively or negatively by this amount.
+   *
+   * Passing `2` changes `1:20` to `1:22`.
+   * */
+  fixedOffset?: number,
+  /** A range an amount that timecodes may be off. Typically, it's safe to have this be `1` second, but it can be `2+` depending on someone's wrong metadata. */
+  timecodePaddingAmount?: number,
+}
+
+export const getIsSimilarTimecode = (
+  timecodeA: string,
+  timecodeB: string,
+  {
+    fixedOffset = 0,
+    timecodePaddingAmount = 0,
+  }: TimecodeDeviation = {},
+) => (
+  getOffsetsFromCenterPoint({
+    offset: fixedOffset,
+    paddingAmount: timecodePaddingAmount,
+  })
+  .some((
+    offset,
+  ) => (
+    (
+      getTimecodeAtOffset(
+        timecodeA,
+        offset,
+      )
+    )
+    === timecodeB
+  ))
+)
+
+export const getSpecialFeatureFromTimecode = ({
   filename,
+  fixedOffset,
   specialFeatures,
   timecode: mediaTimecode,
-}: {
-  filename: string,
-  specialFeatures: SpecialFeature[],
-  timecode: string,
-}): (
+  timecodePaddingAmount,
+}: (
+  {
+    filename: string,
+    specialFeatures: SpecialFeature[],
+    timecode: string,
+  }
+  & TimecodeDeviation
+)): (
   Observable<
     string
   >
@@ -283,9 +325,16 @@ export const combineMediaWithData = ({
         .filter(({
           timecode: specialFeatureTimecode,
         }) => (
-          getIsSimilarTimecode(
-            mediaTimecode,
-            specialFeatureTimecode,
+          specialFeatureTimecode
+          && (
+            getIsSimilarTimecode(
+              mediaTimecode,
+              specialFeatureTimecode,
+              {
+                fixedOffset,
+                timecodePaddingAmount,
+              },
+            )
           )
         ))
         .concat(
@@ -306,9 +355,16 @@ export const combineMediaWithData = ({
           .filter(({
             timecode: SpecialFeatureChildTimecode,
           }) => (
-            getIsSimilarTimecode(
-              mediaTimecode,
-              SpecialFeatureChildTimecode,
+            SpecialFeatureChildTimecode
+            && (
+              getIsSimilarTimecode(
+                mediaTimecode,
+                SpecialFeatureChildTimecode,
+                {
+                  fixedOffset,
+                  timecodePaddingAmount,
+                },
+              )
             )
           ))
         )
@@ -482,7 +538,7 @@ export const combineMediaWithData = ({
       )
     }),
     catchNamedError(
-      combineMediaWithData
+      getSpecialFeatureFromTimecode
     ),
   )
 )

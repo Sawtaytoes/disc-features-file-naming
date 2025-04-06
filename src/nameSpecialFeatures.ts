@@ -1,16 +1,18 @@
 import {
   concatAll,
   concatMap,
+  ignoreElements,
   map,
   mergeAll,
   mergeMap,
   Observable,
   scan,
+  tap,
   toArray,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { combineMediaWithData } from "./combineMediaWithData.js"
+import { getSpecialFeatureFromTimecode, TimecodeDeviation } from "./getSpecialFeatureFromTimecode.js"
 import {
   convertDurationToTimecode,
   getFileDuration,
@@ -31,12 +33,17 @@ const getNextFilenameCount = (
 )
 
 export const nameSpecialFeatures = ({
+  fixedOffset,
   sourcePath,
+  timecodePaddingAmount,
   url,
-}: {
-  sourcePath: string,
-  url: string,
-}) => (
+}: (
+  {
+    sourcePath: string,
+    url: string,
+  }
+  & TimecodeDeviation
+)) => (
   searchDvdCompare({
     url,
   })
@@ -87,13 +94,15 @@ export const nameSpecialFeatures = ({
           fileInfo,
           timecode,
         }) => (
-          combineMediaWithData({
+          getSpecialFeatureFromTimecode({
             filename: (
               fileInfo
               .filename
             ),
+            fixedOffset,
             specialFeatures,
             timecode,
+            timecodePaddingAmount,
           })
           .pipe(
             map((
@@ -123,7 +132,7 @@ export const nameSpecialFeatures = ({
                 )
               )
             },
-            renameFile$: (
+            renameFileObservable: (
               fileInfo
               .renameFile(
                 (
@@ -157,7 +166,7 @@ export const nameSpecialFeatures = ({
                 number
               >
             ),
-            renameFile$: (
+            renameFileObservable: (
               new Observable()
             ) as (
               Observable<
@@ -167,9 +176,9 @@ export const nameSpecialFeatures = ({
           },
         ),
         map(({
-          renameFile$
+          renameFileObservable
         }) => (
-          renameFile$
+          renameFileObservable
         )),
       )
     )),

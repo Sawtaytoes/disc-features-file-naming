@@ -1082,12 +1082,42 @@ yargs(
         type: "string",
       },
     )
+    .option(
+      "fixedOffset",
+      {
+        alias: "o",
+        default: 0,
+        describe: "Timecodes are pushed positively or negatively by this amount.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
+    .option(
+      "timecodePadding",
+      {
+        alias: "p",
+        default: 0,
+        describe: "A range an amount that timecodes may be off. Typically, it's safe to have this be `1` second, but it can be `2+` depending on someone's wrong metadata.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
   ),
   (argv) => {
     nameSpecialFeatures({
+      fixedOffset: (
+        argv
+        .fixedOffset
+      ),
       sourcePath: (
         argv
         .sourcePath
+      ),
+      timecodePaddingAmount: (
+        argv
+        .timecodePadding
       ),
       url: (
         argv
