@@ -1,6 +1,6 @@
 import {
   execFile as execFileCallback,
-} from "node:child_process";
+} from "node:child_process"
 import {
   promisify,
 } from "node:util"

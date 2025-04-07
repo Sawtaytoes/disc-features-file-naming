@@ -1,8 +1,12 @@
 import {
-  execFile,
-} from "node:child_process";
+  execFile as execFileCallback,
+} from "node:child_process"
+import {
+  promisify,
+} from "node:util"
 import {
   defer,
+  from,
   map,
   Observable,
 } from "rxjs"
@@ -82,7 +86,17 @@ export type MkvInfo = {
   warnings: any[]
 }
 
-type ExecFileParameters = Parameters<typeof execFile>
+const execFile = (
+  promisify(
+    execFileCallback
+  )
+)
+
+type ExecFileParameters = (
+  Parameters<
+    typeof execFile
+  >
+)
 
 export const createExecFileObservable = ({
   appExecutablePath,
@@ -93,51 +107,33 @@ export const createExecFileObservable = ({
   args: ExecFileParameters[1]
   options?: ExecFileParameters[2]
 }) => (
-  new Observable<
-    string
-  >((
-    subscriber,
-  ) => {
+  from(
     execFile(
       appExecutablePath,
       args,
       options,
-      (
-        error,
-        stdout,
-        stderr,
-      ) => {
+    )
+  )
+  .pipe(
+    map(({
+      stderr,
+      stdout,
+    }) => {
       if (
-        error
-      ) {
-        subscriber
-        .error(
-          error
-        )
-      }
-      else if (
         stderr
       ) {
-        subscriber
-        .error(
-          new Error(
-            stderr
-            .toString()
-          )
-        )
-      }
-      else {
-        subscriber
-        .next(
-          stdout
+        throw (
+          stderr
           .toString()
         )
-
-        subscriber
-        .complete()
       }
-    })
-  })
+
+      return (
+        stdout
+        .toString()
+      )
+    }),
+  )
 )
 
 export const getMkvInfo = (
