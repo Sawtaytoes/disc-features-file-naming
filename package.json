@@ -1,6 +1,7 @@
 {
   "name": "media-file-naming",
   "packageManager": "yarn@4.5.0",
+  "version": "1.0.0",
   "scripts": {
     "media": "tsx --env-file ./.env src/cli.ts",
     "test": "vitest",
