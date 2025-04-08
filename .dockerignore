@@ -1,4 +1,3 @@
 .venv/
-!.yarn/*
 apps.generated/
 node_modules/
