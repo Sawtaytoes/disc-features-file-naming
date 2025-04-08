@@ -24,8 +24,7 @@ RUN \
   echo "deb [signed-by=/etc/apt/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/debian/ bookworm main" > /etc/apt/sources.list.d/mkvtoolnix.download.list && \
   \
   apt update && \
-  apt install -y --no-install-recommends mkvtoolnix && \
-  useradd apps -u 568 -m
+  apt install -y --no-install-recommends mkvtoolnix
 
 # Add Python dependencies
 COPY requirements.txt ./
@@ -34,10 +33,6 @@ COPY requirements.txt ./
 RUN \
   pipx install audio-offset-finder && \
   pipx ensurepath
-
-# Set up an app user so the container doesn't run as root
-RUN chown -R apps:apps .
-USER apps
 
 # Install Node.js dependencies
 COPY .yarn/patches .yarn/patches
