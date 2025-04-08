@@ -34,8 +34,8 @@ RUN \
   pipx ensurepath
 
 # Install Node.js dependencies
-# COPY .yarn/patches .yarn/patches
-COPY .yarn package.json yarn.lock ./
+COPY .yarn/patches .yarn/patches
+COPY package.json yarn.lock ./
 
 RUN \
   corepack enable && \
