@@ -133,6 +133,7 @@ export const mergeSubtitlesMkvMerge = ({
         trackType: "subtitles",
       })
       .pipe(
+        // TODO: Remove this. It's causing 2 logs instead of 1.
         // This would normally go to the next step in the pipeline, but there are sometimes no "und" language tracks, so we need to utilize this `endWith` to continue in the event the `filter` stopped us.
         endWith(
           null

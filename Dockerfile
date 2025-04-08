@@ -36,7 +36,8 @@ RUN \
 
 # Install Node.js dependencies
 COPY .yarn/patches .yarn/patches
-COPY package.json yarn.lock ./
+COPY . .
+# COPY package.json yarn.lock ./
 
 RUN \
   npm install -g -y corepack@latest && \
@@ -44,6 +45,6 @@ RUN \
   yarn install
 
 # Add repo files to the container
-COPY . .
+# COPY . .
 
 CMD ["sleep", "infinity"]
