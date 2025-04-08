@@ -12,7 +12,7 @@ RUN log() { echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"; };
 # Install the application dependencies
 RUN \
   apt update && \
-  apt install -y --no-install-recommends build-essential ca-certificates ffmpeg git locales mediainfo pipx python3 wget && \
+  apt install -y --no-install-recommends build-essential ca-certificates ffmpeg git locales mediainfo pipx python3 wget yarn && \
   \
   sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen && \
   \
@@ -37,9 +37,7 @@ RUN \
 COPY .yarn/patches .yarn/patches
 COPY package.json yarn.lock ./
 
-RUN \
-  corepack enable && \
-  yarn install
+RUN yarn install
 
 # Add repo files to the container
 COPY . .
