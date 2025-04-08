@@ -5,6 +5,7 @@ WORKDIR /app
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV NODE_ENV=production
 
 RUN log() { echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"; };
@@ -34,21 +35,20 @@ RUN \
   pipx install audio-offset-finder && \
   pipx ensurepath
 
+# Set up an app user so the container doesn't run as root
+RUN chown -R apps:apps .
+USER apps
+
 # Install Node.js dependencies
 COPY .yarn/patches .yarn/patches
 COPY package.json yarn.lock ./
 
 RUN \
-  npm install -g corepack && \
+  npm install -g -y corepack@latest && \
   corepack enable yarn && \
   yarn install
 
 # Add repo files to the container
 COPY . .
-
-RUN chown -R apps:apps .
-
-# Set up an app user so the container doesn't run as root
-USER apps
 
 CMD ["sleep", "infinity"]
