@@ -34,7 +34,7 @@ RUN \
   pipx ensurepath
 
 # Install Node.js dependencies
-COPY package.json yarn.lock ./
+COPY .yarn package.json yarn.lock ./
 
 RUN yarn install
 
