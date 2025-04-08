@@ -39,6 +39,8 @@ COPY package.json yarn.lock ./
 # Add repo files to the container
 COPY . .
 
+RUN chown -R apps:apps .
+
 # Set up an app user so the container doesn't run as root
 USER apps
 
