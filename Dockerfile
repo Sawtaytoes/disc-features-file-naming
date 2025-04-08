@@ -23,7 +23,7 @@ RUN \
   \
   apt update && \
   apt install -y --no-install-recommends mkvtoolnix && \
-  useradd apps
+  useradd apps -u 568 -m
 
 # Add Python dependencies
 COPY requirements.txt ./
