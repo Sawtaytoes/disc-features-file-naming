@@ -36,6 +36,8 @@ RUN \
 # Install Node.js dependencies
 COPY package.json yarn.lock ./
 
+RUN yarn install
+
 # Add repo files to the container
 COPY . .
 
