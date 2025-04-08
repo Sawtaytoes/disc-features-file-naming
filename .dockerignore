@@ -1,9 +1,4 @@
 .venv/
+!.yarn/*
 apps.generated/
 node_modules/
-
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
