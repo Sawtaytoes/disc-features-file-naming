@@ -7,6 +7,7 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV NODE_ENV=production
+ENV PORT=3000
 
 RUN log() { echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"; };
 
@@ -41,6 +42,9 @@ COPY . .
 RUN \
   npm install -g -y corepack@latest && \
   corepack enable yarn && \
-  yarn install
+  yarn install && \
+  yarn add @lydell/node-pty@npm:node-pty@1.0.0
 
-CMD ["sleep", "infinity"]
+EXPOSE $PORT
+
+CMD ["yarn", "tsx", "src/server.ts"]
