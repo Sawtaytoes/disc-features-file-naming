@@ -7,6 +7,7 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
+import { platform } from "node:os"
 
 export const searchDvdCompare = ({
   url,
@@ -20,6 +21,11 @@ export const searchDvdCompare = ({
   from(
     puppeteer
     .launch({
+      args: (
+        platform() === "win32"
+        ? []
+        : ["--no-sandbox"] // TODO; Remove this with a better solution: https://stackoverflow.com/a/53975412/1624862.
+      ),
       headless: true,
       // headless: false,
     })
