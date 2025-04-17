@@ -1,14 +1,15 @@
+import chalk from "chalk"
 import {
   filter,
   map,
-  mergeAll,
   mergeMap,
   tap,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getUhdDiscForumPostData } from "./getUhdDiscForumPostData.js"
 import { filterIsVideoFile } from "./filterIsVideoFile.js"
+import { getUhdDiscForumPostData } from "./getUhdDiscForumPostData.js"
+import { logInfo } from "./logMessage.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const hasBetterVersion = ({
@@ -110,23 +111,23 @@ export const hasBetterVersion = ({
           )
           > 0
         )),
-        mergeMap(({
-          matchingSections,
-        }) => (
-          matchingSections
-          .flatMap(({
-            items,
-            ...otherProps
-          }) => (
-            items
-            .map((
-              item
-            ) => ({
-              ...otherProps,
-              ...item,
-            }))
-          ))
-        )),
+        // mergeMap(({
+        //   matchingSections,
+        // }) => (
+        //   matchingSections
+        //   .flatMap(({
+        //     items,
+        //     ...otherProps
+        //   }) => (
+        //     items
+        //     .map((
+        //       item
+        //     ) => ({
+        //       ...otherProps,
+        //       ...item,
+        //     }))
+        //   ))
+        // )),
         // filter(({
         //   reasons,
         //   sectionTitle,
@@ -151,10 +152,70 @@ export const hasBetterVersion = ({
         // )),
       )
     )),
-    tap(
+    map(({
+      matchingSections,
+      ...otherProps
+    }) => ({
+      ...otherProps,
+      matchingSections: (
+        matchingSections
+        .map(({
+          items,
+          sectionTitle,
+        }) => (
+          chalk
+          .blue(
+            `  ${sectionTitle}`
+          )
+          .concat(
+            "\n",
+            (
+              items
+              .map(({
+                publisher,
+                reasons,
+              }) => (
+                chalk
+                .cyan(
+                  `    Publisher:`
+                )
+                .concat(
+                  ` ${publisher}`,
+                  "\n",
+                  (
+                    reasons
+                    ?.map((
+                      reason,
+                    ) => (
+                      `    - ${reason}`
+                    ))
+                    .join("\n")!
+                  ),
+                )
+              ))
+              .find(Boolean)!
+            )
+          )
+        ))
+        .join("\n\n")
+      )
+    })),
+    tap(({
+      matchingSections,
+      movieNameWithYear,
+    }) => {
       console
-      .info
-    ),
+      .info(
+        (
+          chalk
+          .green(
+            movieNameWithYear
+          )
+        ),
+        "\n",
+        matchingSections,
+      )
+    }),
     catchNamedError(
       hasBetterVersion
     )

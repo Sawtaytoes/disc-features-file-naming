@@ -15,35 +15,65 @@ export type UhdDiscForumPostGroup = {
   title: string
 }
 
-export const getParentText = (
+/**
+ * Ensures we only get the parent element text.
+ *
+ * Avoids returning strings from children which may also match a regex.
+ */
+export const getTextContentWithoutChildren = (
   element: HTMLElement,
-) => {
-  const clonedElement = (
-    element
-    .cloneNode(
-      true
-    ) as (
-      HTMLElement
-    )
-  )
-
+) => (
   Array
   .from(
-    clonedElement
-    .children
+    element
+    .childNodes
   )
-  .forEach((
-    childElement,
-  ) => {
-    clonedElement
-    .removeChild(
-      childElement
+  .filter(({
+    nodeType,
+  }) => (
+    nodeType
+    === (
+      new JSDOM()
+      .window
+      .Node
+      .TEXT_NODE
     )
-  })
+  ))
+  .map((
+    textNode
+  ) => (
+    textNode
+    ?.textContent
+    ?.trim()
+  ))
+  .join("")
+)
+
+export const getReasonFromMovieTextDomSnippet = (
+  jsdomSnippet: JSDOM,
+) => {
+  const textContentWithoutChildren = (
+    getTextContentWithoutChildren(
+      jsdomSnippet
+      .window
+      .document
+      .body
+    )
+  )
+
+  const reason = (
+    textContentWithoutChildren
+    .replace(
+      /^(?!.*Collection).*?\(.+?\) \((.+?)\).*$/,
+      "$1",
+    )
+  )
 
   return (
-    clonedElement
-    .textContent
+    textContentWithoutChildren
+    === reason
+    ? ""
+    : reason
   )
 }
 
@@ -56,8 +86,10 @@ export const getReasonsFromDomSnippet = (
       jsdomSnippet
       .window
       .document
-      .querySelectorAll(
-        'span'
+      .querySelectorAll<
+        HTMLSpanElement
+      >(
+        "span"
       )
     )
     || []
@@ -65,38 +97,34 @@ export const getReasonsFromDomSnippet = (
   .map((
     element
   ) => (
-    element
-    ?.textContent
+    getTextContentWithoutChildren(
+      element
+    )
   ))
   .filter((
-    textContent
+    textContent,
   ): textContent is string => (
     Boolean(
       textContent
     )
-  ))
-  .flatMap((
-    textContent
-  ) => (
-    textContent
-    .matchAll(
-      /\((?<reason>.+?)\)/g
+    && (
+      // Ensure it's not a section title. Those end with `:`.
+      !(
+        /:$/
+        .test(
+          textContent
+        )
+      )
     )
   ))
-  .flatMap((
-    reasonMatchesIterator
+  .map((
+    textContent,
   ) => (
-    Array
-    .from(
-      reasonMatchesIterator
+    textContent
+    .replace(
+      /^.*\((.+?)\)$/,
+      "$1",
     )
-  ))
-  .flatMap((
-    reasonsMatches
-  ) => (
-    reasonsMatches
-    ?.groups
-    ?.reason
   ))
   .filter((
     reason
@@ -114,6 +142,50 @@ export const getReasonsFromDomSnippet = (
   .filter(
     Boolean
   )
+  .concat(
+    getReasonFromMovieTextDomSnippet(
+      jsdomSnippet
+    )
+  )
+  .filter(
+    Boolean
+  )
+  .concat(
+    Array
+    .from(
+      (
+        jsdomSnippet
+        .window
+        .document
+        .querySelectorAll<
+          HTMLAnchorElement
+        >(
+          "[href]"
+        )
+      )
+      || []
+    )
+    .filter((
+      element
+    ) => (
+      element
+      && (
+        (
+          element
+          .textContent
+        )
+        ?.match(
+          /(review$)|(screenshots)/
+        )
+      )
+    ))
+    .map((
+      element
+    ) => (
+      element
+      .href
+    ))
+  )
 )
 
 export const getSectionTitleFromDomSnippet = (
@@ -125,7 +197,7 @@ export const getSectionTitleFromDomSnippet = (
       .window
       .document
       .querySelector(
-        '[style="font-size:150%;line-height:116%"]'
+        `[style="font-size:150%;line-height:116%"]`
       )
       ?.textContent
     )
@@ -138,9 +210,84 @@ export const getSectionTitleFromDomSnippet = (
   )
 )
 
+export const getMovieDataFromDomSnippet = (
+  jsdomSnippet: JSDOM,
+) => {
+  const fakeElement = (
+    jsdomSnippet
+    .window
+    .document
+    .createElement(
+      "div"
+    )
+  )
+
+  const textContent = (
+    (
+      (
+        (
+          // This function seems unnecessary, but it helps the regex be a lot simpler because some items have no publisher and only a reason, but if you matched with text from children, it would match the reason.
+          getTextContentWithoutChildren(
+            jsdomSnippet
+            .window
+            .document
+            .body
+          )
+        )
+        || (
+          getTextContentWithoutChildren(
+            (
+              jsdomSnippet
+              .window
+              .document
+              .querySelector(
+                "span"
+              )
+            )
+            || fakeElement
+          )
+        )
+      )
+    )
+    .trim()
+  )
+
+  const matches = (
+    textContent
+    .match(
+      /^(?<movieName>(.+ Collection)?.+?) \((?<publisher>.+?)( > (.+?))?\).*$/
+    )
+  )
+
+  return (
+    matches
+    ? (
+      matches
+      .groups
+    )
+    : {
+      movieName: "",
+      publisher: "",
+    }
+  ) as (
+    Pick<
+      UhdDiscForumPostItem,
+      (
+        | "movieName"
+        | "publisher"
+      )
+    >
+  )
+}
+
 export const parseDomSnippetTextContent = (
   jsdomSnippet: JSDOM,
 ) => ({
+  ...(
+    getMovieDataFromDomSnippet(
+      jsdomSnippet
+    )
+  ),
   reasons: (
     getReasonsFromDomSnippet(
       jsdomSnippet
@@ -149,23 +296,6 @@ export const parseDomSnippetTextContent = (
   sectionTitle: (
     getSectionTitleFromDomSnippet(
       jsdomSnippet
-    )
-  ),
-  movieMatch: (
-    (
-      (
-        getParentText(
-          jsdomSnippet
-          .window
-          .document
-          .body
-        )
-      )
-      || ""
-    )
-    .trim()
-    .match(
-      /^(.+) \((.+)\)$/
     )
   ),
 })
@@ -195,23 +325,6 @@ export const processUhdDiscForumPost = (
       jsdomSnippet
     )
   ))
-  .map(({
-    movieMatch,
-    ...otherProps
-  }) => ({
-    ...otherProps,
-    movieName: (
-      (
-        movieMatch
-        ?.at(1)
-      )
-      || ""
-    ),
-    publisher: (
-      movieMatch
-      ?.at(2)
-    ),
-  }))
   .filter(({
     sectionTitle,
     movieName,
@@ -224,52 +337,46 @@ export const processUhdDiscForumPost = (
       groups,
       {
         sectionTitle,
-        ...worthItItem
+        ...uhdDiscForumPostItem
       },
-    ) => (
-      sectionTitle
-      ? (
-        groups
-        .concat({
-          items: [],
-          title: sectionTitle,
-        })
+    ) => {
+      if (sectionTitle) {
+        return (
+          groups
+          .concat({
+            items: [],
+            title: sectionTitle,
+          })
+        )
+      }
+
+      const lastItem = (
+        (
+          groups
+          .at(-1)
+        )
+        || (
+          {} as (
+            UhdDiscForumPostGroup
+          )
+        )
       )
-      : (
+
+      return (
         groups
         .slice(0, -1)
         .concat({
-          ...(
-            (
-              groups
-              .at(-1)
-            )
-            || (
-              {} as (
-                UhdDiscForumPostGroup
-              )
-            )
-          ),
+          ...lastItem,
           items: (
-            (
-              (
-                groups
-                .at(-1)
-              )
-              || (
-                {} as (
-                  UhdDiscForumPostGroup
-                )
-              )
-            )
+            lastItem
             .items
             .concat(
-              worthItItem
+              uhdDiscForumPostItem
             )
           ),
         })
       )
-    ),
+    },
     [] satisfies (
       UhdDiscForumPostGroup[]
     ) as (

@@ -1,4 +1,4 @@
-export const postContentInnerHtml = `
+export const postContentInnerHtmlUnusedPrefix = `
 						<h3 class="first"><a href="#p739745">UHD New Releases, Reissues and Upgrades</a></h3>
 
 													<ul class="post-buttons">
@@ -30,6 +30,10 @@ export const postContentInnerHtml = `
 <br>
 <a href="https://criterionforum.org/forum/viewtopic.php?p=828914#p828914" class="postlink">cinemaniac's screencaps</a><br>
 <br>
+`
+
+export const postContentInnerHtml = postContentInnerHtmlUnusedPrefix
+.concat(`
 <span style="font-size:150%;line-height:116%"><strong class="text-strong"><span style="text-decoration:underline"><span style="color:#FF0000">Reference 4K titles and/or spectacular upgrades from the most recent BD:</span></span></strong></span><br>
 2001 (WB)<br>
 8 1/2 (Criterion)<br>
@@ -881,4 +885,4 @@ Total Recall (Studio Canal)</span></span></span></span></span></span></span></di
 													<div class="notice">
 					Last edited by <a href="./memberlist.php?mode=viewprofile&amp;u=15746&amp;sid=09c1b6c84d881578abe2ae6b06d7f4a7" style="color: #006633;" class="username-coloured">Finch</a> on Thu Dec 28, 2023 12:19 pm, edited 664 times in total.
 									</div>
-`
+`)
