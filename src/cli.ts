@@ -401,12 +401,27 @@ yargs(
         type: "boolean",
       },
     )
+    .option(
+      "recursiveDepth",
+      {
+        alias: "d",
+        default: 0,
+        describe: "How many deep of child directories to follow (2 or 3) when using `isRecursive`.",
+        nargs: 1,
+        number: true,
+        type: "number",
+      },
+    )
   ),
   (argv) => {
     hasBetterVersion({
       isRecursive: (
         argv
         .isRecursive
+      ),
+      recursiveDepth: (
+        argv
+        .recursiveDepth
       ),
       sourcePath: (
         argv

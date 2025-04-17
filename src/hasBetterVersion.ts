@@ -7,26 +7,28 @@ import {
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
-import { getDiscWorthIt } from "./getDiscWorthIt.js"
+import { getUhdDiscForumPostData } from "./getUhdDiscForumPostData.js"
 import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const hasBetterVersion = ({
   isRecursive,
+  recursiveDepth = 1,
   sourcePath,
 }: {
   isRecursive: boolean,
+  recursiveDepth: number,
   sourcePath: string
 }) => (
-  getDiscWorthIt()
+  getUhdDiscForumPostData()
   .pipe(
     mergeMap((
-      worthItGroups,
+      uhdDiscForumPostGroups,
     ) => (
       readFilesAtDepth({
         depth: (
           isRecursive
-          ? 1
+          ? recursiveDepth
           : 0
         ),
         sourcePath,
@@ -65,7 +67,7 @@ export const hasBetterVersion = ({
           movieNameWithYear,
         }) => ({
           matchingSections: (
-            worthItGroups
+            uhdDiscForumPostGroups
             .map(({
               items,
               title,
@@ -73,14 +75,14 @@ export const hasBetterVersion = ({
               items: (
                 items
                 .filter(({
-                  movieName: worthItMovieName,
+                  movieName: uhdDiscForumPostMovieName,
                 }) => (
                   (
-                    worthItMovieName
+                    uhdDiscForumPostMovieName
                     === movieName
                   )
                   || (
-                    worthItMovieName
+                    uhdDiscForumPostMovieName
                     === movieNameWithYear
                   )
                 ))
@@ -125,6 +127,28 @@ export const hasBetterVersion = ({
             }))
           ))
         )),
+        // filter(({
+        //   reasons,
+        //   sectionTitle,
+        // }) => (
+        //   (
+        //     sectionTitle === "Reference 4K titles and/or spectacular upgrades from the most recent BD"
+        //     || sectionTitle === "Appreciable/Solid upgrades compared to the most recent Blu-Rays"
+        //   )
+        //   ? (
+        //     Boolean(
+        //       reasons
+        //       && (
+        //         (
+        //           reasons
+        //           .length
+        //         )
+        //         > 0
+        //       )
+        //     )
+        //   )
+        //   : true
+        // )),
       )
     )),
     tap(
