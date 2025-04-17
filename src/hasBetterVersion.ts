@@ -111,45 +111,6 @@ export const hasBetterVersion = ({
           )
           > 0
         )),
-        // mergeMap(({
-        //   matchingSections,
-        // }) => (
-        //   matchingSections
-        //   .flatMap(({
-        //     items,
-        //     ...otherProps
-        //   }) => (
-        //     items
-        //     .map((
-        //       item
-        //     ) => ({
-        //       ...otherProps,
-        //       ...item,
-        //     }))
-        //   ))
-        // )),
-        // filter(({
-        //   reasons,
-        //   sectionTitle,
-        // }) => (
-        //   (
-        //     sectionTitle === "Reference 4K titles and/or spectacular upgrades from the most recent BD"
-        //     || sectionTitle === "Appreciable/Solid upgrades compared to the most recent Blu-Rays"
-        //   )
-        //   ? (
-        //     Boolean(
-        //       reasons
-        //       && (
-        //         (
-        //           reasons
-        //           .length
-        //         )
-        //         > 0
-        //       )
-        //     )
-        //   )
-        //   : true
-        // )),
       )
     )),
     map(({
