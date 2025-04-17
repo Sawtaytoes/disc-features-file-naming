@@ -1,15 +1,17 @@
 import chalk from "chalk"
 import {
+  concatMap,
   filter,
   map,
   mergeMap,
   tap,
+  toArray,
 } from "rxjs"
 
 import { catchNamedError } from "./catchNamedError.js"
 import { filterIsVideoFile } from "./filterIsVideoFile.js"
 import { getUhdDiscForumPostData } from "./getUhdDiscForumPostData.js"
-import { logInfo } from "./logMessage.js"
+import { naturalSort } from "./naturalSort.js"
 import { readFilesAtDepth } from "./readFilesAtDepth.js"
 
 export const hasBetterVersion = ({
@@ -111,6 +113,20 @@ export const hasBetterVersion = ({
           )
           > 0
         )),
+        toArray(),
+        concatMap((
+          items,
+        ) => (
+          naturalSort(
+            items
+          )
+          .asc((
+            item
+          ) => (
+            item
+            .movieNameWithYear
+          ))
+        )),
       )
     )),
     map(({
@@ -173,8 +189,7 @@ export const hasBetterVersion = ({
             movieNameWithYear
           )
         ),
-        "\n",
-        matchingSections,
+        `\n\n${matchingSections}\n\n`,
       )
     }),
     catchNamedError(
