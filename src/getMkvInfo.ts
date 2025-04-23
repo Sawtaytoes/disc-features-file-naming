@@ -13,6 +13,7 @@ import {
 
 import { mkvMergePath } from "./appPaths.js";
 import { catchNamedError } from "./catchNamedError.js"
+import { Iso6392LanguageCode } from "./iso6392LanguageCodes.js";
 
 export type Chapter = {
   num_entries: number
@@ -50,7 +51,7 @@ export type TrackProperties = {
   display_unit?: number
   enabled_track: boolean
   forced_track: boolean
-  language: string
+  language: Iso6392LanguageCode | "und"
   minimum_timestamp?: number
   num_index_entries: number
   number: number

@@ -25,7 +25,7 @@ export const extractSubtitles = ({
 }: {
   codec_id: keyof typeof subtitleCodecExtension
   filePath: string
-  languageCode: Iso6392LanguageCode,
+  languageCode: Iso6392LanguageCode | "und",
   trackId: number,
 }) => (
   of(
