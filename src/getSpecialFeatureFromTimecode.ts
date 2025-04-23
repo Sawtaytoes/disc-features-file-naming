@@ -106,11 +106,11 @@ export const specialFeatureMatchRenames = [
     replacement: "$1 -scene",
   },
   {
-    searchTerm: /(.*spot?.*)/i,
+    searchTerm: /(.*spot.*)/i,
     replacement: "$1 -trailer",
   },
   {
-    searchTerm: /(.*promo?.*)/i,
+    searchTerm: /(.*promo.*)/i,
     replacement: "$1 -trailer",
   },
   {
@@ -118,11 +118,11 @@ export const specialFeatureMatchRenames = [
     replacement: "$1 -featurette",
   },
   {
-    searchTerm: /(clips?)$/i,
+    searchTerm: /(.*clips?.*)$/i,
     replacement: "$1 -behindthescenes",
   },
   {
-    searchTerm: /(stills?)$/i,
+    searchTerm: /(.*stills?.*)$/i,
     replacement: "$1 -other",
   },
 ] as const
