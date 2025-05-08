@@ -11,7 +11,7 @@ import {
 import { catchNamedError } from "./catchNamedError.js"
 import { getAudioOffset } from "./getAudioOffset.js"
 import { type Iso6392LanguageCode } from "./iso6392LanguageCodes.js"
-import { readFiles } from "./readFiles.js"
+import { readFilesAtDepth } from "./readFilesAtDepth.js"
 import { replaceTracksMkvMerge } from "./replaceTracksMkvMerge.js"
 import { logInfo } from "./logMessage.js"
 
@@ -36,7 +36,8 @@ export const replaceTracks = ({
   subtitlesLanguages: Iso6392LanguageCode[]
   videoLanguages: Iso6392LanguageCode[]
 }) => (
-  readFiles({
+  readFilesAtDepth({
+    depth: 0,
     sourcePath: (
       sourceFilesPath
     ),
@@ -46,7 +47,8 @@ export const replaceTracks = ({
     concatMap((
       sourceFileInfos,
     ) => (
-      readFiles({
+      readFilesAtDepth({
+        depth: 0,
         sourcePath: (
           destinationFilesPath
         ),
