@@ -10,10 +10,8 @@ import {
   type RobotsRule,
 } from "./robotsTxt.js"
 
-// Bandcamp publishes no API and no rate limit. This is a politeness number,
-// not a published one: one lookup reads a handful of an artist's own pages,
-// and a pass over many songs should not read like a crawl.
-export const BANDCAMP_MINIMUM_REQUEST_INTERVAL_MILLISECONDS = 3_000
+// The politeness interval (3000 ms; Bandcamp publishes no API and no rate
+// limit) lives on `bandcampCachedFetch` in musicProviderFetchers.ts.
 
 // Bandcamp serves every size of a cover from one id, chosen by the suffix:
 // `a<art id>_<size>.jpg` on f4.bcbits.com. `_2` is the 350 x 350 grid
