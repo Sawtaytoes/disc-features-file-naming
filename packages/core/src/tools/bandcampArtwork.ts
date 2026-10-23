@@ -1,10 +1,5 @@
 import { logAndRethrowPipelineError } from "@mux-magic/tools"
-import {
-  type Cheerio,
-  type CheerioAPI,
-  load,
-} from "cheerio"
-import type { Element } from "domhandler"
+import { JSDOM } from "jsdom"
 import { from, type Observable } from "rxjs"
 
 import { normaliseTitleForIdentifierMatch } from "./discogsArtwork.js"
@@ -107,16 +102,16 @@ const getMetaContent = ({
   pageDocument,
   property,
 }: {
-  pageDocument: CheerioAPI
+  pageDocument: Document
   property: string
 }) =>
   collapseWhitespace(
-    pageDocument(`meta[property="${property}"]`).attr(
-      "content",
-    ) ?? "",
+    pageDocument
+      .querySelector(`meta[property="${property}"]`)
+      ?.getAttribute("content") ?? "",
   )
 
-const getSiteArtistName = (pageDocument: CheerioAPI) =>
+const getSiteArtistName = (pageDocument: Document) =>
   getMetaContent({
     pageDocument,
     property: "og:site_name",
@@ -139,24 +134,25 @@ const resolvePageUrl = ({
 // The title is the text directly inside `p.title`. A release credited to
 // someone other than the page's artist adds a `<br>` and an
 // `.artist-override` span, which is the artist, not the title.
-const getGridItemTitle = (item: Cheerio<Element>) =>
+const getGridItemTitle = (item: Element) =>
   collapseWhitespace(
-    item
-      .find("p.title")
-      .contents()
-      .filter((_index, node) => node.type === "text")
-      .text(),
+    Array.from(
+      item.querySelector("p.title")?.childNodes ?? [],
+    )
+      .filter((node) => node.nodeName === "#text")
+      .map((node) => node.textContent ?? "")
+      .join(""),
   )
 
 // Thumbnails past the first rows load lazily: `src` is a placeholder gif
 // and the real image is in `data-original`.
-const getGridItemImageUrl = (item: Cheerio<Element>) =>
-  ((image: Cheerio<Element>) =>
+const getGridItemImageUrl = (item: Element) =>
+  ((image: Element | null) =>
     upgradeBandcampImageUrl(
-      image.attr("data-original") ??
-        image.attr("src") ??
+      image?.getAttribute("data-original") ??
+        image?.getAttribute("src") ??
         "",
-    ))(item.find(".art img").first())
+    ))(item.querySelector(".art img"))
 
 const buildGridItemRelease = ({
   artistName,
@@ -164,7 +160,7 @@ const buildGridItemRelease = ({
   origin,
 }: {
   artistName: string
-  item: Cheerio<Element>
+  item: Element
   origin: string
 }): BandcampRelease | null =>
   ((itemKind: "album" | "track" | null) =>
@@ -173,19 +169,23 @@ const buildGridItemRelease = ({
       : {
           artistName:
             collapseWhitespace(
-              item.find(".artist-override").text(),
+              item.querySelector(".artist-override")
+                ?.textContent ?? "",
             ) || artistName,
           imageUrl: getGridItemImageUrl(item),
           itemKind,
           pageUrl: resolvePageUrl({
             origin,
-            path: item.find("a").first().attr("href") ?? "",
+            path:
+              item
+                .querySelector("a")
+                ?.getAttribute("href") ?? "",
           }),
           title: getGridItemTitle(item),
           trackTitles: null,
         })(
     getItemKind(
-      (item.attr("data-item-id") ?? "").replace(
+      (item.getAttribute("data-item-id") ?? "").replace(
         /-\d+$/u,
         "",
       ),
@@ -248,21 +248,24 @@ const parseDiscographyGrid = ({
   pageDocument,
 }: {
   origin: string
-  pageDocument: CheerioAPI
+  pageDocument: Document
 }) =>
   ((artistName: string) =>
     parseJsonLater<BandcampClientItem[]>(
-      pageDocument("#music-grid").attr(
-        "data-client-items",
-      ) ?? "[]",
+      pageDocument
+        .querySelector("#music-grid")
+        ?.getAttribute("data-client-items") ?? "[]",
     ).then((clientItems) =>
       removeDuplicatePages(
-        pageDocument("#music-grid li.music-grid-item")
-          .toArray()
+        Array.from(
+          pageDocument.querySelectorAll(
+            "#music-grid li.music-grid-item",
+          ),
+        )
           .map((element) =>
             buildGridItemRelease({
               artistName,
-              item: pageDocument(element),
+              item: element,
               origin,
             }),
           )
@@ -288,7 +291,7 @@ const buildTralbumRelease = ({
   tralbum,
 }: {
   origin: string
-  pageDocument: CheerioAPI
+  pageDocument: Document
   tralbum: BandcampTralbum
 }): BandcampRelease => ({
   artistName:
@@ -320,11 +323,12 @@ const parseReleasePage = ({
   pageDocument,
 }: {
   origin: string
-  pageDocument: CheerioAPI
+  pageDocument: Document
 }) =>
   parseJsonLater<BandcampTralbum>(
-    pageDocument("[data-tralbum]").attr("data-tralbum") ??
-      "",
+    pageDocument
+      .querySelector("[data-tralbum]")
+      ?.getAttribute("data-tralbum") ?? "",
   ).then((tralbum) =>
     tralbum === null
       ? []
@@ -346,12 +350,17 @@ export const parseBandcampPage = ({
   body: string
   origin: string
 }): Promise<BandcampRelease[] | null> =>
-  ((pageDocument: CheerioAPI) =>
-    pageDocument("#music-grid").length > 0
+  ((pageDocument: Document) =>
+    pageDocument.querySelector("#music-grid") !== null
       ? parseDiscographyGrid({ origin, pageDocument })
-      : pageDocument("[data-tralbum]").length > 0
+      : pageDocument.querySelector("[data-tralbum]") !==
+          null
         ? parseReleasePage({ origin, pageDocument })
-        : Promise.resolve(null))(load(body))
+        : Promise.resolve(null))(
+    // Static HTML only: JSDOM runs no page scripts by default, and every
+    // field read here is in the server-rendered markup and attributes.
+    new JSDOM(body).window.document,
+  )
 
 const getErrorStatus = (error: unknown) =>
   typeof error === "object" &&
