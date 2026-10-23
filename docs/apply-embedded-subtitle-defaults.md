@@ -36,6 +36,11 @@ Use `isRecursive` and `recursiveDepth` for nested staging folders. Generated
 Verify the staged outputs before using `moveFiles` to install them. Result records
 include the modified metadata range and `hasRewrittenMediaPackets: false`.
 
+Repeated Script Info headings with a single property-bearing section are consolidated
+before computing defaults. Generator comments and source credits are retained, so a
+leading comment-only block cannot hide the real script resolution. Multiple
+property-bearing Script Info sections are refused as ambiguous.
+
 ## Limits
 
 Only S_TEXT/ASS headers are changed. Bitmap subtitles and other track types are

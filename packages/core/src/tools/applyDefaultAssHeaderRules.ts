@@ -6,7 +6,49 @@ import {
   parseAssFile,
   serializeAssFile,
 } from "./assFileTools.js"
+import type {
+  AssFile,
+  AssScriptInfoSection,
+  AssSection,
+} from "./assTypes.js"
 import { buildDefaultSubtitleModificationRules } from "./buildDefaultSubtitleModificationRules.js"
+
+const consolidateScriptInfo = (assFile: AssFile): AssFile =>
+  ((scriptInfoSections: AssScriptInfoSection[]) =>
+    scriptInfoSections.length <= 1
+      ? assFile
+      : scriptInfoSections.filter((section) =>
+            section.entries.some(
+              (entry) => entry.type === "property",
+            ),
+          ).length === 1
+        ? {
+            sections: assFile.sections.flatMap(
+              (section): AssSection[] =>
+                section.sectionType === "scriptInfo"
+                  ? section === scriptInfoSections[0]
+                    ? [
+                        {
+                          ...section,
+                          entries:
+                            scriptInfoSections.flatMap(
+                              ({ entries }) => entries,
+                            ),
+                        },
+                      ]
+                    : []
+                  : [section],
+            ),
+          }
+        : (() => {
+            throw new Error(
+              "Repeated Script Info requires exactly one property-bearing section; multiple property-bearing Script Info sections are ambiguous",
+            )
+          })())(
+    assFile.sections.filter(
+      (section) => section.sectionType === "scriptInfo",
+    ),
+  )
 
 const retainedProperties = (header: string) =>
   header
@@ -95,4 +137,4 @@ export const applyDefaultAssHeaderRules = (
         assFile,
         filePath: "embedded.ass",
       }),
-    ))(parseAssFile(header))
+    ))(consolidateScriptInfo(parseAssFile(header)))

@@ -65,3 +65,29 @@ test("refuses a serializer round-trip that would lose nonstandard source credit 
     applyDefaultAssHeaderRules(original),
   ).toThrow(/preserve all source Script Info/)
 })
+
+test("reads resolution after a repeated comment-only Script Info header and retains credits", () => {
+  const original = `[Script Info]\n; First generator\n${header({ width: 768, height: 576 }).replace("ScriptType: v4.00+", "ScriptType: v4.00+\nOriginal Translation: Example Group\n; Second generator")}`
+  const output = applyDefaultAssHeaderRules(original)
+  expect(output).toContain(
+    "Style: Default,Example Sans,60,80,80,48",
+  )
+  expect(output).toContain(
+    "Style: Signs,Example Sans,48,10,10,20",
+  )
+  expect(output).toContain("YCbCr Matrix: TV.709")
+  expect(output).toContain(
+    "Original Translation: Example Group",
+  )
+  expect(output).toContain("; First generator")
+  expect(output).toContain("; Second generator")
+  expect(output.match(/\[Script Info\]/g)).toHaveLength(1)
+})
+
+test("refuses multiple property-bearing Script Info sections instead of choosing a resolution", () => {
+  expect(() =>
+    applyDefaultAssHeaderRules(
+      `[Script Info]\nPlayResX: 1920\n${header({ width: 768, height: 576 })}`,
+    ),
+  ).toThrow(/multiple property-bearing Script Info/)
+})
