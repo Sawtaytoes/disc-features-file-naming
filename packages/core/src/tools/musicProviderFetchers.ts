@@ -1,6 +1,7 @@
 import { createCachedFetch } from "../provider-cache/cachedFetch.js"
 import type { ProviderCacheProvider } from "../provider-cache/providerCache.js"
 import { ACOUSTID_MINIMUM_REQUEST_INTERVAL_MILLISECONDS } from "./acoustIdApi.js"
+import { BANDCAMP_MINIMUM_REQUEST_INTERVAL_MILLISECONDS } from "./bandcampArtwork.js"
 import { ITUNES_MINIMUM_REQUEST_INTERVAL_MILLISECONDS } from "./itunesArtwork.js"
 import {
   type CachedFetch,
@@ -109,6 +110,16 @@ export const itunesCachedFetch = buildFetcher({
   minimumRequestIntervalMilliseconds:
     ITUNES_MINIMUM_REQUEST_INTERVAL_MILLISECONDS,
   provider: "itunes",
+})
+
+// Bandcamp publishes no API and no rate limit, so this is a politeness
+// number rather than a published one: at least three seconds between the
+// artist pages one lookup reads. Its own limiter, and the same descriptive
+// User-Agent every provider here sends — never a browser's.
+export const bandcampCachedFetch = buildFetcher({
+  minimumRequestIntervalMilliseconds:
+    BANDCAMP_MINIMUM_REQUEST_INTERVAL_MILLISECONDS,
+  provider: "bandcamp",
 })
 
 // Re-exported so the existing import path keeps working; the holder and
