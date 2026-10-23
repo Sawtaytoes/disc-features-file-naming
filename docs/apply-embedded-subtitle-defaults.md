@@ -39,7 +39,9 @@ include the modified metadata range and `hasRewrittenMediaPackets: false`.
 Repeated Script Info headings with a single property-bearing section are consolidated
 before computing defaults. Generator comments and source credits are retained, so a
 leading comment-only block cannot hide the real script resolution. Multiple
-property-bearing Script Info sections are refused as ambiguous.
+property-bearing Script Info sections are refused as ambiguous. Every formatted
+style block contributes to default-margin decisions; repeated style blocks keep
+their field lists, fonts and ignored sign/song styles.
 
 ## Limits
 

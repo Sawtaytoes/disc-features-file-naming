@@ -50,6 +50,20 @@ const consolidateScriptInfo = (assFile: AssFile): AssFile =>
     ),
   )
 
+const buildHeaderMetadata = (assFile: AssFile) => ({
+  ...buildFileMetadata({
+    assFile,
+    filePath: "embedded.ass",
+  }),
+  styles: assFile.sections.flatMap((section) =>
+    section.sectionType === "formatted"
+      ? section.entries
+          .filter((entry) => entry.entryType === "Style")
+          .map(({ fields }) => fields)
+      : [],
+  ),
+})
+
 const retainedProperties = (header: string) =>
   header
     .replace(/\r\n/g, "\n")
@@ -132,9 +146,6 @@ export const applyDefaultAssHeaderRules = (
             throw new Error(
               "ASS CodecPrivate contains no parsed styles",
             )
-          })())(
-      buildFileMetadata({
-        assFile,
-        filePath: "embedded.ass",
-      }),
-    ))(consolidateScriptInfo(parseAssFile(header)))
+          })())(buildHeaderMetadata(assFile)))(
+    consolidateScriptInfo(parseAssFile(header)),
+  )
